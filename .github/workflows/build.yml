@@ -1,0 +1,43 @@
+name: Build APK Free
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create and Build App
+        run: |
+          npx -y create-vite@latest tamishna --template react-ts
+          cd tamishna
+          npm install
+          npm install @capacitor/core @capacitor/android @aparajita/capacitor-biometric-auth
+          npm install -D @capacitor/cli
+          npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
+          npm run build
+          npx cap add android
+          npx cap sync android
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Build Debug APK
+        run: |
+          cd tamishna/android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tamishna-Attendance-APK
+          path: tamishna/android/app/build/outputs/apk/debug/*.apk
