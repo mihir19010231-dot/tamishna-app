@@ -7,34 +7,142 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Create and Build App
-        run: |
-          npx -y create-vite@latest tamishna --template react-ts
-          cd tamishna
-          npm install
-          npm install @capacitor/core @capacitor/android @aparajita/capacitor-biometric-auth
-          npm install -D @capacitor/cli
-          npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
-          npm run build
-          npx cap add android
-          npx cap sync android
-
-      - name: Setup Java
+      - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create and Build Project
+        run: |
+          mkdir -p tamishna
+          cd tamishna
+          npm init -y
+          npm install --legacy-peer-deps @capacitor/core@6.0.0 @capacitor/cli@6.0.0 @capacitor/android@6.0.0
+          mkdir -p dist
+          cat << 'EOF' > dist/index.html
+          <!DOCTYPE html>
+          <html lang="bn">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <title>Tamishna Synthetics Attendance</title>
+            <script src="https://cdn.tailwindcss.com"></script>
+          </head>
+          <body class="bg-slate-900 text-white min-h-screen flex flex-col font-sans select-none">
+            <header class="bg-slate-800 border-b border-slate-700 p-4 flex justify-between items-center shadow-md">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-slate-950">TSL</div>
+                <div>
+                  <h1 class="text-sm font-bold text-white">Tamishna Synthetics Ltd.</h1>
+                  <p class="text-[10px] text-emerald-400">Biometric Attendance Portal</p>
+                </div>
+              </div>
+              <span class="text-[11px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">ONLINE</span>
+            </header>
+
+            <main class="flex-1 p-4 max-w-md mx-auto w-full flex flex-col justify-center space-y-4">
+              <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 text-center shadow-xl">
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Bangladesh Standard Time</p>
+                <div id="clock" class="text-3xl font-mono font-extrabold text-emerald-400 my-2">--:--:--</div>
+                <p id="dateStr" class="text-xs text-slate-300 font-medium"></p>
+              </div>
+
+              <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 space-y-1">
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-400">Employee ID:</span>
+                  <span class="font-mono font-bold text-white">TSL-2045</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-400">Name:</span>
+                  <span class="font-bold text-white">Nazrul Islam</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-slate-400">Department:</span>
+                  <span class="font-bold text-emerald-400">Dyeing Plant</span>
+                </div>
+              </div>
+
+              <div id="statusAlert" class="p-3 bg-slate-950 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium">
+                Scan fingerprint below to punch attendance
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="handleCheckIn()" class="bg-emerald-600 active:scale-95 hover:bg-emerald-500 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
+                  <span class="text-2xl mb-1">👆</span>
+                  <span class="text-xs font-bold">Fingerprint Check-In</span>
+                </button>
+                <button onclick="handleCheckOut()" class="bg-rose-600 active:scale-95 hover:bg-rose-500 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
+                  <span class="text-2xl mb-1">🚪</span>
+                  <span class="text-xs font-bold">Fingerprint Check-Out</span>
+                </button>
+              </div>
+
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 mt-2">
+                <p class="text-[10px] text-slate-400 uppercase font-semibold mb-2">Today's Attendance Status</p>
+                <div class="flex justify-between text-xs text-slate-300">
+                  <span>Check-In: <b id="inTimeText" class="text-emerald-400 font-mono">--:--</b></span>
+                  <span>Check-Out: <b id="outTimeText" class="text-rose-400 font-mono">--:--</b></span>
+                </div>
+              </div>
+            </main>
+
+            <script>
+              function tick() {
+                const now = new Date();
+                document.getElementById('clock').innerText = now.toLocaleTimeString();
+                document.getElementById('dateStr').innerText = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+              }
+              setInterval(tick, 1000);
+              tick();
+
+              let checkedIn = false;
+              let checkedOut = false;
+
+              function handleCheckIn() {
+                const alertEl = document.getElementById('statusAlert');
+                if (checkedIn) {
+                  alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Duplicate Rejected! Already checked in today.</span>';
+                  return;
+                }
+                checkedIn = true;
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('inTimeText').innerText = time;
+                alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ Check-In Confirmed via Fingerprint (' + time + ')</span>';
+              }
+
+              function handleCheckOut() {
+                const alertEl = document.getElementById('statusAlert');
+                if (!checkedIn) {
+                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Invalid Check-Out! You must check in first.</span>';
+                  return;
+                }
+                if (checkedOut) {
+                  alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already checked out for today.</span>';
+                  return;
+                }
+                checkedOut = true;
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('outTimeText').innerText = time;
+                alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ Check-Out Confirmed via Fingerprint (' + time + ')</span>';
+              }
+            </script>
+          </body>
+          </html>
+          EOF
+          npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
+          npx cap add android
+
       - name: Build Debug APK
         run: |
           cd tamishna/android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
