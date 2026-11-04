@@ -31,38 +31,70 @@ jobs:
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-            <title>Tamishna Synthetics Attendance & Leave Portal</title>
+            <title>Tamishna Synthetics Ltd. - Attendance & Leave Portal</title>
             <script src="https://cdn.tailwindcss.com"></script>
           </head>
           <body class="bg-slate-950 text-white min-h-screen flex flex-col font-sans select-none pb-8">
             
-            <!-- HEADER -->
-            <header class="bg-slate-900 border-b border-slate-800 p-3 sticky top-0 z-30 flex justify-between items-center shadow-lg">
-              <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-extrabold text-slate-950 text-xs shadow-md shadow-emerald-500/20">TSL</div>
+            <!-- TAMISHNA GROUP LOGO COMPONENT -->
+            <template id="tamishnaLogoTpl">
+              <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <!-- Path for TAMISHNA GROUP text curved on bottom -->
+                  <path id="tgTextPath" d="M 28,125 A 72,72 0 0,0 172,125" />
+                </defs>
+                <!-- Outer Blue Gear Body -->
+                <circle cx="100" cy="100" r="92" fill="#0c4182" />
+                <!-- Gear Teeth (Cogs) -->
+                <path d="M 88 5 L 112 5 L 109 18 L 91 18 Z
+                         M 148 24 L 166 40 L 155 50 L 137 36 Z
+                         M 183 82 L 196 100 L 183 108 L 170 94 Z
+                         M 166 153 L 148 169 L 137 156 L 155 142 Z
+                         M 112 195 L 88 195 L 91 182 L 109 182 Z
+                         M 34 169 L 16 153 L 29 141 L 46 155 Z
+                         M 5 100 L 18 82 L 30 94 L 18 108 Z
+                         M 16 40 L 34 24 L 46 38 L 30 52 Z" fill="#ffffff" />
+                <!-- Outer Ring & Border -->
+                <circle cx="100" cy="100" r="82" fill="none" stroke="#0c4182" stroke-width="12" />
+                <circle cx="100" cy="100" r="66" fill="#ffffff" stroke="#0c4182" stroke-width="4" />
+                <!-- Center Orange T-Shirt Logo with Blue Outline -->
+                <path d="M 52 74 L 148 74 C 146 64 134 60 100 60 C 66 60 54 64 52 74 Z" fill="#f26522" stroke="#0c4182" stroke-width="3" />
+                <path d="M 52 74 L 74 74 L 74 138 C 84 142 116 142 126 138 L 126 74 L 148 74 L 142 84 L 126 84 L 126 140 C 110 146 90 146 74 140 L 74 84 L 58 84 Z" fill="#f26522" stroke="#0c4182" stroke-width="3" stroke-linejoin="round" />
+                <!-- TAMISHNA GROUP Curved Text -->
+                <text font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="14.5" fill="#ffffff" letter-spacing="2.2">
+                  <textPath href="#tgTextPath" startOffset="50%" text-anchor="middle">TAMISHNA GROUP</textPath>
+                </text>
+              </svg>
+            </template>
+
+            <!-- APP HEADER -->
+            <header class="bg-slate-900 border-b border-slate-800 p-2.5 sticky top-0 z-30 flex justify-between items-center shadow-lg">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0" id="headerLogoSlot"></div>
                 <div>
-                  <h1 class="text-xs font-bold text-white">Tamishna Synthetics Ltd.</h1>
-                  <p class="text-[9px] text-emerald-400">Attendance & Leave Management</p>
+                  <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
+                  <p class="text-[9px] text-emerald-400 font-medium">Smart Attendance & Leave Portal</p>
                 </div>
               </div>
               <div id="headerActions" class="hidden flex items-center space-x-2">
                 <span id="headerName" class="text-[10px] text-slate-300 font-medium"></span>
-                <button onclick="logout()" class="px-2.5 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded text-[10px] font-bold active:scale-95">লগআউট</button>
+                <button onclick="logout()" class="px-2.5 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-lg text-[10px] font-bold active:scale-95">লগআউট</button>
               </div>
             </header>
 
             <!-- 1. LOGIN SCREEN -->
             <main id="loginView" class="flex-1 p-4 max-w-sm mx-auto w-full flex flex-col justify-center">
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
+              <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+                <!-- Large Tamishna Logo -->
                 <div class="text-center mb-5">
-                  <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-xl mx-auto flex items-center justify-center text-xl mb-2 text-emerald-400 font-bold">🔒</div>
-                  <h2 class="text-base font-bold text-white">হাজিরা ও ছুটি পোর্টাল</h2>
-                  <p class="text-[11px] text-slate-400 mt-0.5">আপনার Card No (ID) ও গোপন Pin দিন</p>
+                  <div class="w-20 h-20 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2.5" id="loginLogoSlot"></div>
+                  <h2 class="text-base font-extrabold text-white">হাজিরা ও ছুটি পোর্টাল</h2>
+                  <p class="text-[11px] text-emerald-400 font-medium">Tamishna Group &bull; Gazipur Plant</p>
                 </div>
 
-                <div id="loginAlert" class="hidden p-2.5 mb-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium"></div>
+                <div id="loginAlert" class="hidden p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium"></div>
 
-                <form onsubmit="handleLogin(event)" class="space-y-4">
+                <form onsubmit="handleLogin(event)" class="space-y-3.5">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
                     <input type="text" id="loginId" required placeholder="যেমন: 10008895 বা 10000159" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
@@ -71,25 +103,23 @@ jobs:
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">গোপনীয় PIN</label>
                     <input type="password" id="loginPin" required maxlength="6" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                   </div>
-                  <button type="submit" class="w-full bg-emerald-500 active:scale-95 text-slate-950 font-bold py-3 rounded-xl shadow-lg shadow-emerald-500/20 text-xs mt-2">
+                  <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 active:scale-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-emerald-500/25 text-xs mt-2">
                     লগইন করুন
                   </button>
                 </form>
 
                 <div class="mt-5 border-t border-slate-800 pt-3 text-[10px] text-slate-400 text-center">
-                  Tamishna Synthetics Limited &bull; Smart Factory System
+                  Protected by Android Biometric & Secure Pin
                 </div>
               </div>
             </main>
 
             <!-- 2. EMPLOYEE PUNCH & LEAVE SCREEN -->
             <main id="punchView" class="flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
-              <!-- PROFILE -->
+              <!-- PROFILE CARD -->
               <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-md">
                 <div class="flex items-center space-x-3 min-w-0">
-                  <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow flex-shrink-0">
-                    <span id="userInitial">E</span>
-                  </div>
+                  <div class="w-12 h-12 rounded-full bg-white p-0.5 shadow flex-shrink-0" id="profileLogoSlot"></div>
                   <div class="min-w-0">
                     <h2 id="userName" class="text-sm font-bold text-white truncate"></h2>
                     <p class="text-[11px] text-slate-300 truncate" id="userDesig"></p>
@@ -106,10 +136,10 @@ jobs:
               <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 text-center shadow-lg">
                 <p class="text-[9px] text-slate-400 uppercase tracking-widest font-semibold">Bangladesh Standard Time</p>
                 <div id="clock" class="text-3xl font-mono font-extrabold text-emerald-400 my-1">--:--:--</div>
-                <p id="dateStr" class="text-xs text-slate-300"></p>
+                <p id="dateStr" class="text-xs text-slate-300 font-medium"></p>
               </div>
 
-              <!-- ALERT BOX -->
+              <!-- STATUS NOTIFICATION -->
               <div id="punchStatusAlert" class="p-3 bg-slate-900 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium">
                 হাজিরা দিতে নিচের আঙ্গুলের ছাপ বাটনে চাপ দিন
               </div>
@@ -135,15 +165,13 @@ jobs:
                 </div>
               </div>
 
-              <!-- MY LEAVES STATUS LIST -->
+              <!-- MY LEAVE LIST -->
               <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
                 <div class="flex justify-between items-center mb-2">
                   <p class="text-[10px] text-slate-400 uppercase font-semibold">আমার সাম্প্রতিক ছুটির আবেদন</p>
                   <span class="text-[10px] text-blue-400 font-mono cursor-pointer" onclick="openLeaveApplyModal()">+ নতুন আবেদন</span>
                 </div>
-                <div id="myLeaveList" class="space-y-2 text-xs">
-                  <!-- Populated by JS -->
-                </div>
+                <div id="myLeaveList" class="space-y-2 text-xs"></div>
               </div>
 
               <div class="text-center pt-1">
@@ -157,13 +185,20 @@ jobs:
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <!-- ADMIN HEADER -->
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
-                <div>
-                  <h2 class="text-sm font-bold text-white">এডমিন প্যানেল - Mihir Roy Chowdhury</h2>
-                  <p class="text-[10px] text-emerald-400">Tamishna Synthetics Limited</p>
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-8 h-8 rounded-full bg-white p-0.5 shadow flex-shrink-0" id="adminLogoSlot"></div>
+                  <div>
+                    <h2 class="text-xs font-bold text-white">Mihir Roy Chowdhury (Admin)</h2>
+                    <p class="text-[10px] text-emerald-400">Tamishna Synthetics Limited</p>
+                  </div>
                 </div>
                 <div class="flex space-x-1.5">
-                  <button onclick="exportCSV()" class="bg-emerald-500 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow">📥 হাজিরা Excel</button>
-                  <button onclick="exportLeaveCSV()" class="bg-blue-500 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow">📥 ছুটির Excel</button>
+                  <button onclick="exportAttendance()" class="bg-emerald-500 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
+                    <span>📊 হাজিরা Excel</span>
+                  </button>
+                  <button onclick="exportLeaveReport()" class="bg-blue-500 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
+                    <span>📝 ছুটির Excel</span>
+                  </button>
                 </div>
               </div>
 
@@ -183,7 +218,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- ADMIN TABS: ATTENDANCE VS LEAVE APPROVAL -->
+              <!-- ADMIN TABS -->
               <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
                 <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">দৈনিক হাজিরা লগ</button>
                 <button id="adminTabLeave" onclick="switchAdminTab('leave')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1">
@@ -220,13 +255,11 @@ jobs:
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
                   কর্মকর্তা-কর্মচারীদের ছুটির আবেদনসমূহ (C/L, M/L, E/L)
                 </div>
-                <div id="adminLeaveCardsContainer" class="p-3 space-y-3">
-                  <!-- Populated by JS -->
-                </div>
+                <div id="adminLeaveCardsContainer" class="p-3 space-y-3"></div>
               </div>
             </main>
 
-            <!-- 4. LEAVE APPLY MODAL (EMPLOYEE) -->
+            <!-- 4. LEAVE APPLY MODAL -->
             <div id="leaveApplyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl">
                 <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2">
@@ -268,8 +301,79 @@ jobs:
               </div>
             </div>
 
+            <!-- 5. UNIVERSAL EXCEL EXPORT & SHARE MODAL -->
+            <div id="exportModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+              <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xl">📊</span>
+                    <h3 class="text-sm font-bold text-white" id="exportModalTitle">Excel রিপোর্ট ডাউনলোড ও শেয়ার</h3>
+                  </div>
+                  <button onclick="closeExportModal()" class="text-slate-400 text-xl hover:text-white">&times;</button>
+                </div>
+
+                <p class="text-xs text-slate-300">
+                  নিচের যেকোনো সুবিধাজনক মাধ্যমে এক্সেল ডাটা ফোনে সেভ বা শেয়ার করুন:
+                </p>
+
+                <!-- 3 WAYS TO GET EXCEL -->
+                <div class="space-y-2.5">
+                  <!-- OPTION A: NATIVE SHARE -->
+                  <button onclick="triggerNativeShare()" class="w-full p-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
+                    <span class="text-2xl">📲</span>
+                    <div>
+                      <div class="text-xs font-bold text-white">মোবাইলে সেভ / সরাসরি শেয়ার করুন</div>
+                      <div class="text-[10px] text-emerald-100">WhatsApp, Drive, Gmail বা Files-এ পাঠান</div>
+                    </div>
+                  </button>
+
+                  <!-- OPTION B: DIRECT DOWNLOAD LINK -->
+                  <button onclick="triggerDirectDownload()" class="w-full p-3 bg-blue-600 hover:bg-blue-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
+                    <span class="text-2xl">📥</span>
+                    <div>
+                      <div class="text-xs font-bold text-white">সরাসরি ফাইল ডাউনলোড (.CSV / Excel)</div>
+                      <div class="text-[10px] text-blue-100">মেমোরি কার্ড বা Downloads ফোল্ডারে নামবে</div>
+                    </div>
+                  </button>
+
+                  <!-- OPTION C: INSTANT CLIPBOARD COPY -->
+                  <button onclick="triggerClipboardCopy()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-xl text-left flex items-center space-x-3 transition shadow">
+                    <span class="text-2xl">📋</span>
+                    <div>
+                      <div class="text-xs font-bold text-emerald-400">এক ক্লিকে সম্পূর্ণ এক্সেল ডাটা কপি</div>
+                      <div class="text-[10px] text-slate-400">কপি করে সরাসরি যেকোনো Excel বা Google Sheets-এ পেস্ট করুন</div>
+                    </div>
+                  </button>
+                </div>
+
+                <!-- PREVIEW BOX -->
+                <div class="border-t border-slate-800 pt-2">
+                  <details class="text-xs text-slate-400">
+                    <summary class="cursor-pointer text-[11px] text-slate-300 hover:underline">ডাটা প্রিভিউ দেখুন</summary>
+                    <textarea id="exportPreviewText" readonly rows="4" class="w-full mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded font-mono text-[10px] text-slate-300"></textarea>
+                  </details>
+                </div>
+
+                <div class="text-right">
+                  <button onclick="closeExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
+                </div>
+              </div>
+            </div>
+
             <script>
-              // 1. TAMISHNA EMPLOYEES LIST
+              // 1. INJECT OFFICIAL TAMISHNA LOGO TO ALL SLOTS
+              function injectLogos() {
+                const logoHtml = document.getElementById('tamishnaLogoTpl').innerHTML;
+                const slots = ['headerLogoSlot', 'loginLogoSlot', 'profileLogoSlot', 'adminLogoSlot'];
+                slots.forEach(id => {
+                  const el = document.getElementById(id);
+                  if (el) el.innerHTML = logoHtml;
+                });
+              }
+              document.addEventListener('DOMContentLoaded', injectLogos);
+              setTimeout(injectLogos, 100);
+
+              // 2. COMPLETE EMPLOYEES LIST
               const TAMISHNA_EMPLOYEES = [
                 { id: "10008895", pin: "8895", name: "Mihir Roy Chowdhury", desig: "System Admin", section: "Administration", role: "ADMIN" },
                 { id: "10000159", pin: "0159", name: "Manobendra Nath Biswas", desig: "Asst. Manager", section: "Maintenance", role: "EMPLOYEE" },
@@ -325,25 +429,13 @@ jobs:
                 { id: "10009796", pin: "9796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_users_v3', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_users_v4', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() {
-                return JSON.parse(localStorage.getItem('tsl_users_v3'));
-              }
-              function getRecords() {
-                return JSON.parse(localStorage.getItem('tsl_records_v3') || '[]');
-              }
-              function saveRecords(data) {
-                localStorage.setItem('tsl_records_v3', JSON.stringify(data));
-              }
-
-              // LEAVE DATABASE ACCESS
-              function getLeaves() {
-                return JSON.parse(localStorage.getItem('tsl_leaves_v3') || '[]');
-              }
-              function saveLeaves(data) {
-                localStorage.setItem('tsl_leaves_v3', JSON.stringify(data));
-              }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_users_v4')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v4') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v4', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v4') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v4', JSON.stringify(d)); }
 
               let currentUser = null;
 
@@ -385,6 +477,7 @@ jobs:
                 document.getElementById('loginView').classList.add('hidden');
                 document.getElementById('headerActions').classList.remove('hidden');
                 document.getElementById('headerName').innerText = currentUser.name.split(' ')[0];
+                injectLogos();
 
                 if (currentUser.role === 'ADMIN') {
                   document.getElementById('punchView').classList.add('hidden');
@@ -397,7 +490,6 @@ jobs:
                   document.getElementById('userDesig').innerText = currentUser.desig;
                   document.getElementById('userId').innerText = currentUser.id;
                   document.getElementById('userSection').innerText = currentUser.section;
-                  document.getElementById('userInitial').innerText = currentUser.name.charAt(0);
                   refreshEmployeeTodayPunch();
                   loadMyLeaves();
                 }
@@ -410,9 +502,10 @@ jobs:
                 document.getElementById('adminView').classList.add('hidden');
                 document.getElementById('headerActions').classList.add('hidden');
                 document.getElementById('punchStatusAlert').innerText = 'হাজিরা দিতে নিচের আঙ্গুলের ছাপ বাটনে চাপ দিন';
+                injectLogos();
               }
 
-              // PUNCH HANDLING
+              // PUNCH
               function refreshEmployeeTodayPunch() {
                 if (!currentUser) return;
                 const today = new Date().toISOString().split('T')[0];
@@ -420,8 +513,7 @@ jobs:
                 const record = records.find(r => r.empId === currentUser.id && r.date === today);
                 document.getElementById('todayInText').innerText = record ? record.checkIn : '--:--';
                 document.getElementById('todayOutText').innerText = (record && record.checkOut) ? record.checkOut : '--:--';
-                
-                // CHECK IF TODAY ON APPROVED LEAVE
+
                 const leaves = getLeaves();
                 const approvedToday = leaves.find(l => l.empId === currentUser.id && l.status === 'APPROVED' && today >= l.fromDate && today <= l.toDate);
                 if (approvedToday) {
@@ -471,7 +563,7 @@ jobs:
                 refreshEmployeeTodayPunch();
               }
 
-              // LEAVE MODAL & APPLY LOGIC
+              // LEAVE MODAL
               function openLeaveApplyModal() {
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('leaveFrom').value = today;
@@ -512,7 +604,7 @@ jobs:
                 });
                 saveLeaves(leaves);
                 closeLeaveApplyModal();
-                alert('ছুটির আবেদন সফলভাবে জমা হয়েছে! এডমিন অনুমোদনের পর এটি কার্যকর হবে।');
+                alert('ছুটির আবেদন সফলভাবে জমা হয়েছে! এডমিন অনুমোদনের পর কার্যকর হবে।');
                 loadMyLeaves();
               }
 
@@ -534,7 +626,7 @@ jobs:
                       <div>
                         <div class="flex items-center space-x-1.5">
                           <b class="text-white">${l.type}</b>
-                          <span class="text-slate-400 text-[10px]">(${l.fromDate} থেকে ${l.toDate})</span>
+                          <span class="text-slate-400 text-[10px]">(${l.fromDate} হতে ${l.toDate})</span>
                         </div>
                         <p class="text-slate-400 text-[10px] truncate max-w-[200px] mt-0.5">${l.reason}</p>
                       </div>
@@ -544,7 +636,7 @@ jobs:
                 }).join('');
               }
 
-              // ADMIN DASHBOARD & APPROVAL
+              // ADMIN DASHBOARD
               function switchAdminTab(tab) {
                 if (tab === 'att') {
                   document.getElementById('adminAttSection').classList.remove('hidden');
@@ -579,7 +671,6 @@ jobs:
                   tabBadge.classList.add('hidden');
                 }
 
-                // Attendance Table
                 const tbody = document.getElementById('adminTableBody');
                 if (records.length === 0) {
                   tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500 font-sans">কোনো হাজিরার তথ্য নেই</td></tr>';
@@ -616,7 +707,7 @@ jobs:
                   if (l.status === 'PENDING') {
                     actionBtns = `
                       <div class="flex space-x-2 pt-2 border-t border-slate-800">
-                        <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ অনুমোদন করুন (Approve)</button>
+                        <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ অনুমোদন (Approve)</button>
                         <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ প্রত্যাখ্যান (Reject)</button>
                       </div>
                     `;
@@ -634,7 +725,7 @@ jobs:
                       <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
                         <p class="text-slate-300"><b>সময়সীমা:</b> ${l.fromDate} হতে ${l.toDate}</p>
                         <p class="text-slate-300 mt-0.5"><b>কারণ:</b> ${l.reason}</p>
-                        <p class="text-[9px] text-slate-500 mt-1">আবেদনের সময়: ${l.appliedOn}</p>
+                        <p class="text-[9px] text-slate-500 mt-1">আবেদন: ${l.appliedOn}</p>
                       </div>
                       ${actionBtns}
                     </div>
@@ -650,7 +741,6 @@ jobs:
                 leaves[foundIndex].status = newStatus;
                 saveLeaves(leaves);
 
-                // IF APPROVED, ALSO CREATE ATTENDANCE ENTRY WITH LEAVE TYPE
                 if (newStatus === 'APPROVED') {
                   const targetLeave = leaves[foundIndex];
                   let records = getRecords();
@@ -672,8 +762,12 @@ jobs:
                 loadAdminDashboard();
               }
 
-              // EXPORT EXCEL (CSV)
-              function exportCSV() {
+              // ==========================================
+              // 3-WAY BULLETPROOF EXCEL EXPORT ENGINE
+              // ==========================================
+              let activeExportPayload = { csv: '', filename: '', title: '' };
+
+              function exportAttendance() {
                 const records = getRecords();
                 if (records.length === 0) {
                   alert('ডাউনলোড করার মতো হাজিরার ডাটা নেই!');
@@ -683,36 +777,112 @@ jobs:
                 records.forEach(r => {
                   csv += `"${r.id}","${r.date}","${r.empId}","${r.name}","${r.desig}","${r.section}","${r.checkIn}","${r.checkOut || ''}","${r.status}"\n`;
                 });
-                downloadCSV(csv, `Tamishna_Attendance_${new Date().toISOString().split('T')[0]}.csv`);
+                openExportModal(csv, `Tamishna_Attendance_${new Date().toISOString().split('T')[0]}.csv`, 'হাজিরা রিপোর্ট ডাউনলোড ও শেয়ার');
               }
 
-              function exportLeaveCSV() {
+              function exportLeaveReport() {
                 const leaves = getLeaves();
                 if (leaves.length === 0) {
-                  alert('ডাউনলোড করার মতো কোনো ছুটির ডাটা নেই!');
+                  alert('ডাউনলোড করার মতো ছুটির ডাটা নেই!');
                   return;
                 }
                 let csv = 'Leave ID,Card No,Name,Designation,Section,Type,From Date,To Date,Reason,Status,Applied On\n';
                 leaves.forEach(l => {
                   csv += `"${l.id}","${l.empId}","${l.name}","${l.desig}","${l.section}","${l.type}","${l.fromDate}","${l.toDate}","${l.reason}","${l.status}","${l.appliedOn}"\n`;
                 });
-                downloadCSV(csv, `Tamishna_Leave_Report_${new Date().toISOString().split('T')[0]}.csv`);
+                openExportModal(csv, `Tamishna_Leave_Report_${new Date().toISOString().split('T')[0]}.csv`, 'ছুটির রিপোর্ট ডাউনলোড ও শেয়ার');
               }
 
-              function downloadCSV(csvContent, filename) {
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+              function openExportModal(csvContent, filename, title) {
+                activeExportPayload = { csv: csvContent, filename: filename, title: title };
+                document.getElementById('exportModalTitle').innerText = title;
+                document.getElementById('exportPreviewText').value = csvContent;
+                document.getElementById('exportModal').classList.remove('hidden');
+              }
+              function closeExportModal() {
+                document.getElementById('exportModal').classList.add('hidden');
+              }
+
+              // WAY 1: ANDROID NATIVE SHARE (WhatsApp, Drive, Gmail, Files)
+              async function triggerNativeShare() {
+                const { csv, filename, title } = activeExportPayload;
+                try {
+                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                  const file = new File([blob], filename, { type: 'text/csv' });
+
+                  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                      title: title,
+                      text: 'Tamishna Synthetics Limited Attendance Report',
+                      files: [file]
+                    });
+                    return;
+                  }
+                } catch (e) {
+                  console.log('File share not supported, trying text share', e);
+                }
+
+                if (navigator.share) {
+                  try {
+                    await navigator.share({
+                      title: title,
+                      text: csv
+                    });
+                    return;
+                  } catch (e) {
+                    console.log('Text share cancelled', e);
+                  }
+                }
+                triggerDirectDownload();
+              }
+
+              // WAY 2: DIRECT BASE64 DATA URI DOWNLOAD
+              function triggerDirectDownload() {
+                const { csv, filename } = activeExportPayload;
+                try {
+                  const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                  const a = document.createElement('a');
+                  a.setAttribute('href', encodedUri);
+                  a.setAttribute('download', filename);
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  alert('ফাইল ডাউনলোড সফল হয়েছে! ফোনের Downloads ফোল্ডার চেক করুন।');
+                } catch (e) {
+                  alert('ব্রাউজার ডাউনলোড ব্লক করেছে। দয়া করে "কপি করুন" বাটনটি ব্যবহার করুন।');
+                }
+              }
+
+              // WAY 3: 1-CLICK CLIPBOARD COPY FOR EXCEL
+              function triggerClipboardCopy() {
+                const { csv } = activeExportPayload;
+                // Convert CSV to Tab-Separated Values (TSV) so Excel pastes it into clean cells directly
+                const tsv = csv.split('\n').map(row => {
+                  return row.split(',').map(cell => cell.replace(/^"|"$/g, '')).join('\t');
+                }).join('\n');
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                  navigator.clipboard.writeText(tsv).then(() => {
+                    alert('✓ সম্পূর্ণ এক্সেল ডাটা সফলভাবে কপি হয়েছে!\nএখন যেকোনো Excel বা Google Sheet খুলে সরাসরি Paste করুন।');
+                  }).catch(() => fallbackCopy(tsv));
+                } else {
+                  fallbackCopy(tsv);
+                }
+              }
+
+              function fallbackCopy(text) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('✓ সম্পূর্ণ এক্সেল ডাটা কপি হয়েছে! Excel এ গিয়ে Paste করুন।');
               }
 
               function clearAllData() {
                 if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?')) {
-                  localStorage.removeItem('tsl_records_v3');
+                  localStorage.removeItem('tsl_records_v4');
                   loadAdminDashboard();
                 }
               }
