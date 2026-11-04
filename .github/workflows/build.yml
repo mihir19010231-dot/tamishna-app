@@ -18,6 +18,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Setup Python for Icon Generation
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Pillow for Image Generation
+        run: pip install pillow
+
       - name: Create and Build Project
         run: |
           mkdir -p tamishna
@@ -40,12 +48,9 @@ jobs:
             <template id="tamishnaLogoTpl">
               <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                  <!-- Path for TAMISHNA GROUP text curved on bottom -->
                   <path id="tgTextPath" d="M 28,125 A 72,72 0 0,0 172,125" />
                 </defs>
-                <!-- Outer Blue Gear Body -->
                 <circle cx="100" cy="100" r="92" fill="#0c4182" />
-                <!-- Gear Teeth (Cogs) -->
                 <path d="M 88 5 L 112 5 L 109 18 L 91 18 Z
                          M 148 24 L 166 40 L 155 50 L 137 36 Z
                          M 183 82 L 196 100 L 183 108 L 170 94 Z
@@ -54,13 +59,10 @@ jobs:
                          M 34 169 L 16 153 L 29 141 L 46 155 Z
                          M 5 100 L 18 82 L 30 94 L 18 108 Z
                          M 16 40 L 34 24 L 46 38 L 30 52 Z" fill="#ffffff" />
-                <!-- Outer Ring & Border -->
                 <circle cx="100" cy="100" r="82" fill="none" stroke="#0c4182" stroke-width="12" />
                 <circle cx="100" cy="100" r="66" fill="#ffffff" stroke="#0c4182" stroke-width="4" />
-                <!-- Center Orange T-Shirt Logo with Blue Outline -->
                 <path d="M 52 74 L 148 74 C 146 64 134 60 100 60 C 66 60 54 64 52 74 Z" fill="#f26522" stroke="#0c4182" stroke-width="3" />
                 <path d="M 52 74 L 74 74 L 74 138 C 84 142 116 142 126 138 L 126 74 L 148 74 L 142 84 L 126 84 L 126 140 C 110 146 90 146 74 140 L 74 84 L 58 84 Z" fill="#f26522" stroke="#0c4182" stroke-width="3" stroke-linejoin="round" />
-                <!-- TAMISHNA GROUP Curved Text -->
                 <text font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="14.5" fill="#ffffff" letter-spacing="2.2">
                   <textPath href="#tgTextPath" startOffset="50%" text-anchor="middle">TAMISHNA GROUP</textPath>
                 </text>
@@ -85,7 +87,6 @@ jobs:
             <!-- 1. LOGIN SCREEN -->
             <main id="loginView" class="flex-1 p-4 max-w-sm mx-auto w-full flex flex-col justify-center">
               <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-                <!-- Large Tamishna Logo -->
                 <div class="text-center mb-5">
                   <div class="w-20 h-20 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2.5" id="loginLogoSlot"></div>
                   <h2 class="text-base font-extrabold text-white">হাজিরা ও ছুটি পোর্টাল</h2>
@@ -114,9 +115,8 @@ jobs:
               </div>
             </main>
 
-            <!-- 2. EMPLOYEE PUNCH & LEAVE SCREEN -->
+            <!-- 2. EMPLOYEE PUNCH SCREEN -->
             <main id="punchView" class="flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
-              <!-- PROFILE CARD -->
               <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-md">
                 <div class="flex items-center space-x-3 min-w-0">
                   <div class="w-12 h-12 rounded-full bg-white p-0.5 shadow flex-shrink-0" id="profileLogoSlot"></div>
@@ -139,12 +139,10 @@ jobs:
                 <p id="dateStr" class="text-xs text-slate-300 font-medium"></p>
               </div>
 
-              <!-- STATUS NOTIFICATION -->
               <div id="punchStatusAlert" class="p-3 bg-slate-900 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium">
                 হাজিরা দিতে নিচের আঙ্গুলের ছাপ বাটনে চাপ দিন
               </div>
 
-              <!-- PUNCH BUTTONS -->
               <div class="grid grid-cols-2 gap-3 pt-1">
                 <button onclick="handlePunch('CHECK_IN')" class="bg-emerald-600 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
                   <span class="text-2xl mb-1">👆</span>
@@ -156,7 +154,6 @@ jobs:
                 </button>
               </div>
 
-              <!-- TODAY SUMMARY -->
               <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
                 <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1">আজকের হাজিরার তথ্য</p>
                 <div class="flex justify-between text-xs text-slate-300">
@@ -165,7 +162,6 @@ jobs:
                 </div>
               </div>
 
-              <!-- MY LEAVE LIST -->
               <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
                 <div class="flex justify-between items-center mb-2">
                   <p class="text-[10px] text-slate-400 uppercase font-semibold">আমার সাম্প্রতিক ছুটির আবেদন</p>
@@ -183,7 +179,6 @@ jobs:
 
             <!-- 3. ADMIN PANEL SCREEN -->
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
-              <!-- ADMIN HEADER -->
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
                   <div class="w-8 h-8 rounded-full bg-white p-0.5 shadow flex-shrink-0" id="adminLogoSlot"></div>
@@ -202,7 +197,6 @@ jobs:
                 </div>
               </div>
 
-              <!-- LIVE STATS -->
               <div class="grid grid-cols-3 gap-2.5 text-center">
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
                   <span class="text-[10px] text-slate-400 block">মোট কর্মী</span>
@@ -218,7 +212,6 @@ jobs:
                 </div>
               </div>
 
-              <!-- ADMIN TABS -->
               <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
                 <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">দৈনিক হাজিরা লগ</button>
                 <button id="adminTabLeave" onclick="switchAdminTab('leave')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1">
@@ -227,7 +220,6 @@ jobs:
                 </button>
               </div>
 
-              <!-- VIEW A: ATTENDANCE TABLE -->
               <div id="adminAttSection" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center text-xs">
                   <span class="text-slate-300 font-semibold">আজকের ও পূর্বের হাজিরা রেকর্ডস</span>
@@ -250,7 +242,6 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW B: LEAVE APPROVAL SECTION -->
               <div id="adminLeaveSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
                   কর্মকর্তা-কর্মচারীদের ছুটির আবেদনসমূহ (C/L, M/L, E/L)
@@ -301,7 +292,7 @@ jobs:
               </div>
             </div>
 
-            <!-- 5. UNIVERSAL EXCEL EXPORT & SHARE MODAL -->
+            <!-- 5. UNIVERSAL EXCEL EXPORT MODAL -->
             <div id="exportModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -316,9 +307,7 @@ jobs:
                   নিচের যেকোনো সুবিধাজনক মাধ্যমে এক্সেল ডাটা ফোনে সেভ বা শেয়ার করুন:
                 </p>
 
-                <!-- 3 WAYS TO GET EXCEL -->
                 <div class="space-y-2.5">
-                  <!-- OPTION A: NATIVE SHARE -->
                   <button onclick="triggerNativeShare()" class="w-full p-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
                     <span class="text-2xl">📲</span>
                     <div>
@@ -327,7 +316,6 @@ jobs:
                     </div>
                   </button>
 
-                  <!-- OPTION B: DIRECT DOWNLOAD LINK -->
                   <button onclick="triggerDirectDownload()" class="w-full p-3 bg-blue-600 hover:bg-blue-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
                     <span class="text-2xl">📥</span>
                     <div>
@@ -336,17 +324,15 @@ jobs:
                     </div>
                   </button>
 
-                  <!-- OPTION C: INSTANT CLIPBOARD COPY -->
                   <button onclick="triggerClipboardCopy()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-xl text-left flex items-center space-x-3 transition shadow">
                     <span class="text-2xl">📋</span>
                     <div>
                       <div class="text-xs font-bold text-emerald-400">এক ক্লিকে সম্পূর্ণ এক্সেল ডাটা কপি</div>
-                      <div class="text-[10px] text-slate-400">কপি করে সরাসরি যেকোনো Excel বা Google Sheets-এ পেস্ট করুন</div>
+                      <div class="text-[10px] text-slate-400">কপি করে যেকোনো Excel বা Google Sheets-এ পেস্ট করুন</div>
                     </div>
                   </button>
                 </div>
 
-                <!-- PREVIEW BOX -->
                 <div class="border-t border-slate-800 pt-2">
                   <details class="text-xs text-slate-400">
                     <summary class="cursor-pointer text-[11px] text-slate-300 hover:underline">ডাটা প্রিভিউ দেখুন</summary>
@@ -361,7 +347,6 @@ jobs:
             </div>
 
             <script>
-              // 1. INJECT OFFICIAL TAMISHNA LOGO TO ALL SLOTS
               function injectLogos() {
                 const logoHtml = document.getElementById('tamishnaLogoTpl').innerHTML;
                 const slots = ['headerLogoSlot', 'loginLogoSlot', 'profileLogoSlot', 'adminLogoSlot'];
@@ -373,7 +358,6 @@ jobs:
               document.addEventListener('DOMContentLoaded', injectLogos);
               setTimeout(injectLogos, 100);
 
-              // 2. COMPLETE EMPLOYEES LIST
               const TAMISHNA_EMPLOYEES = [
                 { id: "10008895", pin: "8895", name: "Mihir Roy Chowdhury", desig: "System Admin", section: "Administration", role: "ADMIN" },
                 { id: "10000159", pin: "0159", name: "Manobendra Nath Biswas", desig: "Asst. Manager", section: "Maintenance", role: "EMPLOYEE" },
@@ -429,17 +413,16 @@ jobs:
                 { id: "10009796", pin: "9796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_users_v4', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_users_v5', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_users_v4')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v4') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v4', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v4') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v4', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_users_v5')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v5') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v5', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v5') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v5', JSON.stringify(d)); }
 
               let currentUser = null;
 
-              // CLOCK
               function tick() {
                 const now = new Date();
                 const clockEl = document.getElementById('clock');
@@ -450,7 +433,6 @@ jobs:
               setInterval(tick, 1000);
               tick();
 
-              // LOGIN
               function handleLogin(e) {
                 e.preventDefault();
                 const idInput = document.getElementById('loginId').value.trim();
@@ -505,7 +487,6 @@ jobs:
                 injectLogos();
               }
 
-              // PUNCH
               function refreshEmployeeTodayPunch() {
                 if (!currentUser) return;
                 const today = new Date().toISOString().split('T')[0];
@@ -563,7 +544,6 @@ jobs:
                 refreshEmployeeTodayPunch();
               }
 
-              // LEAVE MODAL
               function openLeaveApplyModal() {
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('leaveFrom').value = today;
@@ -636,7 +616,6 @@ jobs:
                 }).join('');
               }
 
-              // ADMIN DASHBOARD
               function switchAdminTab(tab) {
                 if (tab === 'att') {
                   document.getElementById('adminAttSection').classList.remove('hidden');
@@ -762,9 +741,7 @@ jobs:
                 loadAdminDashboard();
               }
 
-              // ==========================================
-              // 3-WAY BULLETPROOF EXCEL EXPORT ENGINE
-              // ==========================================
+              // EXPORT HANDLING
               let activeExportPayload = { csv: '', filename: '', title: '' };
 
               function exportAttendance() {
@@ -803,7 +780,6 @@ jobs:
                 document.getElementById('exportModal').classList.add('hidden');
               }
 
-              // WAY 1: ANDROID NATIVE SHARE (WhatsApp, Drive, Gmail, Files)
               async function triggerNativeShare() {
                 const { csv, filename, title } = activeExportPayload;
                 try {
@@ -819,24 +795,20 @@ jobs:
                     return;
                   }
                 } catch (e) {
-                  console.log('File share not supported, trying text share', e);
+                  console.log('File share fallback', e);
                 }
 
                 if (navigator.share) {
                   try {
-                    await navigator.share({
-                      title: title,
-                      text: csv
-                    });
+                    await navigator.share({ title: title, text: csv });
                     return;
                   } catch (e) {
-                    console.log('Text share cancelled', e);
+                    console.log('Share cancel', e);
                   }
                 }
                 triggerDirectDownload();
               }
 
-              // WAY 2: DIRECT BASE64 DATA URI DOWNLOAD
               function triggerDirectDownload() {
                 const { csv, filename } = activeExportPayload;
                 try {
@@ -847,23 +819,21 @@ jobs:
                   document.body.appendChild(a);
                   a.click();
                   document.body.removeChild(a);
-                  alert('ফাইল ডাউনলোড সফল হয়েছে! ফোনের Downloads ফোল্ডার চেক করুন।');
+                  alert('ফাইল ডাউনলোড সফল হয়েছে! Downloads ফোল্ডার চেক করুন।');
                 } catch (e) {
-                  alert('ব্রাউজার ডাউনলোড ব্লক করেছে। দয়া করে "কপি করুন" বাটনটি ব্যবহার করুন।');
+                  alert('ব্রাউজার ডাউনলোড ব্লক করেছে। "কপি করুন" বাটনটি ব্যবহার করুন।');
                 }
               }
 
-              // WAY 3: 1-CLICK CLIPBOARD COPY FOR EXCEL
               function triggerClipboardCopy() {
                 const { csv } = activeExportPayload;
-                // Convert CSV to Tab-Separated Values (TSV) so Excel pastes it into clean cells directly
                 const tsv = csv.split('\n').map(row => {
                   return row.split(',').map(cell => cell.replace(/^"|"$/g, '')).join('\t');
                 }).join('\n');
 
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                   navigator.clipboard.writeText(tsv).then(() => {
-                    alert('✓ সম্পূর্ণ এক্সেল ডাটা সফলভাবে কপি হয়েছে!\nএখন যেকোনো Excel বা Google Sheet খুলে সরাসরি Paste করুন।');
+                    alert('✓ সম্পূর্ণ এক্সেল ডাটা সফলভাবে কপি হয়েছে!\nযেকোনো Excel বা Google Sheet-এ গিয়ে সরাসরি Paste করুন।');
                   }).catch(() => fallbackCopy(tsv));
                 } else {
                   fallbackCopy(tsv);
@@ -877,12 +847,12 @@ jobs:
                 ta.select();
                 document.execCommand('copy');
                 document.body.removeChild(ta);
-                alert('✓ সম্পূর্ণ এক্সেল ডাটা কপি হয়েছে! Excel এ গিয়ে Paste করুন।');
+                alert('✓ সম্পূর্ণ এক্সেল ডাটা কপি হয়েছে! Excel-এ গিয়ে Paste করুন।');
               }
 
               function clearAllData() {
                 if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?')) {
-                  localStorage.removeItem('tsl_records_v4');
+                  localStorage.removeItem('tsl_records_v5');
                   loadAdminDashboard();
                 }
               }
@@ -892,6 +862,65 @@ jobs:
           EOF
           npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
           npx cap add android
+
+      # GENERATE TAMISHNA GROUP APP LAUNCHER ICONS (ALL SIZES)
+      - name: Generate Official Tamishna Group App Icons
+        run: |
+          python3 - << 'EOF'
+          import os
+          from PIL import Image, ImageDraw
+
+          # Android Icon Resolutions
+          sizes = {
+              'mipmap-mdpi': 48,
+              'mipmap-hdpi': 72,
+              'mipmap-xhdpi': 96,
+              'mipmap-xxhdpi': 144,
+              'mipmap-xxxhdpi': 192
+          }
+
+          def create_tamishna_icon(sz):
+              # Transparent Canvas
+              img = Image.new('RGBA', (sz, sz), (0, 0, 0, 0))
+              draw = ImageDraw.Draw(img)
+
+              # 1. Outer Dark Blue Cogwheel
+              draw.ellipse([sz*0.03, sz*0.03, sz*0.97, sz*0.97], fill='#0c4182')
+
+              # 2. White Inner Circle
+              draw.ellipse([sz*0.17, sz*0.17, sz*0.83, sz*0.83], fill='#ffffff', outline='#0c4182', width=max(1, int(sz*0.025)))
+
+              # 3. Orange T-Shirt / Industrial T Shape
+              top_w = sz * 0.46
+              top_h = sz * 0.12
+              top_x = (sz - top_w) / 2
+              top_y = sz * 0.30
+              draw.rectangle([top_x, top_y, top_x + top_w, top_y + top_h], fill='#f26522', outline='#0c4182', width=max(1, int(sz*0.02)))
+
+              stem_w = sz * 0.22
+              stem_h = sz * 0.32
+              stem_x = (sz - stem_w) / 2
+              stem_y = top_y + top_h - 1
+              draw.rectangle([stem_x, stem_y, stem_x + stem_w, stem_y + stem_h], fill='#f26522', outline='#0c4182', width=max(1, int(sz*0.02)))
+
+              return img
+
+          res_path = 'tamishna/android/app/src/main/res'
+          for folder, size in sizes.items():
+              target_dir = os.path.join(res_path, folder)
+              os.makedirs(target_dir, exist_ok=True)
+              icon = create_tamishna_icon(size)
+              icon.save(os.path.join(target_dir, 'ic_launcher.png'))
+              icon.save(os.path.join(target_dir, 'ic_launcher_round.png'))
+              icon.save(os.path.join(target_dir, 'ic_launcher_foreground.png'))
+
+          # Remove XML overrides so all Android phones use the Tamishna Group logo directly
+          xml_folder = os.path.join(res_path, 'mipmap-anydpi-v26')
+          if os.path.exists(xml_folder):
+              import shutil
+              shutil.rmtree(xml_folder)
+          print("✓ Official Tamishna Group App Launcher Icons generated successfully!")
+          EOF
 
       - name: Build Debug APK
         run: |
