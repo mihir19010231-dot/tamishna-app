@@ -921,7 +921,6 @@ jobs:
               shutil.rmtree(xml_folder)
           print("✓ Official Tamishna Group App Launcher Icons generated successfully!")
           EOF
-
       - name: Build Debug APK
         run: |
           cd tamishna/android
