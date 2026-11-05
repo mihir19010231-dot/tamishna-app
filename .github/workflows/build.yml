@@ -93,9 +93,9 @@ jobs:
                   <p class="text-[11px] text-emerald-400 font-medium">Tamishna Group &bull; Gazipur Plant</p>
                 </div>
 
-                <div id="loginAlert" class="hidden p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium"></div>
+                <div id="loginAlert" class="hidden p-2.5 mb-4 rounded-xl text-xs text-center font-medium"></div>
 
-                <form onsubmit="handleLogin(event)" class="space-y-3.5">
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
                     <input type="text" id="loginId" required placeholder="যেমন: 10008895 বা 10000159" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
@@ -109,8 +109,8 @@ jobs:
                   </button>
                 </form>
 
-                <div class="mt-5 border-t border-slate-800 pt-3 text-[10px] text-slate-400 text-center">
-                  Protected by Android Biometric & Secure Pin
+                <div class="mt-4 text-center">
+                  <p class="text-[10px] text-slate-400">প্রথমবার লগইন করছেন? Card No এবং যেকোনো ৪-সংখ্যার PIN দিয়ে সাবমিট করলেই সেট হয়ে যাবে।</p>
                 </div>
               </div>
             </main>
@@ -212,17 +212,20 @@ jobs:
                 </div>
               </div>
 
+              <!-- ADMIN TABS -->
               <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
                 <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">দৈনিক হাজিরা লগ</button>
                 <button id="adminTabLeave" onclick="switchAdminTab('leave')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1">
-                  <span>ছুটি অনুমোদন (Leave Requests)</span>
+                  <span>ছুটি অনুমোদন (Leave)</span>
                   <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-amber-500 text-slate-950 text-[9px] rounded-full font-bold">0</span>
                 </button>
+                <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN রিসেট</button>
               </div>
 
+              <!-- VIEW A: ATTENDANCE TABLE -->
               <div id="adminAttSection" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center text-xs">
-                  <span class="text-slate-300 font-semibold">আজকের ও পূর্বের হাজিরা রেকর্ডস</span>
+                  <span class="text-slate-300 font-semibold">হাজিরা রেকর্ডস</span>
                   <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline">রেকর্ডস মুছুন</button>
                 </div>
                 <div class="overflow-x-auto max-h-96">
@@ -242,11 +245,32 @@ jobs:
                 </div>
               </div>
 
+              <!-- VIEW B: LEAVE APPROVAL SECTION -->
               <div id="adminLeaveSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
                   কর্মকর্তা-কর্মচারীদের ছুটির আবেদনসমূহ (C/L, M/L, E/L)
                 </div>
                 <div id="adminLeaveCardsContainer" class="p-3 space-y-3"></div>
+              </div>
+
+              <!-- VIEW C: PIN MANAGEMENT SECTION -->
+              <div id="adminPinSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
+                <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
+                  কর্মীদের গোপন PIN রিসেট তালিকা (কেউ পিন ভুলে গেলে এখান থেকে রিসেট করুন)
+                </div>
+                <div class="overflow-x-auto max-h-96">
+                  <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-950 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
+                      <tr>
+                        <th class="p-2.5">Card No</th>
+                        <th class="p-2.5">নাম ও সেকশন</th>
+                        <th class="p-2.5">PIN স্ট্যাটাস</th>
+                        <th class="p-2.5">অ্যাকশন</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminPinTableBody" class="divide-y divide-slate-800 text-[11px]"></tbody>
+                  </table>
+                </div>
               </div>
             </main>
 
@@ -358,68 +382,83 @@ jobs:
               document.addEventListener('DOMContentLoaded', injectLogos);
               setTimeout(injectLogos, 100);
 
+              // ============================================================
+              // 1. TAMISHNA EMPLOYEES LIST (NO PINS HARDCODED IN SOURCE CODE!)
+              // ============================================================
               const TAMISHNA_EMPLOYEES = [
-                { id: "10008895", pin: "8895", name: "Mihir Roy Chowdhury", desig: "System Admin", section: "Administration", role: "ADMIN" },
-                { id: "10000159", pin: "0159", name: "Manobendra Nath Biswas", desig: "Asst. Manager", section: "Maintenance", role: "EMPLOYEE" },
-                { id: "10000372", pin: "0372", name: "Mohammad Anamul Kabir", desig: "Manager", section: "Quality Control", role: "EMPLOYEE" },
-                { id: "10000485", pin: "0485", name: "Mohammed Aminul Islam", desig: "Asst. General Manager", section: "Maintenance", role: "EMPLOYEE" },
-                { id: "10000517", pin: "0517", name: "Md. Arifuzzaman", desig: "Deputy Manager", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10000579", pin: "0579", name: "Md. Tazul Islam", desig: "Sr. Engineer", section: "Utility", role: "EMPLOYEE" },
-                { id: "10000811", pin: "0811", name: "Md. Shamim Ahmed", desig: "Sr. Manager", section: "Research And Development", role: "EMPLOYEE" },
-                { id: "10000812", pin: "0812", name: "Lutfor Rahman", desig: "Sr. Manager", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10000813", pin: "0813", name: "Md. Nizam Uddin", desig: "Jr. Executive", section: "Store", role: "EMPLOYEE" },
-                { id: "10000820", pin: "0820", name: "Md. Mir Kashem Ali", desig: "Sr. Executive", section: "Finishing", role: "EMPLOYEE" },
-                { id: "10000821", pin: "0821", name: "Md. Abdul Aziz", desig: "Asst. Manager", section: "Quality Control", role: "EMPLOYEE" },
-                { id: "10000822", pin: "0822", name: "Abdullah Al Mamun Billah", desig: "Deputy Manager", section: "Research And Development", role: "EMPLOYEE" },
-                { id: "10000823", pin: "0823", name: "Shamsul Alam", desig: "Sr. Executive", section: "Compliance", role: "EMPLOYEE" },
-                { id: "10000828", pin: "0828", name: "Md. Rofiqul Islam", desig: "Sr. Executive", section: "Back Process", role: "EMPLOYEE" },
-                { id: "10000835", pin: "0835", name: "Md. Azizur Rahman", desig: "Asst. Manager", section: "Store", role: "EMPLOYEE" },
-                { id: "10000849", pin: "0849", name: "Md. Eabadut Hossain", desig: "Sr. Executive", section: "Finishing", role: "EMPLOYEE" },
-                { id: "10000875", pin: "0875", name: "Md. Atikur Rahman", desig: "Asst. Manager", section: "MIS", role: "EMPLOYEE" },
-                { id: "10000913", pin: "0913", name: "Md. Nasir Uddin Howlader", desig: "Sr. Executive", section: "Finishing", role: "EMPLOYEE" },
-                { id: "10000918", pin: "0918", name: "Md. Sohel Rana", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10001021", pin: "1021", name: "Mst. Masuda Akther", desig: "Welfare Officer", section: "Compliance", role: "EMPLOYEE" },
-                { id: "10001043", pin: "1043", name: "Md. Shamsul Haque (Bakul)", desig: "Sr. Executive", section: "Back Process", role: "EMPLOYEE" },
-                { id: "10001060", pin: "1060", name: "Md. Foyzur Razzaque", desig: "Sr. Engineer", section: "Civil", role: "EMPLOYEE" },
-                { id: "10001070", pin: "1070", name: "Md. Mozibor Rahaman", desig: "Asst. Manager", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10001218", pin: "1218", name: "Md. Nazrul Islam", desig: "General Manager", section: "Operation", role: "EMPLOYEE" },
-                { id: "10001558", pin: "1558", name: "Md. Ashraful Islam", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
-                { id: "10001703", pin: "1703", name: "Md. Khalekuzzaman", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10001732", pin: "1732", name: "Md. Shoriful Islam", desig: "Sr. Executive", section: "Back Process", role: "EMPLOYEE" },
-                { id: "10001759", pin: "1759", name: "S.M. Shoeb Shuvo", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
-                { id: "10001811", pin: "1811", name: "Md. Abdul Kader Molla", desig: "Sr. Engineer", section: "Maintenance", role: "EMPLOYEE" },
-                { id: "10001823", pin: "1823", name: "Md. Ismail Hossain", desig: "Sr. Engineer", section: "Maintenance", role: "EMPLOYEE" },
-                { id: "10001835", pin: "1835", name: "Md. Aminul Islam", desig: "Sr. Executive", section: "Ring", role: "EMPLOYEE" },
-                { id: "10001933", pin: "1933", name: "Md. Zuran Uddin", desig: "Executive", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10001934", pin: "1934", name: "Md. Jowel Dewan", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
-                { id: "10002061", pin: "2061", name: "Md. Abdul Malek", desig: "Sr. Executive", section: "Research And Development", role: "EMPLOYEE" },
-                { id: "10002176", pin: "2176", name: "Md. Humayun Talukder", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
-                { id: "10002181", pin: "2181", name: "Md. Kamrul Islam", desig: "Sr. Executive", section: "Research And Development", role: "EMPLOYEE" },
-                { id: "10002184", pin: "2184", name: "Md. Anowar Hossen", desig: "Executive", section: "MIS", role: "EMPLOYEE" },
-                { id: "10002470", pin: "2470", name: "Md. Shahinzu", desig: "Sr. Executive", section: "Accounts", role: "EMPLOYEE" },
-                { id: "10002502", pin: "2502", name: "Pial Basak", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10002636", pin: "2636", name: "Md. Aktaruzzaman", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10002688", pin: "2638", name: "Ratan Kumar Roy", desig: "Executive", section: "Research And Development", role: "EMPLOYEE" },
-                { id: "10002922", pin: "2922", name: "Fazlur Rahman", desig: "Deputy Manager", section: "Store", role: "EMPLOYEE" },
-                { id: "10003148", pin: "3148", name: "Chitra Mohon Roy", desig: "Executive", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10003856", pin: "3856", name: "Shajib Miah", desig: "Executive", section: "Finishing", role: "EMPLOYEE" },
-                { id: "10004802", pin: "4802", name: "Md. Imon Khan", desig: "Executive", section: "Quality Control", role: "EMPLOYEE" },
-                { id: "10005285", pin: "5258", name: "Md. Habibur Rahman Badhan", desig: "Asst. Executive", section: "Twisting", role: "EMPLOYEE" },
-                { id: "10005288", pin: "5288", name: "Md. Rejaul Islam", desig: "Asst. Executive", section: "Back Process", role: "EMPLOYEE" },
-                { id: "10005672", pin: "5672", name: "Shahabul Islam", desig: "Jr. Executive", section: "Human Resource", role: "EMPLOYEE" },
-                { id: "10007832", pin: "7832", name: "Rabiul Hasan", desig: "Executive", section: "Research And Development", role: "EMPLOYEE" },
-                { id: "10008119", pin: "8119", name: "Md. Wahidur Rahman", desig: "Asst. Manager", section: "Ring", role: "EMPLOYEE" },
-                { id: "10009570", pin: "9570", name: "Rakibul Hasan", desig: "Asst. Executive", section: "Ring", role: "EMPLOYEE" },
-                { id: "10009796", pin: "9796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
+                { id: "10008895", name: "Mihir Roy Chowdhury", desig: "System Admin", section: "Administration", role: "ADMIN" },
+                { id: "10000159", name: "Manobendra Nath Biswas", desig: "Asst. Manager", section: "Maintenance", role: "EMPLOYEE" },
+                { id: "10000372", name: "Mohammad Anamul Kabir", desig: "Manager", section: "Quality Control", role: "EMPLOYEE" },
+                { id: "10000485", name: "Mohammed Aminul Islam", desig: "Asst. General Manager", section: "Maintenance", role: "EMPLOYEE" },
+                { id: "10000517", name: "Md. Arifuzzaman", desig: "Deputy Manager", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10000579", name: "Md. Tazul Islam", desig: "Sr. Engineer", section: "Utility", role: "EMPLOYEE" },
+                { id: "10000811", name: "Md. Shamim Ahmed", desig: "Sr. Manager", section: "Research And Development", role: "EMPLOYEE" },
+                { id: "10000812", name: "Lutfor Rahman", desig: "Sr. Manager", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10000813", name: "Md. Nizam Uddin", desig: "Jr. Executive", section: "Store", role: "EMPLOYEE" },
+                { id: "10000820", name: "Md. Mir Kashem Ali", desig: "Sr. Executive", section: "Finishing", role: "EMPLOYEE" },
+                { id: "10000821", name: "Md. Abdul Aziz", desig: "Asst. Manager", section: "Quality Control", role: "EMPLOYEE" },
+                { id: "10000822", name: "Abdullah Al Mamun Billah", desig: "Deputy Manager", section: "Research And Development", role: "EMPLOYEE" },
+                { id: "10000823", name: "Shamsul Alam", desig: "Sr. Executive", section: "Compliance", role: "EMPLOYEE" },
+                { id: "10000828", name: "Md. Rofiqul Islam", desig: "Sr. Executive", section: "Back Process", role: "EMPLOYEE" },
+                { id: "10000835", name: "Md. Azizur Rahman", desig: "Asst. Manager", section: "Store", role: "EMPLOYEE" },
+                { id: "10000849", name: "Md. Eabadut Hossain", desig: "Sr. Executive", section: "Finishing", role: "EMPLOYEE" },
+                { id: "10000875", name: "Md. Atikur Rahman", desig: "Asst. Manager", section: "MIS", role: "EMPLOYEE" },
+                { id: "10000913", name: "Md. Nasir Uddin Howlader", desig: "Sr. Executive", section: "Finishing", role: "EMPLOYEE" },
+                { id: "10000918", name: "Md. Sohel Rana", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10001021", name: "Mst. Masuda Akther", desig: "Welfare Officer", section: "Compliance", role: "EMPLOYEE" },
+                { id: "10001043", name: "Md. Shamsul Haque (Bakul)", desig: "Sr. Executive", section: "Back Process", role: "EMPLOYEE" },
+                { id: "10001060", name: "Md. Foyzur Razzaque", desig: "Sr. Engineer", section: "Civil", role: "EMPLOYEE" },
+                { id: "10001070", name: "Md. Mozibor Rahaman", desig: "Asst. Manager", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10001218", name: "Md. Nazrul Islam", desig: "General Manager", section: "Operation", role: "EMPLOYEE" },
+                { id: "10001558", name: "Md. Ashraful Islam", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
+                { id: "10001703", name: "Md. Khalekuzzaman", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10001732", name: "Md. Shoriful Islam", desig: "Sr. Executive", section: "Back Process", role: "EMPLOYEE" },
+                { id: "10001759", name: "S.M. Shoeb Shuvo", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
+                { id: "10001811", name: "Md. Abdul Kader Molla", desig: "Sr. Engineer", section: "Maintenance", role: "EMPLOYEE" },
+                { id: "10001823", name: "Md. Ismail Hossain", desig: "Sr. Engineer", section: "Maintenance", role: "EMPLOYEE" },
+                { id: "10001835", name: "Md. Aminul Islam", desig: "Sr. Executive", section: "Ring", role: "EMPLOYEE" },
+                { id: "10001933", name: "Md. Zuran Uddin", desig: "Executive", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10001934", name: "Md. Jowel Dewan", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
+                { id: "10002061", name: "Md. Abdul Malek", desig: "Sr. Executive", section: "Research And Development", role: "EMPLOYEE" },
+                { id: "10002176", name: "Md. Humayun Talukder", desig: "Sr. Executive", section: "Quality Control", role: "EMPLOYEE" },
+                { id: "10002181", name: "Md. Kamrul Islam", desig: "Sr. Executive", section: "Research And Development", role: "EMPLOYEE" },
+                { id: "10002184", name: "Md. Anowar Hossen", desig: "Executive", section: "MIS", role: "EMPLOYEE" },
+                { id: "10002470", name: "Md. Shahinzu", desig: "Sr. Executive", section: "Accounts", role: "EMPLOYEE" },
+                { id: "10002502", name: "Pial Basak", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10002636", name: "Md. Aktaruzzaman", desig: "Sr. Executive", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10002688", name: "Ratan Kumar Roy", desig: "Executive", section: "Research And Development", role: "EMPLOYEE" },
+                { id: "10002922", name: "Fazlur Rahman", desig: "Deputy Manager", section: "Store", role: "EMPLOYEE" },
+                { id: "10003148", name: "Chitra Mohon Roy", desig: "Executive", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10003856", name: "Shajib Miah", desig: "Executive", section: "Finishing", role: "EMPLOYEE" },
+                { id: "10004802", name: "Md. Imon Khan", desig: "Executive", section: "Quality Control", role: "EMPLOYEE" },
+                { id: "10005285", name: "Md. Habibur Rahman Badhan", desig: "Asst. Executive", section: "Twisting", role: "EMPLOYEE" },
+                { id: "10005288", name: "Md. Rejaul Islam", desig: "Asst. Executive", section: "Back Process", role: "EMPLOYEE" },
+                { id: "10005672", name: "Shahabul Islam", desig: "Jr. Executive", section: "Human Resource", role: "EMPLOYEE" },
+                { id: "10007832", name: "Rabiul Hasan", desig: "Executive", section: "Research And Development", role: "EMPLOYEE" },
+                { id: "10008119", name: "Md. Wahidur Rahman", desig: "Asst. Manager", section: "Ring", role: "EMPLOYEE" },
+                { id: "10009570", name: "Rakibul Hasan", desig: "Asst. Executive", section: "Ring", role: "EMPLOYEE" },
+                { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_users_v5', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v6', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_users_v5')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v5') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v5', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v5') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v5', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v6')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v6') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v6', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v6') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v6', JSON.stringify(d)); }
+
+              // DYNAMIC PIN VAULT (STORED ON DEVICE ONLY, ZERO PINS IN CODE)
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v6') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v6', JSON.stringify(v)); }
+
+              // CRYPTOGRAPHIC SHA-256 PIN HASHING
+              async function hashPin(pin) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(pin + "_tsl_secure_salt_2026");
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+              }
 
               let currentUser = null;
 
@@ -433,19 +472,41 @@ jobs:
               setInterval(tick, 1000);
               tick();
 
-              function handleLogin(e) {
+              // SECURE LOGIN & DYNAMIC FIRST-TIME SETUP
+              async function handleLoginSubmit(e) {
                 e.preventDefault();
                 const idInput = document.getElementById('loginId').value.trim();
                 const pinInput = document.getElementById('loginPin').value.trim();
                 const alertEl = document.getElementById('loginAlert');
-                alertEl.classList.add('hidden');
+                alertEl.className = 'hidden p-2.5 mb-4 rounded-xl text-xs text-center font-medium';
 
                 const users = getUsers();
-                const found = users.find(u => u.id === idInput && u.pin === pinInput);
+                const found = users.find(u => u.id === idInput);
 
                 if (!found) {
-                  alertEl.innerText = 'ভুল Card No অথবা PIN! সঠিক তথ্য দিন।';
-                  alertEl.classList.remove('hidden');
+                  alertEl.innerText = 'ভুল Card No! এই আইডি তালিকায় পাওয়া যায়নি।';
+                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                if (pinInput.length < 4) {
+                  alertEl.innerText = 'PIN অবশ্যই অন্তত ৪ সংখ্যার হতে হবে!';
+                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                const vault = getPinVault();
+                const existingHashedPin = vault[found.id];
+                const inputHash = await hashPin(pinInput);
+
+                // FIRST TIME LOGIN -> SET USER'S CHOSEN PIN AUTOMATICALLY
+                if (!existingHashedPin) {
+                  vault[found.id] = inputHash;
+                  savePinVault(vault);
+                  alert('স্বাগতম ' + found.name + '!\nআপনার দেওয়া PIN সফলভাবে এই ডিভাইসে সেট হয়ে গেছে। পরবর্তী সময়ে লগইন করতে এই PIN ব্যবহার করুন।');
+                } else if (existingHashedPin !== inputHash) {
+                  alertEl.innerText = 'ভুল PIN! সঠিক গোপন পিন দিন। পিন ভুলে গেলে এডমিনকে জানান।';
+                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
 
@@ -617,17 +678,25 @@ jobs:
               }
 
               function switchAdminTab(tab) {
+                document.getElementById('adminAttSection').classList.add('hidden');
+                document.getElementById('adminLeaveSection').classList.add('hidden');
+                document.getElementById('adminPinSection').classList.add('hidden');
+
+                document.getElementById('adminTabAtt').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white';
+                document.getElementById('adminTabLeave').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1';
+                document.getElementById('adminTabPin').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white';
+
                 if (tab === 'att') {
                   document.getElementById('adminAttSection').classList.remove('hidden');
-                  document.getElementById('adminLeaveSection').classList.add('hidden');
                   document.getElementById('adminTabAtt').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold';
-                  document.getElementById('adminTabLeave').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1';
-                } else {
-                  document.getElementById('adminAttSection').classList.add('hidden');
+                } else if (tab === 'leave') {
                   document.getElementById('adminLeaveSection').classList.remove('hidden');
                   document.getElementById('adminTabLeave').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center space-x-1';
-                  document.getElementById('adminTabAtt').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white';
                   loadAdminLeaveCards();
+                } else if (tab === 'pin') {
+                  document.getElementById('adminPinSection').classList.remove('hidden');
+                  document.getElementById('adminTabPin').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold';
+                  loadAdminPinManagement();
                 }
               }
 
@@ -667,6 +736,7 @@ jobs:
                 }
 
                 loadAdminLeaveCards();
+                loadAdminPinManagement();
               }
 
               function loadAdminLeaveCards() {
@@ -739,6 +809,43 @@ jobs:
 
                 alert(newStatus === 'APPROVED' ? 'ছুটি সফলভাবে অনুমোদন করা হয়েছে!' : 'ছুটির আবেদন প্রত্যাখ্যান করা হয়েছে।');
                 loadAdminDashboard();
+              }
+
+              // PIN RESET MANAGEMENT BY ADMIN
+              function loadAdminPinManagement() {
+                const users = getUsers();
+                const vault = getPinVault();
+                const tbody = document.getElementById('adminPinTableBody');
+
+                tbody.innerHTML = users.map(u => {
+                  const isSet = !!vault[u.id];
+                  const statusHtml = isSet 
+                    ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN সেট করা আছে</span>' 
+                    : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ এখনও সেট হয়নি</span>';
+                  
+                  return `
+                    <tr class="hover:bg-slate-800/40">
+                      <td class="p-2.5 font-mono text-emerald-400 font-bold">${u.id}</td>
+                      <td class="p-2.5 font-sans">${u.name}<br><span class="text-[9px] text-slate-400">${u.section}</span></td>
+                      <td class="p-2.5">${statusHtml}</td>
+                      <td class="p-2.5">
+                        <button onclick="resetUserPin('${u.id}', '${u.name}')" class="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold active:scale-95">
+                          রিসেট (Reset)
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('');
+              }
+
+              function resetUserPin(empId, empName) {
+                if (confirm(empName + ' (' + empId + ')-এর PIN রিসেট করতে চান?\nরিসেট করার পর এই কর্মী পুনরায় নিজের ইচ্ছামতো নতুন পিন সেট করতে পারবে।')) {
+                  const vault = getPinVault();
+                  delete vault[empId];
+                  savePinVault(vault);
+                  alert('✓ ' + empName + '-এর PIN সফলভাবে রিসেট করা হয়েছে!');
+                  loadAdminPinManagement();
+                }
               }
 
               // EXPORT HANDLING
@@ -852,7 +959,7 @@ jobs:
 
               function clearAllData() {
                 if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?')) {
-                  localStorage.removeItem('tsl_records_v5');
+                  localStorage.removeItem('tsl_records_v6');
                   loadAdminDashboard();
                 }
               }
@@ -870,7 +977,6 @@ jobs:
           import os
           from PIL import Image, ImageDraw
 
-          # Android Icon Resolutions
           sizes = {
               'mipmap-mdpi': 48,
               'mipmap-hdpi': 72,
@@ -880,17 +986,12 @@ jobs:
           }
 
           def create_tamishna_icon(sz):
-              # Transparent Canvas
               img = Image.new('RGBA', (sz, sz), (0, 0, 0, 0))
               draw = ImageDraw.Draw(img)
 
-              # 1. Outer Dark Blue Cogwheel
               draw.ellipse([sz*0.03, sz*0.03, sz*0.97, sz*0.97], fill='#0c4182')
-
-              # 2. White Inner Circle
               draw.ellipse([sz*0.17, sz*0.17, sz*0.83, sz*0.83], fill='#ffffff', outline='#0c4182', width=max(1, int(sz*0.025)))
 
-              # 3. Orange T-Shirt / Industrial T Shape
               top_w = sz * 0.46
               top_h = sz * 0.12
               top_x = (sz - top_w) / 2
@@ -914,13 +1015,13 @@ jobs:
               icon.save(os.path.join(target_dir, 'ic_launcher_round.png'))
               icon.save(os.path.join(target_dir, 'ic_launcher_foreground.png'))
 
-          # Remove XML overrides so all Android phones use the Tamishna Group logo directly
           xml_folder = os.path.join(res_path, 'mipmap-anydpi-v26')
           if os.path.exists(xml_folder):
               import shutil
               shutil.rmtree(xml_folder)
           print("✓ Official Tamishna Group App Launcher Icons generated successfully!")
           EOF
+
       - name: Build Debug APK
         run: |
           cd tamishna/android
