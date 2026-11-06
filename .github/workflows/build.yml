@@ -35,7 +35,7 @@ jobs:
           mkdir -p dist
           cat << 'EOF' > dist/index.html
           <!DOCTYPE html>
-          <html lang="bn">
+          <html lang="en">
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -78,17 +78,17 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v3.3</span>
+                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v3.4</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">রিয়েলটাইম ক্লাউড সিঙ্ক সক্রিয়</span>
+                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">Realtime Cloud Sync Active</span>
                   </div>
                 </div>
               </div>
               <div id="headerActions" class="hidden flex items-center space-x-2">
                 <span id="headerName" class="text-[10px] text-slate-300 font-medium"></span>
-                <button onclick="logout()" class="px-2.5 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-lg text-[10px] font-bold active:scale-95">লগআউট</button>
+                <button onclick="logout()" class="px-2.5 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-lg text-[10px] font-bold active:scale-95">Logout</button>
               </div>
             </header>
 
@@ -98,7 +98,7 @@ jobs:
                 <div class="text-center mb-4">
                   <div class="w-16 h-16 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2" id="loginLogoSlot"></div>
                   <div class="flex items-center justify-center space-x-1.5">
-                    <h2 class="text-base font-extrabold text-white">হাজিরা ও জব কার্ড পোর্টাল</h2>
+                    <h2 class="text-base font-extrabold text-white">Attendance & Job Card Portal</h2>
                     <span class="text-[9px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.5 rounded border border-blue-500/30">TSL</span>
                   </div>
                   <p class="text-[10px] text-slate-400 mt-0.5">Plant: Gazipur &bull; Cloud Connected</p>
@@ -106,8 +106,8 @@ jobs:
 
                 <!-- TABS: LOGIN VS SIGN UP -->
                 <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 mb-4 text-xs font-bold">
-                  <button id="tabBtnLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-emerald-500 text-slate-950 transition">লগইন (Login)</button>
-                  <button id="tabBtnSignUp" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">সাইন আপ (Sign Up)</button>
+                  <button id="tabBtnLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-emerald-500 text-slate-950 transition">Login</button>
+                  <button id="tabBtnSignUp" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">Sign Up</button>
                 </div>
 
                 <div id="authAlert" class="hidden p-2.5 mb-3 rounded-xl text-xs text-center font-medium"></div>
@@ -116,35 +116,35 @@ jobs:
                 <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3" autocomplete="off">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
-                    <input type="text" id="loginId" required placeholder="Card No লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500" autocomplete="off">
+                    <input type="text" id="loginId" required placeholder="Enter Card No" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500" autocomplete="off">
                   </div>
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">গোপনীয় PIN</label>
-                    <input type="password" id="loginPin" required maxlength="6" placeholder="PIN লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Secret PIN</label>
+                    <input type="password" id="loginPin" required maxlength="6" placeholder="Enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
 
                   <div class="flex items-center justify-between py-1">
                     <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer select-none">
                       <input type="checkbox" id="rememberPinCheckbox" class="w-4 h-4 rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0">
-                      <span>পাসওয়ার্ড মনে রাখুন (Remember PIN)</span>
+                      <span>Remember PIN</span>
                     </label>
                   </div>
 
                   <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 active:scale-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-emerald-500/25 text-xs mt-1">
-                    লগইন করুন
+                    Login Now
                   </button>
                   <div class="text-center pt-2">
-                    <button type="button" onclick="switchAuthTab('signup')" class="text-[11px] text-emerald-400 hover:underline">প্রথমবার লগইন করছেন? সাইন আপ করুন ➔</button>
+                    <button type="button" onclick="switchAuthTab('signup')" class="text-[11px] text-emerald-400 hover:underline">First time logging in? Sign Up ➔</button>
                   </div>
                 </form>
 
-                <!-- SIGN UP FORM (AUTO REFRESH - ZERO PREVIOUS DATA) -->
+                <!-- SIGN UP FORM -->
                 <form id="signupForm" onsubmit="handleSignUpSubmit(event)" class="hidden space-y-3" autocomplete="off">
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">আপনার Card No দিন</label>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Employee Card No</label>
                     <div class="flex space-x-1.5">
-                      <input type="text" id="signupId" required placeholder="Card No লিখুন" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500" autocomplete="off">
-                      <button type="button" onclick="verifyEmployeeForSignUp()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold active:scale-95">যাচাই</button>
+                      <input type="text" id="signupId" required placeholder="Enter Card No" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500" autocomplete="off">
+                      <button type="button" onclick="verifyEmployeeForSignUp()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold active:scale-95">Verify</button>
                     </div>
                   </div>
 
@@ -154,19 +154,19 @@ jobs:
                   </div>
 
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">নতুন ৪-সংখ্যার গোপন PIN দিন</label>
-                    <input type="password" id="signupPin" required maxlength="6" placeholder="নতুন PIN লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">New 4-Digit Secret PIN</label>
+                    <input type="password" id="signupPin" required maxlength="6" placeholder="Enter new PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">PIN আবার লিখুন (Confirm PIN)</label>
-                    <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="PIN পুনরায় লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Confirm Secret PIN</label>
+                    <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="Re-enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
 
                   <button id="signupSubmitBtn" type="submit" class="w-full bg-blue-600 active:scale-95 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/25 text-xs mt-1">
-                    ✓ সাইন আপ সম্পন্ন করুন
+                    ✓ Complete Sign Up
                   </button>
                   <div class="text-center pt-2">
-                    <button type="button" onclick="switchAuthTab('login')" class="text-[11px] text-slate-400 hover:underline">আগে PIN সেট করেছেন? লগইন করুন</button>
+                    <button type="button" onclick="switchAuthTab('login')" class="text-[11px] text-slate-400 hover:underline">Already set PIN? Login</button>
                   </div>
                 </form>
 
@@ -187,11 +187,11 @@ jobs:
                 <div class="flex flex-col space-y-1.5 flex-shrink-0">
                   <button onclick="viewEmployeeJobCard()" class="px-2.5 py-1.5 bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 rounded-xl text-[10px] font-bold active:scale-95 flex items-center space-x-1">
                     <span>📋</span>
-                    <span>আমার জব কার্ড</span>
+                    <span>My Job Card</span>
                   </button>
                   <button onclick="openLeaveApplyModal()" class="px-2.5 py-1.5 bg-blue-600/20 border border-blue-500/40 text-blue-300 rounded-xl text-[10px] font-bold active:scale-95 flex items-center space-x-1">
                     <span>📝</span>
-                    <span>ছুটি</span>
+                    <span>Leave</span>
                   </button>
                 </div>
               </div>
@@ -204,7 +204,7 @@ jobs:
               </div>
 
               <div id="punchStatusAlert" class="p-3 bg-slate-900 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium transition duration-200">
-                হাজিরা দিতে নিচের বাটনে চাপ দিয়ে আঙ্গুলের ছাপ দিন
+                Press button below and touch fingerprint sensor
               </div>
 
               <!-- PUNCH BUTTONS -->
@@ -212,26 +212,26 @@ jobs:
                 <button onclick="triggerBiometricAuth('CHECK_IN')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
                   <span class="text-3xl mb-1">👆</span>
                   <span class="text-xs font-bold">Fingerprint Check-In</span>
-                  <span class="text-[9px] text-emerald-200 mt-0.5">আঙ্গুলের ছাপ দিন</span>
+                  <span class="text-[9px] text-emerald-200 mt-0.5">Punch In Now</span>
                 </button>
                 <button onclick="triggerBiometricAuth('CHECK_OUT')" class="bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
                   <span class="text-3xl mb-1">🚪</span>
                   <span class="text-xs font-bold">Fingerprint Check-Out</span>
-                  <span class="text-[9px] text-rose-200 mt-0.5">আঙ্গুলের ছাপ দিন</span>
+                  <span class="text-[9px] text-rose-200 mt-0.5">Punch Out Now</span>
                 </button>
               </div>
 
               <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1">আজকের হাজিরার তথ্য</p>
+                <p class="text-[10px] text-slate-400 uppercase font-semibold mb-1">Today's Attendance Status</p>
                 <div class="flex justify-between text-xs text-slate-300">
-                  <span>চেক-ইন: <b id="todayInText" class="text-emerald-400 font-mono">--:--</b></span>
-                  <span>চেক-আউট: <b id="todayOutText" class="text-rose-400 font-mono">--:--</b></span>
+                  <span>Check-In: <b id="todayInText" class="text-emerald-400 font-mono">--:--</b></span>
+                  <span>Check-Out: <b id="todayOutText" class="text-rose-400 font-mono">--:--</b></span>
                 </div>
               </div>
 
               <div class="text-center pt-1">
                 <button onclick="logout()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs font-semibold text-rose-400 active:scale-95">
-                  লগআউট করুন
+                  Logout
                 </button>
               </div>
             </main>
@@ -244,7 +244,7 @@ jobs:
                   <div>
                     <div class="flex items-center space-x-1.5">
                       <h2 class="text-xs font-bold text-white">Admin Dashboard</h2>
-                      <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono px-1 py-0.2 rounded border border-blue-500/30">Cloud Central</span>
+                      <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono px-1 py-0.2 rounded border border-blue-500/30">Auto Cloud Sync</span>
                     </div>
                     <p class="text-[10px] text-emerald-400">Tamishna Synthetics Limited</p>
                   </div>
@@ -252,10 +252,10 @@ jobs:
 
                 <div class="flex space-x-1.5">
                   <button onclick="openPDFExportModal()" class="bg-rose-500 hover:bg-rose-400 active:scale-95 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
-                    <span>📄 PDF সেভ</span>
+                    <span>📄 Save PDF</span>
                   </button>
                   <button onclick="exportAttendanceCSV()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
-                    <span>📊 Excel</span>
+                    <span>📊 Save Excel</span>
                   </button>
                 </div>
               </div>
@@ -263,58 +263,58 @@ jobs:
               <!-- STATS -->
               <div class="grid grid-cols-3 gap-2.5 text-center">
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">মোট কর্মী</span>
+                  <span class="text-[10px] text-slate-400 block">Total Staff</span>
                   <p id="totalEmpCount" class="text-base font-bold text-white">51</p>
                 </div>
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">আজ উপস্থিত (সব ফোনে)</span>
+                  <span class="text-[10px] text-slate-400 block">Present Today (All Phones)</span>
                   <p id="todayPresentCount" class="text-base font-bold text-emerald-400">0</p>
                 </div>
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">ছুটি অপেক্ষারত</span>
+                  <span class="text-[10px] text-slate-400 block">Pending Leaves</span>
                   <p id="pendingLeaveBadge" class="text-base font-bold text-amber-400">0</p>
                 </div>
               </div>
 
-              <!-- LIVE CLOUD SYNC REFRESH BAR -->
+              <!-- LIVE CLOUD SYNC STATUS BAR -->
               <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                 <div class="flex items-center space-x-2">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span class="text-slate-300 text-[11px]">অন্য সব ফোনের হাজিরার ডাটা সেন্ট্রাল ক্লাউড হতে আনুন</span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span class="text-slate-300 text-[11px]">Realtime Central Sync Active (Auto 5s Refresh)</span>
                 </div>
                 <button onclick="pullAllFromCloud(true)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow">
-                  <span>🔄 ক্লাউড রিফ্রেশ</span>
+                  <span>🔄 Sync Now</span>
                 </button>
               </div>
 
               <!-- ADMIN TABS -->
               <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
-                <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">সকল হাজিরার লগ</button>
-                <button id="adminTabJobCard" onclick="switchAdminTab('jobcard')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">📋 জব কার্ড সার্চ ও প্রিন্ট</button>
+                <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">Attendance Logs</button>
+                <button id="adminTabJobCard" onclick="switchAdminTab('jobcard')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">📋 Job Card Search</button>
                 <button id="adminTabLeave" onclick="switchAdminTab('leave')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1">
-                  <span>ছুটি অনুমোদন</span>
+                  <span>Leaves</span>
                   <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-amber-500 text-slate-950 text-[9px] rounded-full font-bold">0</span>
                 </button>
-                <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN তালিকা</button>
+                <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN List</button>
               </div>
 
               <!-- VIEW A: ATTENDANCE LOG -->
               <div id="adminAttSection" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center text-xs">
-                  <span class="text-slate-300 font-semibold">সকল হাজিরার রেকর্ডস (ডাটা মুছলে এক্সেল থেকেও মুছে যাবে)</span>
-                  <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline font-bold">সমস্ত ডাটা মুছুন</button>
+                  <span class="text-slate-300 font-semibold">All Attendance Records (Central Cloud Database)</span>
+                  <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline font-bold">Clear All Records</button>
                 </div>
                 <div class="overflow-x-auto max-h-96">
                   <table class="w-full text-left text-xs text-slate-300">
                     <thead class="bg-slate-950 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
                       <tr>
-                        <th class="p-2.5">তারিখ</th>
-                        <th class="p-2.5">কর্মী</th>
-                        <th class="p-2.5">সেকশন</th>
-                        <th class="p-2.5">ইন</th>
-                        <th class="p-2.5">আউট</th>
-                        <th class="p-2.5">স্ট্যাটাস</th>
-                        <th class="p-2.5 text-center">মুছুন</th>
+                        <th class="p-2.5">Date</th>
+                        <th class="p-2.5">Employee</th>
+                        <th class="p-2.5">Section</th>
+                        <th class="p-2.5">In</th>
+                        <th class="p-2.5">Out</th>
+                        <th class="p-2.5">Status</th>
+                        <th class="p-2.5 text-center">Action</th>
                       </tr>
                     </thead>
                     <tbody id="adminTableBody" class="divide-y divide-slate-800 font-mono text-[11px]"></tbody>
@@ -322,47 +322,48 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (WITH LIVE SEARCH BAR BY EMPLOYEE ID) -->
+              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (WITHOUT DAY COLUMN) -->
               <div id="adminJobCardSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div>
-                    <h3 class="text-xs font-bold text-white">মাসিক জব কার্ড (Monthly Attendance Job Card)</h3>
+                    <h3 class="text-xs font-bold text-white">Monthly Attendance Job Card (Factory ERP Standard)</h3>
                     <p class="text-[10px] text-slate-400">Tamishna Synthetics Limited &bull; Gazipur Plant</p>
                   </div>
                   <button onclick="downloadJobCardPDF()" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1 shadow">
-                    <span>📄 পুরো মাসের জব কার্ড PDF সেভ</span>
+                    <span>📄 Save Job Card PDF</span>
                   </button>
                 </div>
 
                 <!-- LIVE EMPLOYEE ID / CARD NO SEARCH BAR -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                  <label class="block text-slate-300 font-semibold text-xs">🔍 Employee ID / Card No দিয়ে জব কার্ড সার্চ করুন:</label>
+                  <label class="block text-slate-300 font-semibold text-xs">🔍 Search Job Card by Card No / ID:</label>
                   <div class="flex space-x-2">
-                    <input type="text" id="jobCardSearchInput" oninput="handleJobCardSearchInput()" onkeypress="if(event.key==='Enter') searchEmployeeJobCard()" placeholder="Employee ID লিখুন (যেমন: 10000159 বা 10000517)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
-                    <button onclick="searchEmployeeJobCard()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold active:scale-95 shadow">সার্চ</button>
+                    <input type="text" id="jobCardSearchInput" oninput="handleJobCardSearchInput()" onkeypress="if(event.key==='Enter') searchEmployeeJobCard()" placeholder="Type Employee ID (e.g. 10000159)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+                    <button onclick="searchEmployeeJobCard()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold active:scale-95 shadow">Search</button>
                   </div>
                   <div id="jcSearchFeedback" class="hidden text-[10px] font-medium pt-0.5"></div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <label class="block text-slate-400 mb-1">অথবা ড্রপডাউন থেকে কর্মী বেছে নিন:</label>
+                    <label class="block text-slate-400 mb-1">Select from dropdown:</label>
                     <select id="jobCardEmpSelect" onchange="onJobCardDropdownChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white"></select>
                   </div>
                   <div>
-                    <label class="block text-slate-400 mb-1">মাস ও বছর নির্বাচন:</label>
+                    <label class="block text-slate-400 mb-1">Month & Year:</label>
                     <input type="month" id="jobCardMonthSelect" onchange="renderSelectedEmployeeJobCard()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono">
                   </div>
                 </div>
 
-                <!-- INDIVIDUAL JOB CARD PROFILE HEADER -->
+                <!-- INDIVIDUAL JOB CARD PROFILE HEADER WITH ISSUE DATE -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                   <div>
                     <p class="text-white font-bold text-sm" id="jcDisplayEmpName"></p>
                     <p class="text-slate-400 text-[10px]" id="jcDisplayEmpDesigSec"></p>
+                    <p class="text-blue-400 text-[10px] mt-0.5">Issue Date: <span id="jcPrintDate" class="font-mono font-bold"></span></p>
                   </div>
                   <div class="text-right">
-                    <span class="text-[9px] text-slate-400 block">কার্ড নং (ID)</span>
+                    <span class="text-[9px] text-slate-400 block">Card No (ID)</span>
                     <b class="text-emerald-400 font-mono text-sm" id="jcDisplayEmpId"></b>
                   </div>
                 </div>
@@ -370,51 +371,50 @@ jobs:
                 <!-- JOB CARD SUMMARY STATS -->
                 <div class="grid grid-cols-4 gap-2 text-center text-xs">
                   <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                    <span class="text-[9px] text-slate-400 block">উপস্থিত (Present)</span>
+                    <span class="text-[9px] text-slate-400 block">Present</span>
                     <b id="jcStatPresent" class="text-emerald-400">0</b>
                   </div>
                   <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                    <span class="text-[9px] text-slate-400 block">ছুটি (Leaves)</span>
+                    <span class="text-[9px] text-slate-400 block">Leave</span>
                     <b id="jcStatLeave" class="text-blue-400">0</b>
                   </div>
                   <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                    <span class="text-[9px] text-slate-400 block">শুক্রবার (Weekend)</span>
+                    <span class="text-[9px] text-slate-400 block">Weekend</span>
                     <b id="jcStatWeekend" class="text-amber-400">0</b>
                   </div>
                   <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                    <span class="text-[9px] text-slate-400 block">অনুপস্থিত (Absent)</span>
+                    <span class="text-[9px] text-slate-400 block">Absent</span>
                     <b id="jcStatAbsent" class="text-rose-400">0</b>
                   </div>
                 </div>
 
-                <!-- FULL MONTH DATE-WISE JOB CARD TABLE -->
+                <!-- FULL MONTH DATE-WISE JOB CARD TABLE (NO DAY COLUMN) -->
                 <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto max-h-72">
                   <table class="w-full text-left text-xs text-slate-300">
                     <thead class="bg-slate-900 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
                       <tr>
-                        <th class="p-2">তারিখ</th>
-                        <th class="p-2">বার</th>
-                        <th class="p-2">ইন টাইম</th>
-                        <th class="p-2">আউট টাইম</th>
-                        <th class="p-2">স্ট্যাটাস</th>
+                        <th class="p-2">Date</th>
+                        <th class="p-2">In Time</th>
+                        <th class="p-2">Out Time</th>
+                        <th class="p-2">Status</th>
                       </tr>
                     </thead>
                     <tbody id="jobCardTableBody" class="divide-y divide-slate-800 font-mono text-[11px]"></tbody>
                   </table>
                 </div>
 
-                <!-- FACTORY SIGNATURES NOTE (STRICTLY NO NAMES - ONLY DESIGNATION) -->
-                <div class="border-t border-slate-800/80 pt-2 flex justify-between text-[10px] text-slate-400 font-sans">
-                  <span>Employee Signature</span>
-                  <span>Time Keeper Signature</span>
-                  <span class="font-bold text-slate-300">Admin Signature</span>
+                <!-- FACTORY SIGNATURES NOTE (AUTHORIZED BLANK) -->
+                <div class="border-t border-slate-800/80 pt-3 flex justify-between text-[10px] text-slate-400 font-sans">
+                  <span>Employee: ____________________</span>
+                  <span>Time Keeper: ____________________</span>
+                  <span class="text-slate-300 font-bold">Authorized: ____________________</span>
                 </div>
               </div>
 
               <!-- VIEW C: LEAVE APPROVAL -->
               <div id="adminLeaveSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
-                  ছুটির আবেদনসমূহ (C/L, M/L, E/L)
+                  Leave Applications (C/L, M/L, E/L)
                 </div>
                 <div id="adminLeaveCardsContainer" class="p-3 space-y-3"></div>
               </div>
@@ -422,16 +422,16 @@ jobs:
               <!-- VIEW D: PIN MANAGEMENT -->
               <div id="adminPinSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
-                  কর্মীদের PIN স্ট্যাটাস ও রিসেট সুবিধা
+                  Employee PIN Management & Reset
                 </div>
                 <div class="overflow-x-auto max-h-96">
                   <table class="w-full text-left text-xs text-slate-300">
                     <thead class="bg-slate-950 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
                       <tr>
                         <th class="p-2.5">Card No</th>
-                        <th class="p-2.5">নাম ও সেকশন</th>
-                        <th class="p-2.5">PIN স্ট্যাটাস</th>
-                        <th class="p-2.5">অ্যাকশন</th>
+                        <th class="p-2.5">Name & Section</th>
+                        <th class="p-2.5">PIN Status</th>
+                        <th class="p-2.5">Action</th>
                       </tr>
                     </thead>
                     <tbody id="adminPinTableBody" class="divide-y divide-slate-800 text-[11px]"></tbody>
@@ -445,7 +445,7 @@ jobs:
               <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-4 shadow-2xl space-y-3 max-h-[90vh] flex flex-col">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2 flex-shrink-0">
                   <div>
-                    <h3 class="text-sm font-bold text-white">আমার ব্যক্তিগত জব কার্ড (My Job Card)</h3>
+                    <h3 class="text-sm font-bold text-white">My Attendance Job Card</h3>
                     <p class="text-[10px] text-emerald-400" id="empJcSubtitle"></p>
                   </div>
                   <button onclick="closeEmployeeJobCard()" class="text-slate-400 text-xl hover:text-white">&times;</button>
@@ -454,7 +454,7 @@ jobs:
                 <div class="flex justify-between items-center text-xs flex-shrink-0">
                   <input type="month" id="empJcMonthInput" onchange="renderMyJobCard()" class="bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-white font-mono text-xs">
                   <button onclick="downloadMyJobCardPDF()" class="px-2.5 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold active:scale-95 shadow">
-                    📄 পুরো মাসের জব কার্ড PDF সেভ
+                    📄 Save Job Card PDF
                   </button>
                 </div>
 
@@ -462,11 +462,10 @@ jobs:
                   <table class="w-full text-left text-xs text-slate-300">
                     <thead class="bg-slate-900 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
                       <tr>
-                        <th class="p-2">তারিখ</th>
-                        <th class="p-2">বার</th>
-                        <th class="p-2">ইন</th>
-                        <th class="p-2">আউট</th>
-                        <th class="p-2">স্ট্যাটাস</th>
+                        <th class="p-2">Date</th>
+                        <th class="p-2">In</th>
+                        <th class="p-2">Out</th>
+                        <th class="p-2">Status</th>
                       </tr>
                     </thead>
                     <tbody id="empJobCardTableBody" class="divide-y divide-slate-800 font-mono text-[11px]"></tbody>
@@ -474,7 +473,7 @@ jobs:
                 </div>
 
                 <div class="text-right flex-shrink-0 pt-1">
-                  <button onclick="closeEmployeeJobCard()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
+                  <button onclick="closeEmployeeJobCard()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">Close</button>
                 </div>
               </div>
             </div>
@@ -483,51 +482,51 @@ jobs:
             <div id="leaveApplyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl">
                 <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2">
-                  <h3 class="text-sm font-bold text-white">ছুটির আবেদন ফর্ম</h3>
+                  <h3 class="text-sm font-bold text-white">Leave Application Form</h3>
                   <button onclick="closeLeaveApplyModal()" class="text-slate-400 text-lg hover:text-white">&times;</button>
                 </div>
 
                 <form onsubmit="handleLeaveSubmit(event)" class="space-y-3 text-xs">
                   <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">ছুটির ধরন (Leave Type)</label>
+                    <label class="block text-slate-300 mb-1 font-semibold">Leave Type</label>
                     <select id="leaveType" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-medium focus:outline-none focus:border-emerald-500">
-                      <option value="C/L">C/L - Casual Leave (নৈমিত্তিক ছুটি)</option>
-                      <option value="M/L">M/L - Medical Leave (চিকিৎসা ছুটি)</option>
-                      <option value="E/L">E/L - Earned Leave (অর্জিত ছুটি)</option>
+                      <option value="C/L">C/L - Casual Leave</option>
+                      <option value="M/L">M/L - Medical Leave</option>
+                      <option value="E/L">E/L - Earned Leave</option>
                     </select>
                   </div>
 
                   <div class="grid grid-cols-2 gap-2">
                     <div>
-                      <label class="block text-slate-300 mb-1 font-semibold">হতে (From Date)</label>
+                      <label class="block text-slate-300 mb-1 font-semibold">From Date</label>
                       <input type="date" id="leaveFrom" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
-                      <label class="block text-slate-300 mb-1 font-semibold">পর্যন্ত (To Date)</label>
+                      <label class="block text-slate-300 mb-1 font-semibold">To Date</label>
                       <input type="date" id="leaveTo" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:outline-none focus:border-emerald-500">
                     </div>
                   </div>
 
                   <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">ছুটির কারণ (Reason)</label>
-                    <textarea id="leaveReason" required rows="2" placeholder="ছুটির কারণ লিখুন..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"></textarea>
+                    <label class="block text-slate-300 mb-1 font-semibold">Reason for Leave</label>
+                    <textarea id="leaveReason" required rows="2" placeholder="Write leave reason..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"></textarea>
                   </div>
 
                   <div class="flex justify-end space-x-2 pt-2 border-t border-slate-800">
-                    <button type="button" onclick="closeLeaveApplyModal()" class="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg font-semibold">বাতিল</button>
-                    <button type="submit" class="px-4 py-1.5 bg-blue-600 active:scale-95 text-white font-bold rounded-lg shadow">আবেদন জমা দিন</button>
+                    <button type="button" onclick="closeLeaveApplyModal()" class="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg font-semibold">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 bg-blue-600 active:scale-95 text-white font-bold rounded-lg shadow">Submit Leave</button>
                   </div>
                 </form>
               </div>
             </div>
 
-            <!-- 6. ADVANCED PDF "SAVE AS" MODAL -->
+            <!-- 6. ADVANCED PDF MODAL -->
             <div id="pdfExportModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div class="flex items-center space-x-2">
                     <span class="text-xl">📄</span>
-                    <h3 class="text-sm font-bold text-white">হাজিরা PDF সেভ করুন</h3>
+                    <h3 class="text-sm font-bold text-white">Save Attendance PDF</h3>
                   </div>
                   <button onclick="closePDFExportModal()" class="text-slate-400 text-xl hover:text-white">&times;</button>
                 </div>
@@ -536,14 +535,14 @@ jobs:
                   <button onclick="savePDFWithNativeEngine()" class="w-full p-3 bg-rose-600 hover:bg-rose-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
                     <span class="text-2xl">💾</span>
                     <div>
-                      <div class="text-xs font-bold text-white">ফোনের Downloads ফোল্ডারে সেভ করুন</div>
-                      <div class="text-[10px] text-rose-100">সরাসরি মেমোরি কার্ড বা ইন্টারনাল স্টোরেজে সেভ হবে</div>
+                      <div class="text-xs font-bold text-white">Save Directly to Downloads Folder</div>
+                      <div class="text-[10px] text-rose-100">Saved to Internal Storage / Downloads</div>
                     </div>
                   </button>
                 </div>
 
                 <div class="text-right">
-                  <button onclick="closePDFExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
+                  <button onclick="closePDFExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">Close</button>
                 </div>
               </div>
             </div>
@@ -616,16 +615,16 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v23', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v24', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v23')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v23') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v23', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v23') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v23', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v24')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v24') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v24', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v24') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v24', JSON.stringify(d)); }
 
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v23') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v23', JSON.stringify(v)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v24') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v24', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -665,9 +664,10 @@ jobs:
               }
 
               // ============================================================
-              // 2. CENTRAL MULTI-DEVICE CLOUD SYNC ENGINE
+              // 2. CENTRAL MULTI-DEVICE CLOUD SYNC ENGINE (REALTIME AUTO-POLL)
               // ============================================================
               const SHARED_CLOUD_SYNC_URL = 'https://tamishna-attendance-v2-default-rtdb.firebaseio.com/records';
+              let centralSyncInterval = null;
 
               async function pushPunchToCloud(record) {
                 try {
@@ -677,7 +677,7 @@ jobs:
                     body: JSON.stringify(record)
                   });
                 } catch(e) {
-                  console.warn('Cloud write deferred', e);
+                  console.warn('Cloud write error', e);
                 }
               }
 
@@ -696,15 +696,25 @@ jobs:
                       const mergedList = Array.from(mergedMap.values());
                       mergedList.sort((a,b) => (b.date + (b.checkIn||'')).localeCompare(a.date + (a.checkIn||'')));
                       saveRecords(mergedList);
-                      if (showAlert) alert('✓ সেন্ট্রাল ক্লাউড হতে সমস্ত ফোনের হাজিরার ডাটা সফলভাবে সিঙ্ক হয়েছে!');
-                      loadAdminDashboard();
+                      if (showAlert) alert('✓ Central Cloud Attendance Synced Successfully!');
+                      if (currentUser && currentUser.role === 'ADMIN') {
+                        loadAdminDashboard();
+                      }
                       return;
                     }
                   }
                 } catch(e) {
                   console.warn('Cloud sync error', e);
                 }
-                if (showAlert) alert('ক্লাউড সিঙ্কে সমস্যা হয়েছে। ইন্টারনেট কানেকশন চেক করুন।');
+                if (showAlert) alert('Cloud sync error. Please check your internet connection.');
+              }
+
+              function startRealtimeCloudSync() {
+                if (centralSyncInterval) clearInterval(centralSyncInterval);
+                pullAllFromCloud(false);
+                centralSyncInterval = setInterval(() => {
+                  pullAllFromCloud(false);
+                }, 5000);
               }
 
               // ==========================================
@@ -719,28 +729,28 @@ jobs:
 
                 if (actionType === 'CHECK_IN') {
                   if (existingIndex !== -1) {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ ডুপ্লিকেট পাঞ্চ বাতিল! অলরেডি ইন করেছেন (' + records[existingIndex].checkIn + ')</span>';
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Duplicate punch ignored! Already punched in at ' + records[existingIndex].checkIn + '</span>';
                     return;
                   }
                 } else {
                   if (existingIndex === -1) {
-                    alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ আগে চেক-ইন (Check-In) করতে হবে!</span>';
+                    alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Please Check-In first!</span>';
                     return;
                   }
                   if (records[existingIndex].checkOut) {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ আজকের হাজিরা সম্পন্ন হয়েছে (' + records[existingIndex].checkOut + ')</span>';
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Today\'s attendance already completed at ' + records[existingIndex].checkOut + '</span>';
                     return;
                   }
                 }
 
-                alertEl.innerHTML = '<span class="text-blue-400 font-medium animate-pulse">অনুগ্রহ করে আপনার ফোনের ফিঙ্গারপ্রিন্ট সেন্সরে আঙ্গুল ছোঁয়ান...</span>';
+                alertEl.innerHTML = '<span class="text-blue-400 font-medium animate-pulse">Please touch your phone\'s fingerprint sensor...</span>';
 
                 if (window.AndroidBiometric && window.AndroidBiometric.authenticate) {
                   window.AndroidBiometric.authenticate(actionType);
                 } else {
-                  const confirmed = confirm("[Hardware Sensor Simulator]\nTamishna Synthetics Attendance\n\nআঙ্গুলের ছাপ ভেরিফাই করতে 'OK' চাপুন।");
+                  const confirmed = confirm("[Biometric Sensor Prompt]\nTamishna Synthetics Ltd.\n\nPress OK to verify fingerprint.");
                   if (confirmed) onBiometricSuccess(actionType);
-                  else onBiometricError("ভেরিফিকেশন বাতিল করা হয়েছে");
+                  else onBiometricError("Verification cancelled");
                 }
               }
 
@@ -748,7 +758,7 @@ jobs:
                 if (!currentUser) return;
                 const today = new Date().toISOString().split('T')[0];
                 const now = new Date();
-                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                 const alertEl = document.getElementById('punchStatusAlert');
                 let records = getRecords();
                 let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
@@ -769,26 +779,26 @@ jobs:
                   records.unshift(punchRecord);
                   saveRecords(records);
                   pushPunchToCloud(punchRecord);
-                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ ফিঙ্গারপ্রিন্ট ভেরিফাইড! ইন হয়েছে (' + timeStr + ')</span>';
+                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ Verified! Checked In at ' + timeStr + '</span>';
                 } else {
                   records[existingIndex].checkOut = timeStr;
                   saveRecords(records);
                   pushPunchToCloud(records[existingIndex]);
-                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ ফিঙ্গারপ্রিন্ট ভেরিফাইড! আউট হয়েছে (' + timeStr + ')</span>';
+                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ Verified! Checked Out at ' + timeStr + '</span>';
                 }
                 refreshEmployeeTodayPunch();
               };
 
               window.onBiometricFailed = function() {
-                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-rose-400 font-bold">❌ আঙ্গুলের ছাপ মেলেনি! আবার সঠিক আঙ্গুল দিন।</span>';
+                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-rose-400 font-bold">❌ Fingerprint not recognized. Try again.</span>';
               };
 
               window.onBiometricError = function(errMsg) {
-                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-amber-400">⚠️ সেন্সর বাতিল: ' + errMsg + '</span>';
+                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-amber-400">⚠️ Sensor error: ' + errMsg + '</span>';
               };
 
               // ==========================================
-              // 4. REAL NATIVE PDF SAVER (ADMIN TITLE ONLY)
+              // 4. REAL NATIVE PDF SAVER (AUTHORIZED BLANK)
               // ==========================================
               let activePdfDoc = null;
               let activePdfFilename = '';
@@ -814,10 +824,10 @@ jobs:
 
                 doc.setTextColor(50, 50, 50);
                 doc.setFontSize(9);
-                doc.text('Authorized: Admin Signature', 40, 85);
+                doc.text('Authorized: ____________________', 40, 85);
                 doc.text('Plant Location: Gazipur Factory', 40, 98);
-                doc.text('Total Records: ' + records.length, 440, 85);
-                doc.text('Export Date: ' + new Date().toLocaleDateString(), 440, 98);
+                doc.text('Total Records: ' + records.length, 420, 85);
+                doc.text('Export Date: ' + new Date().toISOString().split('T')[0], 420, 98);
 
                 const tableRows = records.map(r => [
                   r.date,
@@ -840,13 +850,18 @@ jobs:
                   margin: { left: 40, right: 40 }
                 });
 
+                const finalY = doc.lastAutoTable.finalY + 35;
+                doc.setFontSize(8.5);
+                doc.text('Time Keeper: ____________________', 40, finalY);
+                doc.text('Authorized: ____________________', 380, finalY);
+
                 return doc;
               }
 
               function openPDFExportModal() {
                 activePdfDoc = buildAttendancePdfDoc();
                 if (!activePdfDoc) {
-                  alert('ডাউনলোড করার মতো হাজিরার ডাটা নেই!');
+                  alert('No attendance data available to download!');
                   return;
                 }
                 activePdfFilename = 'Tamishna_Attendance_' + new Date().toISOString().split('T')[0] + '.pdf';
@@ -865,13 +880,13 @@ jobs:
                   closePDFExportModal();
                 } else {
                   activePdfDoc.save(activePdfFilename);
-                  alert('✓ ব্রাউজারে PDF ডাউনলোড সম্পন্ন হয়েছে!');
+                  alert('✓ Attendance PDF downloaded successfully!');
                   closePDFExportModal();
                 }
               }
 
               // ============================================================
-              // 5. INDIVIDUAL JOB CARD ENGINE (WITH SEARCH BAR BY EMPLOYEE ID)
+              // 5. INDIVIDUAL JOB CARD ENGINE (NO DAY COLUMN, FULL ENGLISH)
               // ============================================================
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
 
@@ -884,10 +899,10 @@ jobs:
                 const now = new Date();
                 const curMonth = now.toISOString().slice(0, 7);
                 document.getElementById('jobCardMonthSelect').value = curMonth;
+                document.getElementById('jcPrintDate').innerText = now.toISOString().split('T')[0];
                 renderSelectedEmployeeJobCard();
               }
 
-              // SEARCH BAR BY EMPLOYEE ID / CARD NO
               function handleJobCardSearchInput() {
                 const query = document.getElementById('jobCardSearchInput').value.trim().toUpperCase();
                 const feedbackEl = document.getElementById('jcSearchFeedback');
@@ -901,11 +916,11 @@ jobs:
 
                 if (matched) {
                   document.getElementById('jobCardEmpSelect').value = matched.id;
-                  feedbackEl.innerText = `✓ পাওয়া গেছে: ${matched.name} (${matched.desig} - ${matched.section})`;
+                  feedbackEl.innerText = `✓ Found: ${matched.name} (${matched.desig} - ${matched.section})`;
                   feedbackEl.className = 'text-[10px] font-medium text-emerald-400 block';
                   renderSelectedEmployeeJobCard();
                 } else {
-                  feedbackEl.innerText = 'এই Card No-এর কোনো কর্মী পাওয়া যায়নি।';
+                  feedbackEl.innerText = 'No employee matched this Card No.';
                   feedbackEl.className = 'text-[10px] font-medium text-amber-400 block';
                 }
               }
@@ -913,7 +928,7 @@ jobs:
               function searchEmployeeJobCard() {
                 const query = document.getElementById('jobCardSearchInput').value.trim().toUpperCase();
                 if (!query) {
-                  alert('অনুগ্রহ করে Employee ID / Card No লিখুন!');
+                  alert('Please enter Employee ID / Card No!');
                   return;
                 }
                 const users = getUsers();
@@ -922,7 +937,7 @@ jobs:
                   document.getElementById('jobCardEmpSelect').value = matched.id;
                   renderSelectedEmployeeJobCard();
                 } else {
-                  alert(`'${query}' নম্বরের কোনো কর্মী তালিকায় পাওয়া যায়নি!`);
+                  alert(`No employee found with ID: ${query}`);
                 }
               }
 
@@ -955,7 +970,6 @@ jobs:
                   const dayStr = String(day).padStart(2, '0');
                   const dateStr = `${yearMonth}-${dayStr}`;
                   const dateObj = new Date(year, month - 1, day);
-                  const dayName = dateObj.toLocaleDateString('bn-BD', { weekday: 'short' });
                   const isFriday = (dateObj.getDay() === 5);
 
                   const attRecord = records.find(r => r.empId === empId && r.date === dateStr);
@@ -963,7 +977,7 @@ jobs:
 
                   let inTime = '--:--';
                   let outTime = '--:--';
-                  let status = isFriday ? 'WEEKEND (শুক্রবার)' : 'ABSENT';
+                  let status = isFriday ? 'WEEKEND' : 'ABSENT';
 
                   if (approvedLeave) {
                     status = `LEAVE (${approvedLeave.type})`;
@@ -984,7 +998,6 @@ jobs:
 
                   rows.push({
                     date: dateStr,
-                    day: dayName,
                     inTime: inTime,
                     outTime: outTime,
                     status: status
@@ -1016,6 +1029,7 @@ jobs:
                 document.getElementById('jcDisplayEmpName').innerText = currentJobCardData.emp.name;
                 document.getElementById('jcDisplayEmpDesigSec').innerText = `${currentJobCardData.emp.desig} • Section: ${currentJobCardData.emp.section}`;
                 document.getElementById('jcDisplayEmpId').innerText = currentJobCardData.emp.id;
+                document.getElementById('jcPrintDate').innerText = new Date().toISOString().split('T')[0];
 
                 document.getElementById('jcStatPresent').innerText = currentJobCardData.stats.present;
                 document.getElementById('jcStatLeave').innerText = currentJobCardData.stats.leave;
@@ -1026,7 +1040,6 @@ jobs:
                 tbody.innerHTML = currentJobCardData.rows.map(r => `
                   <tr class="hover:bg-slate-900">
                     <td class="p-2 text-slate-300">${r.date}</td>
-                    <td class="p-2 text-slate-400 font-sans">${r.day}</td>
                     <td class="p-2 text-emerald-400 font-bold">${r.inTime}</td>
                     <td class="p-2 text-rose-400 font-bold">${r.outTime}</td>
                     <td class="p-2 font-sans font-bold ${r.status.includes('PRESENT') ? 'text-emerald-400' : r.status.includes('LEAVE') ? 'text-blue-400' : r.status.includes('WEEKEND') ? 'text-amber-400' : 'text-slate-500'}">
@@ -1057,7 +1070,6 @@ jobs:
                 tbody.innerHTML = currentJobCardData.rows.map(r => `
                   <tr class="hover:bg-slate-900">
                     <td class="p-2 text-slate-300">${r.date}</td>
-                    <td class="p-2 text-slate-400 font-sans">${r.day}</td>
                     <td class="p-2 text-emerald-400 font-bold">${r.inTime}</td>
                     <td class="p-2 text-rose-400 font-bold">${r.outTime}</td>
                     <td class="p-2 font-sans font-bold ${r.status.includes('PRESENT') ? 'text-emerald-400' : r.status.includes('LEAVE') ? 'text-blue-400' : r.status.includes('WEEKEND') ? 'text-amber-400' : 'text-slate-500'}">
@@ -1067,7 +1079,7 @@ jobs:
                 `).join('');
               }
 
-              // FULL MONTH 1-31 DAYS JOB CARD PDF
+              // FULL MONTH JOB CARD PDF (AUTHORIZED BLANK & NO DAY COLUMN)
               function generateJobCardPdfDoc(data) {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF('p', 'pt', 'a4');
@@ -1090,13 +1102,12 @@ jobs:
                 doc.text(`Section / Dept: ${data.emp.section}`, 40, 111);
 
                 doc.text(`Job Card Month : ${data.month}`, 400, 72);
-                doc.text(`Total Days     : ${data.stats.totalDays}`, 400, 85);
-                doc.text(`Present Days   : ${data.stats.present}`, 400, 98);
-                doc.text(`Total Leaves   : ${data.stats.leave}`, 400, 111);
+                doc.text(`Issue Date     : ${new Date().toISOString().split('T')[0]}`, 400, 85);
+                doc.text(`Total Days     : ${data.stats.totalDays}`, 400, 98);
+                doc.text(`Present Days   : ${data.stats.present}`, 400, 111);
 
                 const tableRows = data.rows.map(r => [
                   r.date,
-                  r.day,
                   r.inTime,
                   r.outTime,
                   r.status
@@ -1104,16 +1115,16 @@ jobs:
 
                 doc.autoTable({
                   startY: 122,
-                  head: [['Date', 'Day', 'In Time', 'Out Time', 'Attendance Status']],
+                  head: [['Date', 'In Time', 'Out Time', 'Attendance Status']],
                   body: tableRows,
                   theme: 'striped',
-                  headStyles: { fillColor: [12, 65, 130], textColor: [255, 255, 255], fontSize: 7.5, fontStyle: 'bold', cellPadding: 2 },
-                  bodyStyles: { fontSize: 7, textColor: [40, 40, 40], cellPadding: 1.8 },
+                  headStyles: { fillColor: [12, 65, 130], textColor: [255, 255, 255], fontSize: 8, fontStyle: 'bold', cellPadding: 2.5 },
+                  bodyStyles: { fontSize: 7.5, textColor: [40, 40, 40], cellPadding: 2 },
                   alternateRowStyles: { fillColor: [245, 247, 250] },
                   margin: { left: 40, right: 40 }
                 });
 
-                const finalY = doc.lastAutoTable.finalY + 30;
+                const finalY = doc.lastAutoTable.finalY + 35;
                 doc.setFontSize(8);
                 doc.text('_________________________', 40, finalY);
                 doc.text('Employee Signature', 40, finalY + 12);
@@ -1122,14 +1133,14 @@ jobs:
                 doc.text('Time Keeper Signature', 230, finalY + 12);
 
                 doc.text('_________________________', 420, finalY);
-                doc.text('Admin Signature', 420, finalY + 12);
+                doc.text('Authorized: ____________________', 420, finalY + 12);
 
                 return doc;
               }
 
               function downloadJobCardPDF() {
                 if (!currentJobCardData || !currentJobCardData.emp) {
-                  alert('জব কার্ডের ডাটা পাওয়া যায়নি!');
+                  alert('No Job Card data available!');
                   return;
                 }
                 const doc = generateJobCardPdfDoc(currentJobCardData);
@@ -1142,7 +1153,7 @@ jobs:
                   window.AndroidBiometric.savePdfToDownloads(base64, filename);
                 } else {
                   doc.save(filename);
-                  alert('✓ ব্রাউজারে Job Card PDF ডাউনলোড সম্পন্ন হয়েছে!');
+                  alert('✓ Job Card PDF downloaded successfully!');
                 }
               }
 
@@ -1151,7 +1162,7 @@ jobs:
               }
 
               // ==========================================
-              // 6. AUTO REFRESH SIGN UP (ZERO OLD DATA)
+              // 6. AUTO REFRESH SIGN UP
               // ==========================================
               function clearSignUpForm() {
                 const form = document.getElementById('signupForm');
@@ -1193,7 +1204,7 @@ jobs:
                 alertEl.className = 'hidden';
 
                 if (!cardInput) {
-                  alert('দয়া করে Card No দিন!');
+                  alert('Please enter Card No!');
                   return;
                 }
 
@@ -1201,7 +1212,7 @@ jobs:
                 const found = users.find(u => u.id === cardInput);
 
                 if (!found) {
-                  alertEl.innerText = 'এই Card No পাওয়া যায়নি! সঠিক আইডি দিন।';
+                  alertEl.innerText = 'Card No not found! Please check ID.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   document.getElementById('signupEmpDetails').classList.add('hidden');
                   return;
@@ -1209,7 +1220,7 @@ jobs:
 
                 const vault = getPinVault();
                 if (vault[found.id]) {
-                  alertEl.innerText = '⚠️ এই Card No-এর PIN ইতিমধ্যে সেট করা আছে! আপনি সরাসরি লগইন করতে পারবেন।';
+                  alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   
                   document.getElementById('signupPin').value = '';
@@ -1221,7 +1232,7 @@ jobs:
                   document.getElementById('signupSubmitBtn').classList.remove('opacity-50', 'cursor-not-allowed');
                 }
 
-                document.getElementById('signupEmpName').innerText = '✓ কর্মী: ' + found.name;
+                document.getElementById('signupEmpName').innerText = '✓ Employee: ' + found.name;
                 document.getElementById('signupEmpDesigSec').innerText = found.desig + ' • ' + found.section;
                 document.getElementById('signupEmpDetails').classList.remove('hidden');
               }
@@ -1238,26 +1249,26 @@ jobs:
                 const found = users.find(u => u.id === cardInput);
 
                 if (!found) {
-                  alertEl.innerText = 'ভুল Card No! আইডি পাওয়া যায়নি।';
+                  alertEl.innerText = 'Card No not found!';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
 
                 const vault = getPinVault();
                 if (vault[found.id]) {
-                  alertEl.innerText = '⚠️ এই কর্মীর PIN ইতিমধ্যে সেট করা রয়েছে। সরাসরি লগইন করুন।';
+                  alertEl.innerText = '⚠️ PIN already set for this ID. Please login directly.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   return;
                 }
 
                 if (pin.length < 4) {
-                  alertEl.innerText = 'PIN অবশ্যই অন্তত ৪ সংখ্যার হতে হবে!';
+                  alertEl.innerText = 'PIN must be at least 4 digits!';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
 
                 if (pin !== pinConfirm) {
-                  alertEl.innerText = 'দুই ঘরের PIN এক হয়নি!';
+                  alertEl.innerText = 'Both PIN fields must match!';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
@@ -1265,7 +1276,7 @@ jobs:
                 vault[found.id] = await hashPin(pin);
                 savePinVault(vault);
 
-                alert('✓ সাইন আপ সফল হয়েছে!\nকর্মী ' + found.name + '-এর PIN সংরক্ষিত হয়েছে।');
+                alert('✓ Sign Up Successful!\nPIN created for ' + found.name);
                 
                 clearSignUpForm();
                 document.getElementById('loginId').value = cardInput;
@@ -1279,9 +1290,9 @@ jobs:
               function tick() {
                 const now = new Date();
                 const clockEl = document.getElementById('clock');
-                if (clockEl) clockEl.innerText = now.toLocaleTimeString();
+                if (clockEl) clockEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
                 const dateEl = document.getElementById('dateStr');
-                if (dateEl) dateEl.innerText = now.toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                if (dateEl) dateEl.innerText = now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
               }
               setInterval(tick, 1000);
               tick();
@@ -1297,7 +1308,7 @@ jobs:
                 const found = users.find(u => u.id === idInput);
 
                 if (!found) {
-                  alertEl.innerText = 'ভুল Card No! এই আইডি তালিকায় নেই।';
+                  alertEl.innerText = 'Invalid Card No! ID does not exist.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
@@ -1306,14 +1317,14 @@ jobs:
                 const existingHashedPin = vault[found.id];
 
                 if (!existingHashedPin) {
-                  alertEl.innerText = 'আপনার PIN এখনও সেট করা হয়নি! "সাইন আপ" ট্যাবে গিয়ে PIN সেট করুন।';
+                  alertEl.innerText = 'PIN not set yet! Please register via Sign Up tab.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   return;
                 }
 
                 const inputHash = await hashPin(pinInput);
                 if (existingHashedPin !== inputHash) {
-                  alertEl.innerText = 'ভুল PIN! সঠিক গোপন পিন দিন।';
+                  alertEl.innerText = 'Incorrect PIN! Please enter the correct PIN.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
@@ -1334,7 +1345,7 @@ jobs:
                   document.getElementById('punchView').classList.add('hidden');
                   document.getElementById('adminView').classList.remove('hidden');
                   populateJobCardEmpDropdown();
-                  pullAllFromCloud(false);
+                  startRealtimeCloudSync();
                   loadAdminDashboard();
                 } else {
                   document.getElementById('adminView').classList.add('hidden');
@@ -1349,11 +1360,12 @@ jobs:
 
               function logout() {
                 currentUser = null;
+                if (centralSyncInterval) clearInterval(centralSyncInterval);
                 document.getElementById('authView').classList.remove('hidden');
                 document.getElementById('punchView').classList.add('hidden');
                 document.getElementById('adminView').classList.add('hidden');
                 document.getElementById('headerActions').classList.add('hidden');
-                document.getElementById('punchStatusAlert').innerText = 'হাজিরা দিতে নিচের বাটনে চাপ দিন (ফোনের ফিঙ্গারপ্রিন্ট সেন্সর চালু হবে)';
+                document.getElementById('punchStatusAlert').innerText = 'Press button below and touch fingerprint sensor';
                 injectLogos();
                 clearSignUpForm();
                 loadRememberedCredentials();
@@ -1389,7 +1401,7 @@ jobs:
                 const reason = document.getElementById('leaveReason').value.trim();
 
                 if (fromDate > toDate) {
-                  alert('শুরুর তারিখ শেষের তারিখের চেয়ে বড় হতে পারবে না!');
+                  alert('From Date cannot be later than To Date!');
                   return;
                 }
 
@@ -1404,12 +1416,12 @@ jobs:
                   fromDate: fromDate,
                   toDate: toDate,
                   reason: reason,
-                  appliedOn: new Date().toLocaleDateString('bn-BD') + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                  appliedOn: new Date().toISOString().split('T')[0],
                   status: 'PENDING'
                 });
                 saveLeaves(leaves);
                 closeLeaveApplyModal();
-                alert('ছুটির আবেদন সফলভাবে জমা হয়েছে!');
+                alert('✓ Leave application submitted successfully!');
               }
 
               function switchAdminTab(tab) {
@@ -1462,7 +1474,7 @@ jobs:
 
                 const tbody = document.getElementById('adminTableBody');
                 if (records.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500 font-sans">কোনো হাজিরার তথ্য নেই</td></tr>';
+                  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500 font-sans">No attendance records found</td></tr>';
                 } else {
                   tbody.innerHTML = records.map(r => `
                     <tr class="hover:bg-slate-800/40">
@@ -1473,7 +1485,7 @@ jobs:
                       <td class="p-2.5 text-rose-400 font-bold">${r.checkOut || '--:--'}</td>
                       <td class="p-2.5 font-sans"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">${r.status}</span></td>
                       <td class="p-2.5 text-center">
-                        <button onclick="deleteSingleRecord('${r.id}')" class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded active:scale-90" title="রেকর্ড মুছুন">
+                        <button onclick="deleteSingleRecord('${r.id}')" class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded active:scale-90" title="Delete Record">
                           🗑️
                         </button>
                       </td>
@@ -1486,7 +1498,7 @@ jobs:
               }
 
               function deleteSingleRecord(recordId) {
-                if (confirm('আপনি কি এই হাজিরার রেকর্ডটি মুছে ফেলতে চান?\nমুছে ফেললে এক্সেল ও জব কার্ড থেকেও এটি চিরতরে বাদ যাবে।')) {
+                if (confirm('Delete this attendance record?\nIt will be permanently removed from cloud, Excel, and Job Card.')) {
                   let records = getRecords();
                   records = records.filter(r => r.id !== recordId);
                   saveRecords(records);
@@ -1496,7 +1508,7 @@ jobs:
                   } catch(e) {}
 
                   loadAdminDashboard();
-                  alert('✓ রেকর্ডটি সফলভাবে মুছে ফেলা হয়েছে!');
+                  alert('✓ Record deleted successfully!');
                 }
               }
 
@@ -1504,7 +1516,7 @@ jobs:
                 const leaves = getLeaves();
                 const container = document.getElementById('adminLeaveCardsContainer');
                 if (leaves.length === 0) {
-                  container.innerHTML = '<p class="text-slate-500 text-center py-6">কোনো ছুটির আবেদন জমা পড়েনি</p>';
+                  container.innerHTML = '<p class="text-slate-500 text-center py-6">No leave applications found</p>';
                   return;
                 }
                 container.innerHTML = leaves.map(l => `
@@ -1517,13 +1529,13 @@ jobs:
                       <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${l.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : l.status === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}">${l.status} (${l.type})</span>
                     </div>
                     <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
-                      <p class="text-slate-300"><b>সময়সীমা:</b> ${l.fromDate} হতে ${l.toDate}</p>
-                      <p class="text-slate-300 mt-0.5"><b>কারণ:</b> ${l.reason}</p>
+                      <p class="text-slate-300"><b>Duration:</b> ${l.fromDate} to ${l.toDate}</p>
+                      <p class="text-slate-300 mt-0.5"><b>Reason:</b> ${l.reason}</p>
                     </div>
                     ${l.status === 'PENDING' ? `
                       <div class="flex space-x-2 pt-2 border-t border-slate-800">
-                        <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ অনুমোদন</button>
-                        <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ বাতিল</button>
+                        <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ Approve</button>
+                        <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ Reject</button>
                       </div>
                     ` : ''}
                   </div>
@@ -1556,7 +1568,7 @@ jobs:
                   saveRecords(records);
                 }
 
-                alert(newStatus === 'APPROVED' ? '✓ ছুটি সফলভাবে অনুমোদন করা হয়েছে!\nএটি জব কার্ডে নির্দিষ্ট তারিখগুলোতে (Leave C/L, M/L, E/L) হিসেবে সরাসরি প্রদর্শিত হবে।' : 'ছুটি বাতিল করা হয়েছে।');
+                alert(newStatus === 'APPROVED' ? '✓ Leave Approved! Added to date range on Job Card.' : 'Leave rejected.');
                 loadAdminDashboard();
                 if (currentJobCardData && currentJobCardData.emp) {
                   renderSelectedEmployeeJobCard();
@@ -1572,10 +1584,10 @@ jobs:
                   <tr class="hover:bg-slate-800/40">
                     <td class="p-2.5 font-mono text-emerald-400 font-bold">${u.id}</td>
                     <td class="p-2.5 font-sans">${u.name}<br><span class="text-[9px] text-slate-400">${u.section}</span></td>
-                    <td class="p-2.5">${vault[u.id] ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN সেট আছে</span>' : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ সেট হয়নি</span>'}</td>
+                    <td class="p-2.5">${vault[u.id] ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN Active</span>' : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ Not Set</span>'}</td>
                     <td class="p-2.5">
                       <button onclick="resetUserPin('${u.id}', '${u.name}')" class="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold active:scale-95">
-                        রিসেট
+                        Reset
                       </button>
                     </td>
                   </tr>
@@ -1583,43 +1595,52 @@ jobs:
               }
 
               function resetUserPin(empId, empName) {
-                if (confirm(empName + ' (' + empId + ')-এর PIN রিসেট করতে চান?')) {
+                if (confirm('Reset PIN for ' + empName + ' (' + empId + ')?')) {
                   const vault = getPinVault();
                   delete vault[empId];
                   savePinVault(vault);
-                  alert('✓ PIN রিসেট করা হয়েছে!');
+                  alert('✓ PIN Reset successfully!');
                   loadAdminPinManagement();
                 }
               }
 
+              // 100% DIRECT DOWNLOAD FOR EXCEL / CSV (NATIVE DOWNLOADS INTEGRATION)
               function exportAttendanceCSV() {
                 const records = getRecords();
                 if (records.length === 0) {
-                  alert('ডাউনলোড করার মতো হাজিরার ডাটা নেই!');
+                  alert('No attendance records to export!');
                   return;
                 }
                 let csv = 'DATE,CARD_NO,EMPLOYEE_NAME,SECTION,IN_TIME,OUT_TIME,STATUS\n';
                 records.forEach(r => {
                   csv += `"${r.date}","${r.empId}","${r.name}","${r.section}","${r.checkIn}","${r.checkOut || ''}","${r.status}"\n`;
                 });
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `Tamishna_ERP_Attendance_${new Date().toISOString().split('T')[0]}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                
+                const filename = `Tamishna_ERP_Attendance_${new Date().toISOString().split('T')[0]}.csv`;
+
+                if (window.AndroidBiometric && window.AndroidBiometric.saveCsvToDownloads) {
+                  window.AndroidBiometric.saveCsvToDownloads(csv, filename);
+                } else {
+                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = filename;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  alert('✓ Attendance Excel CSV downloaded successfully!');
+                }
               }
 
               function clearAllData() {
-                if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?\nমুছে ফেললে অ্যাপ ও এক্সেল ফাইল উভয়ের ডাটাই চিরতরে খালি হয়ে যাবে।')) {
-                  localStorage.removeItem('tsl_records_v23');
+                if (confirm('Delete ALL attendance records permanently?\nThis will clear the central cloud and device records.')) {
+                  localStorage.removeItem('tsl_records_v24');
                   try {
                     fetch(`${SHARED_CLOUD_SYNC_URL}.json`, { method: 'DELETE' });
                   } catch(e) {}
                   loadAdminDashboard();
-                  alert('✓ সমস্ত হাজিরার ডাটা সম্পূর্ণ মুছে ফেলা হয়েছে!');
+                  alert('✓ All attendance records have been cleared!');
                 }
               }
 
@@ -1637,12 +1658,12 @@ jobs:
         run: |
           sed -i '/<application/i <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n<uses-permission android:name="android.permission.USE_FINGERPRINT" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
 
-      # ADD ANDROIDX BIOMETRIC DEPENDENCY & BUMP VERSION TO V3.3.0
+      # ADD ANDROIDX BIOMETRIC DEPENDENCY & BUMP VERSION TO V3.4.0
       - name: Add AndroidX Biometric Dependency & Bump Version
         run: |
           sed -i '/dependencies {/a \    implementation "androidx.biometric:biometric:1.1.0"' tamishna/android/app/build.gradle
-          sed -i 's/versionCode 1/versionCode 15/g' tamishna/android/app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "3.3.0"/g' tamishna/android/app/build.gradle
+          sed -i 's/versionCode 1/versionCode 16/g' tamishna/android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "3.4.0"/g' tamishna/android/app/build.gradle
 
       # INJECT BULLETPROOF NATIVE BIOMETRIC & REAL DOWNLOADS ENGINE INTO MAINACTIVITY
       - name: Inject Native Biometric and Real Storage Engine
@@ -1668,6 +1689,7 @@ jobs:
           import java.io.File;
           import java.io.FileOutputStream;
           import java.io.OutputStream;
+          import java.nio.charset.StandardCharsets;
           import java.util.concurrent.Executor;
 
           public class MainActivity extends BridgeActivity {
@@ -1702,13 +1724,13 @@ jobs:
                               }
                           });
 
-                          String title = actionType.equals("CHECK_IN") ? "হাজিরা (Check-In) নিশ্চিতকরণ" : "প্রস্থান (Check-Out) নিশ্চিতকরণ";
-                          String subtitle = "Tamishna Synthetics Limited - আঙ্গুলের ছাপ দিন";
+                          String title = actionType.equals("CHECK_IN") ? "Attendance Check-In" : "Attendance Check-Out";
+                          String subtitle = "Tamishna Synthetics Ltd. - Touch Fingerprint Sensor";
 
                           BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                                   .setTitle(title)
                                   .setSubtitle(subtitle)
-                                  .setNegativeButtonText("বাতিল (Cancel)")
+                                  .setNegativeButtonText("Cancel")
                                   .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.BIOMETRIC_WEAK)
                                   .build();
 
@@ -1716,7 +1738,7 @@ jobs:
                       });
                   }
 
-                  // 100% REAL NATIVE ANDROID PDF SAVER DIRECTLY INTO DOWNLOADS DIRECTORY
+                  // NATIVE PDF SAVER DIRECTLY INTO DOWNLOADS
                   @JavascriptInterface
                   public void savePdfToDownloads(final String base64Data, final String rawFilename) {
                       runOnUiThread(() -> {
@@ -1738,13 +1760,13 @@ jobs:
                                           outputStream.flush();
                                           outputStream.close();
                                       }
-                                      Toast.makeText(MainActivity.this, "✓ Job Card PDF সফলভাবে Downloads ফোল্ডারে সেভ হয়েছে!", Toast.LENGTH_LONG).show();
+                                      Toast.makeText(MainActivity.this, "✓ PDF saved to Downloads folder!", Toast.LENGTH_LONG).show();
 
                                       try {
                                           Intent intent = new Intent(Intent.ACTION_VIEW);
                                           intent.setDataAndType(uri, "application/pdf");
                                           intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                          startActivity(Intent.createChooser(intent, "PDF ফাইলটি ওপেন করুন"));
+                                          startActivity(Intent.createChooser(intent, "Open PDF"));
                                       } catch (Exception ignored) {}
                                   }
                               } else {
@@ -1755,10 +1777,57 @@ jobs:
                                   fos.write(pdfBytes);
                                   fos.flush();
                                   fos.close();
-                                  Toast.makeText(MainActivity.this, "✓ Job Card PDF সফলভাবে Downloads ফোল্ডারে সেভ হয়েছে!", Toast.LENGTH_LONG).show();
+                                  Toast.makeText(MainActivity.this, "✓ PDF saved to Downloads folder!", Toast.LENGTH_LONG).show();
                               }
                           } catch (Exception e) {
-                              Toast.makeText(MainActivity.this, "PDF সেভ হতে ত্রুটি: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                              Toast.makeText(MainActivity.this, "PDF save error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                          }
+                      });
+                  }
+
+                  // NATIVE EXCEL / CSV SAVER DIRECTLY INTO DOWNLOADS
+                  @JavascriptInterface
+                  public void saveCsvToDownloads(final String csvContent, final String rawFilename) {
+                      runOnUiThread(() -> {
+                          try {
+                              String safeFilename = rawFilename.replaceAll("[^a-zA-Z0-9._-]", "_");
+                              byte[] csvBytes = csvContent.getBytes(StandardCharsets.UTF_8);
+
+                              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                  ContentValues values = new ContentValues();
+                                  values.put(MediaStore.MediaColumns.DISPLAY_NAME, safeFilename);
+                                  values.put(MediaStore.MediaColumns.MIME_TYPE, "text/csv");
+                                  values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                                  Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                                  if (uri != null) {
+                                      OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                                      if (outputStream != null) {
+                                          outputStream.write(csvBytes);
+                                          outputStream.flush();
+                                          outputStream.close();
+                                      }
+                                      Toast.makeText(MainActivity.this, "✓ Excel CSV saved to Downloads folder!", Toast.LENGTH_LONG).show();
+
+                                      try {
+                                          Intent intent = new Intent(Intent.ACTION_VIEW);
+                                          intent.setDataAndType(uri, "text/csv");
+                                          intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                          startActivity(Intent.createChooser(intent, "Open Excel File"));
+                                      } catch (Exception ignored) {}
+                                  }
+                              } else {
+                                  File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                  if (!downloadsDir.exists()) downloadsDir.mkdirs();
+                                  File file = new File(downloadsDir, safeFilename);
+                                  FileOutputStream fos = new FileOutputStream(file);
+                                  fos.write(csvBytes);
+                                  fos.flush();
+                                  fos.close();
+                                  Toast.makeText(MainActivity.this, "✓ Excel CSV saved to Downloads folder!", Toast.LENGTH_LONG).show();
+                              }
+                          } catch (Exception e) {
+                              Toast.makeText(MainActivity.this, "Excel save error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                           }
                       });
                   }
@@ -1824,8 +1893,8 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      # RENAME APK DIRECTLY TO "Tsl attendance.apk"
-      - name: Rename APK to Tsl attendance.apk
+      # RENAME APK DIRECTLY TO "Tsl Attendance.apk"
+      - name: Rename APK to Tsl Attendance.apk
         run: |
           mkdir -p output_apk
           cp tamishna/android/app/build/outputs/apk/debug/app-debug.apk "output_apk/Tsl attendance.apk"
@@ -1834,5 +1903,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v3.3.1
-          path: "output_apk/Tsl attendance.apk"
+          name: Tsl-Attendance-v3.4.1
+          path: "output_apk/Tsl Attendance.apk"
