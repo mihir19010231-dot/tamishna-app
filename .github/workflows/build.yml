@@ -397,7 +397,6 @@ jobs:
             <!-- 6. PRINT-READY OFFICIAL PDF REPORT MODAL -->
             <div id="pdfModal" class="hidden fixed inset-0 z-50 bg-black/90 overflow-y-auto p-4 flex justify-center items-start">
               <div class="bg-white text-slate-900 rounded-2xl w-full max-w-2xl p-6 shadow-2xl space-y-4 my-6">
-                <!-- ACTION BAR INSIDE PDF MODAL (HIDDEN ON PRINT) -->
                 <div class="no-print flex justify-between items-center border-b pb-3">
                   <div class="flex items-center space-x-2">
                     <span class="text-rose-600 font-bold text-lg">📄 PDF প্রিভিউ</span>
@@ -412,9 +411,7 @@ jobs:
                   </div>
                 </div>
 
-                <!-- OFFICIAL PDF DOCUMENT (PRINTS BEAUTIFULLY) -->
                 <div id="pdfContentToPrint" class="space-y-4 p-2 bg-white text-slate-900">
-                  <!-- LETTERHEAD -->
                   <div class="border-b-2 border-slate-800 pb-3 text-center">
                     <h1 class="text-xl font-extrabold text-blue-900 tracking-wider">TAMISHNA SYNTHETICS LIMITED</h1>
                     <p class="text-xs text-slate-600 font-medium">Gorai, Mirzapur / Gazipur Plant, Bangladesh</p>
@@ -422,14 +419,12 @@ jobs:
                     <p class="text-[11px] text-slate-500 font-mono mt-0.5" id="pdfReportDate">Report Generated: --</p>
                   </div>
 
-                  <!-- SUMMARY COUNTS -->
                   <div class="grid grid-cols-3 gap-2 text-center text-xs border p-2 rounded-lg bg-slate-50">
                     <div><b>Total Staff:</b> <span id="pdfTotalStaff">51</span></div>
                     <div><b>Present:</b> <span id="pdfPresentCount" class="text-emerald-700 font-bold">0</span></div>
                     <div><b>Admin:</b> Mihir Roy Chowdhury</div>
                   </div>
 
-                  <!-- ATTENDANCE TABLE -->
                   <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs border-collapse border border-slate-300">
                       <thead class="bg-slate-100 text-slate-700 font-bold text-[10px] uppercase">
@@ -443,13 +438,10 @@ jobs:
                           <th class="p-2 border border-slate-300">Status</th>
                         </tr>
                       </thead>
-                      <tbody id="pdfTableBody" class="text-[11px] font-mono divide-y divide-slate-200">
-                        <!-- Populated dynamically -->
-                      </tbody>
+                      <tbody id="pdfTableBody" class="text-[11px] font-mono divide-y divide-slate-200"></tbody>
                     </table>
                   </div>
 
-                  <!-- SIGNATURE BLOCK -->
                   <div class="pt-8 grid grid-cols-2 gap-8 text-center text-xs font-semibold text-slate-700">
                     <div class="border-t border-slate-400 pt-1">Prepared By (Time Keeper)</div>
                     <div class="border-t border-slate-400 pt-1">Authorized Signature (Mihir Roy Chowdhury - Admin)</div>
@@ -459,7 +451,7 @@ jobs:
             </div>
 
             <script>
-              const CLOUD_DB_URL = "https://script.google.com/macros/s/AKfycbwagzL-61l-BTLwRp2NV1yv7TuIq3pn52pmLJZddOGh_WmShuylEOtq68-JMlqUfyJx9A/exec";
+              const CLOUD_DB_URL = "https://script.google.com/macros/s/AKfycbyArqQrKOY5p3T6ACEMlLPiYaCv1umVOB6uudbLnU_-pC6T_IKv8uN_8XkZPG_OZf6A/exec";
               const MASTER_ADMIN_ID = "10008895";
               const MASTER_ADMIN_PASS = "tslhr";
 
@@ -567,16 +559,16 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v11', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v12', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v11')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v11') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v11', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v11') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v11', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v12')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v12') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v12', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v12') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v12', JSON.stringify(d)); }
 
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v11') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v11', JSON.stringify(v)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v12') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v12', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -1100,9 +1092,7 @@ jobs:
                 }
               }
 
-              // ==========================================
-              // OFFICIAL PDF REPORT GENERATION ENGINE
-              // ==========================================
+              // OFFICIAL PDF REPORT
               function generatePdfReport() {
                 const records = getRecords();
                 const today = new Date().toISOString().split('T')[0];
@@ -1172,6 +1162,7 @@ jobs:
               function openExportModal(csvContent, filename, title) {
                 activeExportPayload = { csv: csvContent, filename: filename, title: title };
                 document.getElementById('exportModalTitle').innerText = title;
+                document.getElementById('exportPreviewText').value = csvContent;
                 document.getElementById('exportModal').classList.remove('hidden');
               }
               function closeExportModal() {
