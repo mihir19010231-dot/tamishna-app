@@ -1834,5 +1834,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v3.3
+          name: Tsl-attendance-v3.3.1
           path: "output_apk/Tsl attendance.apk"
