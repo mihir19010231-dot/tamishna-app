@@ -41,26 +41,30 @@ jobs:
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
             <title>Tamishna Synthetics Ltd. - Attendance & Leave Portal</title>
             <script src="https://cdn.tailwindcss.com"></script>
+            <style>
+              @media print {
+                body { background: white !important; color: black !important; }
+                .no-print { display: none !important; }
+                .print-only { display: block !important; }
+                table { width: 100% !important; border-collapse: collapse !important; }
+                th, td { border: 1px solid #333 !important; padding: 6px !important; color: black !important; }
+              }
+            </style>
           </head>
           <body class="bg-slate-950 text-white min-h-screen flex flex-col font-sans select-none pb-8">
             
-            <!-- OFFICIAL TAMISHNA 'T' BRAND LOGO COMPONENT -->
+            <!-- OFFICIAL TAMISHNA 'T' BRAND LOGO -->
             <template id="tamishnaTLogoTpl">
               <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md select-none" xmlns="http://www.w3.org/2000/svg">
-                <!-- 1. Outer Dark Navy Blue Ring -->
                 <circle cx="100" cy="100" r="94" fill="#0c4182" stroke="#082c59" stroke-width="4" />
-                <!-- 2. Crisp White Inner Disc -->
                 <circle cx="100" cy="100" r="70" fill="#ffffff" stroke="#0c4182" stroke-width="5" />
-                <!-- 3. Bold Industrial Vibrant Orange 'T' Shape -->
-                <!-- Top Cap Wing -->
                 <path d="M 44 65 L 156 65 C 153 54 140 48 100 48 C 60 48 47 54 44 65 Z" fill="#f26522" stroke="#0c4182" stroke-width="4" />
-                <!-- Main Body of 'T' -->
                 <path d="M 44 65 L 75 65 L 75 142 C 86 148 114 148 125 142 L 125 65 L 156 65 L 148 78 L 125 78 L 125 144 C 110 151 90 151 75 144 L 75 78 L 52 78 Z" fill="#f26522" stroke="#0c4182" stroke-width="4" stroke-linejoin="round" />
               </svg>
             </template>
 
             <!-- APP HEADER -->
-            <header class="bg-slate-900 border-b border-slate-800 p-2.5 sticky top-0 z-30 flex justify-between items-center shadow-lg">
+            <header class="no-print bg-slate-900 border-b border-slate-800 p-2.5 sticky top-0 z-30 flex justify-between items-center shadow-lg">
               <div class="flex items-center space-x-2.5">
                 <div class="w-9 h-9 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0" id="headerLogoSlot"></div>
                 <div>
@@ -77,48 +81,73 @@ jobs:
               </div>
             </header>
 
-            <!-- 1. LOGIN SCREEN -->
-            <main id="loginView" class="flex-1 p-4 max-w-sm mx-auto w-full flex flex-col justify-center">
+            <!-- 1. AUTHENTICATION SCREEN -->
+            <main id="loginView" class="no-print flex-1 p-4 max-w-sm mx-auto w-full flex flex-col justify-center">
               <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-                <div class="text-center mb-5">
+                <div class="text-center mb-4">
                   <div class="w-20 h-20 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2.5" id="loginLogoSlot"></div>
                   <h2 class="text-base font-extrabold text-white">হাজিরা ও ছুটি পোর্টাল</h2>
                   <p class="text-[11px] text-emerald-400 font-medium">Tamishna Group &bull; Cloud DB Active</p>
                 </div>
 
-                <div id="loginAlert" class="hidden p-2.5 mb-4 rounded-xl text-xs text-center font-medium"></div>
+                <!-- TAB SWITCHER -->
+                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 mb-4 text-xs font-bold">
+                  <button id="authTabLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-emerald-500 text-slate-950 shadow transition">লগইন (Log In)</button>
+                  <button id="authTabSignup" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">সাইন আপ (Sign Up)</button>
+                </div>
 
-                <form onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
+                <div id="authAlert" class="hidden p-2.5 mb-3.5 rounded-xl text-xs text-center font-medium"></div>
+
+                <!-- LOGIN FORM -->
+                <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
-                    <input type="text" id="loginId" required placeholder="যেমন: 10008895 বা 10000159" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Employee ID / Card No</label>
+                    <input type="text" id="loginId" required placeholder="আপনার আইডি নম্বর দিন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
                   </div>
                   <div>
-                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">গোপনীয় PIN</label>
-                    <input type="password" id="loginPin" required maxlength="6" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Password / PIN</label>
+                    <input type="password" id="loginPin" required maxlength="10" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                   </div>
 
-                  <!-- REMEMBER PIN CHECKBOX -->
-                  <div class="flex items-center justify-between py-1">
+                  <div class="flex items-center justify-between py-0.5">
                     <label class="flex items-center space-x-2 cursor-pointer select-none">
                       <input type="checkbox" id="rememberMe" checked class="w-4 h-4 rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-emerald-500">
-                      <span class="text-[11px] text-slate-300 font-medium">PIN মনে রাখুন (Remember PIN)</span>
+                      <span class="text-[11px] text-slate-300 font-medium">পাসওয়ার্ড মনে রাখুন (Remember)</span>
                     </label>
                   </div>
 
-                  <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 active:scale-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-emerald-500/25 text-xs mt-2">
+                  <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 active:scale-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-emerald-500/25 text-xs mt-1">
                     লগইন করুন
                   </button>
+                  <p class="text-[10px] text-slate-400 text-center pt-1">
+                    কর্মীরা প্রথমবার এসে <b>"সাইন আপ"</b> ট্যাবে পাসওয়ার্ড সেট করবেন।
+                  </p>
                 </form>
 
-                <div class="mt-4 text-center">
-                  <p class="text-[10px] text-slate-400">প্রথমবার লগইন করছেন? Card No এবং যেকোনো ৪-সংখ্যার PIN দিয়ে সাবমিট করলেই সেট হয়ে যাবে।</p>
-                </div>
+                <!-- SIGN UP FORM -->
+                <form id="formSignup" onsubmit="handleSignupSubmit(event)" class="space-y-3.5 hidden">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Employee ID / Card No</label>
+                    <input type="text" id="signupId" required placeholder="আপনার কার্ড নম্বর লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-blue-500">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">নতুন Password / PIN সেট করুন</label>
+                    <input type="password" id="signupPin" required minlength="4" maxlength="10" placeholder="কমপক্ষে ৪ সংখ্যার পিন বা পাসওয়ার্ড" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-blue-500">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">পাসওয়ার্ড নিশ্চিত করুন (Confirm Password)</label>
+                    <input type="password" id="signupConfirmPin" required minlength="4" maxlength="10" placeholder="পুনরায় একই পাসওয়ার্ড লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-blue-500">
+                  </div>
+
+                  <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-indigo-500 active:scale-95 text-white font-extrabold py-3 rounded-xl shadow-lg shadow-blue-500/25 text-xs mt-1">
+                    সাইন আপ ও পাসওয়ার্ড সংরক্ষণ করুন
+                  </button>
+                </form>
               </div>
             </main>
 
             <!-- 2. EMPLOYEE PUNCH SCREEN -->
-            <main id="punchView" class="flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
+            <main id="punchView" class="no-print flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
               <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-md">
                 <div class="flex items-center space-x-3 min-w-0">
                   <div class="w-12 h-12 rounded-full bg-white p-0.5 shadow flex-shrink-0" id="profileLogoSlot"></div>
@@ -180,7 +209,7 @@ jobs:
             </main>
 
             <!-- 3. ADMIN PANEL SCREEN -->
-            <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
+            <main id="adminView" class="no-print flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
                   <div class="w-8 h-8 rounded-full bg-white p-0.5 shadow flex-shrink-0" id="adminLogoSlot"></div>
@@ -195,6 +224,9 @@ jobs:
                   </button>
                   <button onclick="exportAttendance()" class="bg-emerald-500 active:scale-95 text-slate-950 font-bold px-2 py-1.5 rounded-lg text-xs shadow">
                     <span>📊 Excel</span>
+                  </button>
+                  <button onclick="generatePdfReport()" class="bg-rose-500 hover:bg-rose-400 active:scale-95 text-white font-bold px-2 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
+                    <span>📄 PDF</span>
                   </button>
                 </div>
               </div>
@@ -218,7 +250,7 @@ jobs:
               <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
                 <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">দৈনিক হাজিরা লগ</button>
                 <button id="adminTabLeave" onclick="switchAdminTab('leave')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1">
-                  <span>ছুটি অনুমোদন (Leave)</span>
+                  <span>ছুটি অনুমোদন</span>
                   <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-amber-500 text-slate-950 text-[9px] rounded-full font-bold">0</span>
                 </button>
                 <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN রিসেট</button>
@@ -278,7 +310,7 @@ jobs:
             </main>
 
             <!-- 4. LEAVE APPLY MODAL -->
-            <div id="leaveApplyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div id="leaveApplyModal" class="no-print hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl">
                 <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2">
                   <h3 class="text-sm font-bold text-white">ছুটির আবেদন ফর্ম</h3>
@@ -320,7 +352,7 @@ jobs:
             </div>
 
             <!-- 5. UNIVERSAL EXCEL EXPORT MODAL -->
-            <div id="exportModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+            <div id="exportModal" class="no-print hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div class="flex items-center space-x-2">
@@ -329,10 +361,6 @@ jobs:
                   </div>
                   <button onclick="closeExportModal()" class="text-slate-400 text-xl hover:text-white">&times;</button>
                 </div>
-
-                <p class="text-xs text-slate-300">
-                  নিচের যেকোনো সুবিধাজনক মাধ্যমে এক্সেল ডাটা ফোনে সেভ বা শেয়ার করুন:
-                </p>
 
                 <div class="space-y-2.5">
                   <button onclick="triggerNativeShare()" class="w-full p-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
@@ -360,23 +388,81 @@ jobs:
                   </button>
                 </div>
 
-                <div class="border-t border-slate-800 pt-2">
-                  <details class="text-xs text-slate-400">
-                    <summary class="cursor-pointer text-[11px] text-slate-300 hover:underline">ডাটা প্রিভিউ দেখুন</summary>
-                    <textarea id="exportPreviewText" readonly rows="4" class="w-full mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded font-mono text-[10px] text-slate-300"></textarea>
-                  </details>
+                <div class="border-t border-slate-800 pt-2 text-right">
+                  <button onclick="closeExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. PRINT-READY OFFICIAL PDF REPORT MODAL -->
+            <div id="pdfModal" class="hidden fixed inset-0 z-50 bg-black/90 overflow-y-auto p-4 flex justify-center items-start">
+              <div class="bg-white text-slate-900 rounded-2xl w-full max-w-2xl p-6 shadow-2xl space-y-4 my-6">
+                <!-- ACTION BAR INSIDE PDF MODAL (HIDDEN ON PRINT) -->
+                <div class="no-print flex justify-between items-center border-b pb-3">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-rose-600 font-bold text-lg">📄 PDF প্রিভিউ</span>
+                  </div>
+                  <div class="flex space-x-2">
+                    <button onclick="triggerPdfPrint()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-lg text-xs shadow flex items-center space-x-1">
+                      <span>📥 Save as PDF / Print</span>
+                    </button>
+                    <button onclick="closePdfModal()" class="px-3 py-2 bg-slate-200 text-slate-800 font-bold rounded-lg text-xs">
+                      বন্ধ করুন
+                    </button>
+                  </div>
                 </div>
 
-                <div class="text-right">
-                  <button onclick="closeExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
+                <!-- OFFICIAL PDF DOCUMENT (PRINTS BEAUTIFULLY) -->
+                <div id="pdfContentToPrint" class="space-y-4 p-2 bg-white text-slate-900">
+                  <!-- LETTERHEAD -->
+                  <div class="border-b-2 border-slate-800 pb-3 text-center">
+                    <h1 class="text-xl font-extrabold text-blue-900 tracking-wider">TAMISHNA SYNTHETICS LIMITED</h1>
+                    <p class="text-xs text-slate-600 font-medium">Gorai, Mirzapur / Gazipur Plant, Bangladesh</p>
+                    <h2 class="text-sm font-bold text-slate-800 mt-2 uppercase underline tracking-wide">Daily Attendance & Work Shift Report</h2>
+                    <p class="text-[11px] text-slate-500 font-mono mt-0.5" id="pdfReportDate">Report Generated: --</p>
+                  </div>
+
+                  <!-- SUMMARY COUNTS -->
+                  <div class="grid grid-cols-3 gap-2 text-center text-xs border p-2 rounded-lg bg-slate-50">
+                    <div><b>Total Staff:</b> <span id="pdfTotalStaff">51</span></div>
+                    <div><b>Present:</b> <span id="pdfPresentCount" class="text-emerald-700 font-bold">0</span></div>
+                    <div><b>Admin:</b> Mihir Roy Chowdhury</div>
+                  </div>
+
+                  <!-- ATTENDANCE TABLE -->
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse border border-slate-300">
+                      <thead class="bg-slate-100 text-slate-700 font-bold text-[10px] uppercase">
+                        <tr>
+                          <th class="p-2 border border-slate-300">Date</th>
+                          <th class="p-2 border border-slate-300">Card No</th>
+                          <th class="p-2 border border-slate-300">Employee Name</th>
+                          <th class="p-2 border border-slate-300">Section</th>
+                          <th class="p-2 border border-slate-300">In Time</th>
+                          <th class="p-2 border border-slate-300">Out Time</th>
+                          <th class="p-2 border border-slate-300">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="pdfTableBody" class="text-[11px] font-mono divide-y divide-slate-200">
+                        <!-- Populated dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- SIGNATURE BLOCK -->
+                  <div class="pt-8 grid grid-cols-2 gap-8 text-center text-xs font-semibold text-slate-700">
+                    <div class="border-t border-slate-400 pt-1">Prepared By (Time Keeper)</div>
+                    <div class="border-t border-slate-400 pt-1">Authorized Signature (Mihir Roy Chowdhury - Admin)</div>
+                  </div>
                 </div>
               </div>
             </div>
 
             <script>
               const CLOUD_DB_URL = "https://script.google.com/macros/s/AKfycbwagzL-61l-BTLwRp2NV1yv7TuIq3pn52pmLJZddOGh_WmShuylEOtq68-JMlqUfyJx9A/exec";
+              const MASTER_ADMIN_ID = "10008895";
+              const MASTER_ADMIN_PASS = "tslhr";
 
-              // INJECT TAMISHNA 'T' BRAND LOGO TO ALL SLOTS
               function injectLogos() {
                 const logoHtml = document.getElementById('tamishnaTLogoTpl').innerHTML;
                 const slots = ['headerLogoSlot', 'loginLogoSlot', 'profileLogoSlot', 'adminLogoSlot'];
@@ -386,7 +472,27 @@ jobs:
                 });
               }
 
-              // AUTO FILL REMEMBERED PIN ON LOAD
+              function switchAuthTab(tab) {
+                const btnLogin = document.getElementById('authTabLogin');
+                const btnSignup = document.getElementById('authTabSignup');
+                const formLogin = document.getElementById('formLogin');
+                const formSignup = document.getElementById('formSignup');
+                const alertEl = document.getElementById('authAlert');
+                alertEl.className = 'hidden';
+
+                if (tab === 'login') {
+                  btnLogin.className = 'flex-1 py-2 rounded-lg bg-emerald-500 text-slate-950 shadow transition';
+                  btnSignup.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
+                  formLogin.classList.remove('hidden');
+                  formSignup.classList.add('hidden');
+                } else {
+                  btnSignup.className = 'flex-1 py-2 rounded-lg bg-blue-600 text-white shadow transition';
+                  btnLogin.className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
+                  formSignup.classList.remove('hidden');
+                  formLogin.classList.add('hidden');
+                }
+              }
+
               function checkRememberedLogin() {
                 injectLogos();
                 const saved = localStorage.getItem('tsl_remembered_user');
@@ -461,16 +567,16 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v9', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v11', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v9')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v9') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v9', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v9') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v9', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v11')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v11') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v11', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v11') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v11', JSON.stringify(d)); }
 
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v9') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v9', JSON.stringify(v)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v11') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v11', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -479,12 +585,107 @@ jobs:
                 return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
               }
 
+              // SIGN UP
+              async function handleSignupSubmit(e) {
+                e.preventDefault();
+                const idInput = document.getElementById('signupId').value.trim();
+                const pinInput = document.getElementById('signupPin').value.trim();
+                const confirmPin = document.getElementById('signupConfirmPin').value.trim();
+                const alertEl = document.getElementById('authAlert');
+
+                const users = getUsers();
+                const found = users.find(u => u.id === idInput);
+
+                if (!found) {
+                  alertEl.innerText = 'ভুল Employee ID! সঠিক কার্ড নম্বর দিন।';
+                  alertEl.className = 'p-2.5 mb-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                const vault = getPinVault();
+                if (vault[found.id]) {
+                  alertEl.innerText = 'এই আইডির অ্যাকাউন্ট ইতিমধ্যে সক্রিয় আছে! "লগইন" ট্যাবে যান।';
+                  alertEl.className = 'p-2.5 mb-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                if (pinInput !== confirmPin) {
+                  alertEl.innerText = 'দুই ঘরের পাসওয়ার্ড এক হয়নি! আবার চেক করে দিন।';
+                  alertEl.className = 'p-2.5 mb-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                const inputHash = await hashPin(pinInput);
+                vault[found.id] = inputHash;
+                savePinVault(vault);
+
+                alert('স্বাগতম ' + found.name + '!\nআপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে। এখন লগইন করুন।');
+                document.getElementById('signupId').value = '';
+                document.getElementById('signupPin').value = '';
+                document.getElementById('signupConfirmPin').value = '';
+                document.getElementById('loginId').value = found.id;
+                document.getElementById('loginPin').value = pinInput;
+                switchAuthTab('login');
+              }
+
+              // LOGIN (WITH MASTER ADMIN PASSWORD 'tslhr')
+              async function handleLoginSubmit(e) {
+                e.preventDefault();
+                const idInput = document.getElementById('loginId').value.trim();
+                const pinInput = document.getElementById('loginPin').value.trim();
+                const isRemember = document.getElementById('rememberMe').checked;
+                const alertEl = document.getElementById('authAlert');
+
+                const users = getUsers();
+                const found = users.find(u => u.id === idInput);
+
+                if (!found) {
+                  alertEl.innerText = 'ভুল ID! সঠিক Employee ID লিখুন।';
+                  alertEl.className = 'p-2.5 mb-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                // DIRECT MASTER ADMIN LOGIN CHECK
+                if (found.id === MASTER_ADMIN_ID && pinInput === MASTER_ADMIN_PASS) {
+                  if (isRemember) {
+                    localStorage.setItem('tsl_remembered_user', JSON.stringify({ id: idInput, pin: pinInput }));
+                  } else {
+                    localStorage.removeItem('tsl_remembered_user');
+                  }
+                  currentUser = found;
+                  showAppScreen();
+                  return;
+                }
+
+                const vault = getPinVault();
+                const existingHashedPin = vault[found.id];
+
+                if (!existingHashedPin) {
+                  alertEl.innerText = 'এই আইডি এখনও সাইন আপ করা হয়নি! প্রথমে "সাইন আপ" ট্যাবে গিয়ে পাসওয়ার্ড সেট করুন।';
+                  alertEl.className = 'p-2.5 mb-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                const inputHash = await hashPin(pinInput);
+                if (existingHashedPin !== inputHash) {
+                  alertEl.innerText = 'ভুল Password/PIN! সঠিক গোপন কোড দিন।';
+                  alertEl.className = 'p-2.5 mb-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                if (isRemember) {
+                  localStorage.setItem('tsl_remembered_user', JSON.stringify({ id: idInput, pin: pinInput }));
+                } else {
+                  localStorage.removeItem('tsl_remembered_user');
+                }
+
+                currentUser = found;
+                showAppScreen();
+              }
+
               async function postToCloud(payload) {
                 try {
-                  await fetch(CLOUD_DB_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                  });
+                  await fetch(CLOUD_DB_URL, { method: 'POST', body: JSON.stringify(payload) });
                 } catch (e) {
                   console.error('Cloud Sync Failed', e);
                 }
@@ -520,53 +721,6 @@ jobs:
               }
               setInterval(tick, 1000);
               tick();
-
-              async function handleLoginSubmit(e) {
-                e.preventDefault();
-                const idInput = document.getElementById('loginId').value.trim();
-                const pinInput = document.getElementById('loginPin').value.trim();
-                const isRemember = document.getElementById('rememberMe').checked;
-                const alertEl = document.getElementById('loginAlert');
-                alertEl.className = 'hidden p-2.5 mb-4 rounded-xl text-xs text-center font-medium';
-
-                const users = getUsers();
-                const found = users.find(u => u.id === idInput);
-
-                if (!found) {
-                  alertEl.innerText = 'ভুল Card No! এই আইডি তালিকায় পাওয়া যায়নি।';
-                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
-                  return;
-                }
-
-                if (pinInput.length < 4) {
-                  alertEl.innerText = 'PIN অবশ্যই অন্তত ৪ সংখ্যার হতে হবে!';
-                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
-                  return;
-                }
-
-                const vault = getPinVault();
-                const existingHashedPin = vault[found.id];
-                const inputHash = await hashPin(pinInput);
-
-                if (!existingHashedPin) {
-                  vault[found.id] = inputHash;
-                  savePinVault(vault);
-                  alert('স্বাগতম ' + found.name + '!\nআপনার দেওয়া PIN সফলভাবে এই ডিভাইসে সেট হয়ে গেছে।');
-                } else if (existingHashedPin !== inputHash) {
-                  alertEl.innerText = 'ভুল PIN! সঠিক গোপন পিন দিন। পিন ভুলে গেলে এডমিনকে জানান।';
-                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
-                  return;
-                }
-
-                if (isRemember) {
-                  localStorage.setItem('tsl_remembered_user', JSON.stringify({ id: idInput, pin: pinInput }));
-                } else {
-                  localStorage.removeItem('tsl_remembered_user');
-                }
-
-                currentUser = found;
-                showAppScreen();
-              }
 
               function showAppScreen() {
                 document.getElementById('loginView').classList.add('hidden');
@@ -906,7 +1060,7 @@ jobs:
                   saveRecords(records);
                 }
 
-                alert(newStatus === 'APPROVED' ? 'ছুটি সফলভাবে অনুমোদন করা হয়েছে এবং ক্লাউডে আপডেট হয়েছে!' : 'ছুটির আবেদন প্রত্যাখ্যান করা হয়েছে।');
+                alert(newStatus === 'APPROVED' ? 'ছুটি সফলভাবে অনুমোদন করা হয়েছে!' : 'ছুটির আবেদন প্রত্যাখ্যান করা হয়েছে।');
                 loadAdminDashboard();
               }
 
@@ -916,10 +1070,10 @@ jobs:
                 const tbody = document.getElementById('adminPinTableBody');
 
                 tbody.innerHTML = users.map(u => {
-                  const isSet = !!vault[u.id];
+                  const isSet = (u.id === MASTER_ADMIN_ID) || !!vault[u.id];
                   const statusHtml = isSet 
                     ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN সেট করা আছে</span>' 
-                    : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ এখনও সেট হয়নি</span>';
+                    : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ এখনও সাইন আপ হয়নি</span>';
                   
                   return `
                     <tr class="hover:bg-slate-800/40">
@@ -937,7 +1091,7 @@ jobs:
               }
 
               function resetUserPin(empId, empName) {
-                if (confirm(empName + ' (' + empId + ')-এর PIN রিসেট করতে চান?\nরিসেট করার পর এই কর্মী পুনরায় নিজের ইচ্ছামতো নতুন পিন সেট করতে পারবে।')) {
+                if (confirm(empName + ' (' + empId + ')-এর PIN রিসেট করতে চান?\nরিসেট করার পর এই কর্মী পুনরায় "সাইন আপ" ট্যাবে গিয়ে নতুন পাসওয়ার্ড সেট করতে পারবে।')) {
                   const vault = getPinVault();
                   delete vault[empId];
                   savePinVault(vault);
@@ -946,6 +1100,47 @@ jobs:
                 }
               }
 
+              // ==========================================
+              // OFFICIAL PDF REPORT GENERATION ENGINE
+              // ==========================================
+              function generatePdfReport() {
+                const records = getRecords();
+                const today = new Date().toISOString().split('T')[0];
+                const todayRecords = records.filter(r => r.date === today);
+
+                document.getElementById('pdfReportDate').innerText = 'Report Generated: ' + new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' });
+                document.getElementById('pdfTotalStaff').innerText = getUsers().length;
+                document.getElementById('pdfPresentCount').innerText = todayRecords.length;
+
+                const tbody = document.getElementById('pdfTableBody');
+                if (records.length === 0) {
+                  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500">কোনো হাজিরার তথ্য নেই</td></tr>';
+                } else {
+                  tbody.innerHTML = records.map(r => `
+                    <tr>
+                      <td class="p-2 border border-slate-300">${r.date}</td>
+                      <td class="p-2 border border-slate-300 font-bold">${r.empId}</td>
+                      <td class="p-2 border border-slate-300 font-sans">${r.name}</td>
+                      <td class="p-2 border border-slate-300 font-sans">${r.section}</td>
+                      <td class="p-2 border border-slate-300 text-emerald-800 font-bold">${r.checkIn}</td>
+                      <td class="p-2 border border-slate-300 text-rose-800 font-bold">${r.checkOut || '--:--'}</td>
+                      <td class="p-2 border border-slate-300 font-sans font-bold">${r.status}</td>
+                    </tr>
+                  `).join('');
+                }
+
+                document.getElementById('pdfModal').classList.remove('hidden');
+              }
+
+              function closePdfModal() {
+                document.getElementById('pdfModal').classList.add('hidden');
+              }
+
+              function triggerPdfPrint() {
+                window.print();
+              }
+
+              // EXCEL EXPORT
               let activeExportPayload = { csv: '', filename: '', title: '' };
 
               function exportAttendance() {
@@ -977,7 +1172,6 @@ jobs:
               function openExportModal(csvContent, filename, title) {
                 activeExportPayload = { csv: csvContent, filename: filename, title: title };
                 document.getElementById('exportModalTitle').innerText = title;
-                document.getElementById('exportPreviewText').value = csvContent;
                 document.getElementById('exportModal').classList.remove('hidden');
               }
               function closeExportModal() {
@@ -1079,13 +1273,9 @@ jobs:
               img = Image.new('RGBA', (sz, sz), (0, 0, 0, 0))
               draw = ImageDraw.Draw(img)
 
-              # 1. Outer Dark Navy Blue Ring
               draw.ellipse([sz*0.03, sz*0.03, sz*0.97, sz*0.97], fill='#0c4182')
-
-              # 2. Crisp White Inner Disc
               draw.ellipse([sz*0.16, sz*0.16, sz*0.84, sz*0.84], fill='#ffffff', outline='#0c4182', width=max(1, int(sz*0.025)))
 
-              # 3. Signature Vibrant Orange 'T'
               top_w = sz * 0.52
               top_h = sz * 0.14
               top_x = (sz - top_w) / 2
@@ -1109,7 +1299,6 @@ jobs:
               icon.save(os.path.join(target_dir, 'ic_launcher_round.png'))
               icon.save(os.path.join(target_dir, 'ic_launcher_foreground.png'))
 
-          # Remove XML overrides so Android home screen directly uses the crisp 'T' icon
           xml_folder = os.path.join(res_path, 'mipmap-anydpi-v26')
           if os.path.exists(xml_folder):
               import shutil
