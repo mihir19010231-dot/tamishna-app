@@ -75,7 +75,10 @@ jobs:
                 <div class="w-9 h-9 rounded-full bg-white p-0.5 flex items-center justify-center shadow-md flex-shrink-0" id="headerLogoSlot"></div>
                 <div>
                   <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                  <p class="text-[9px] text-emerald-400 font-medium">Smart Attendance & Leave Portal</p>
+                  <div class="flex items-center space-x-1.5">
+                    <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">স্মার্ট হাজিরা ও ছুটি</span>
+                  </div>
                 </div>
               </div>
               <div id="headerActions" class="hidden flex items-center space-x-2">
@@ -84,18 +87,25 @@ jobs:
               </div>
             </header>
 
-            <!-- 1. LOGIN SCREEN -->
-            <main id="loginView" class="flex-1 p-4 max-w-sm mx-auto w-full flex flex-col justify-center">
-              <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-                <div class="text-center mb-5">
-                  <div class="w-20 h-20 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2.5" id="loginLogoSlot"></div>
+            <!-- 1. LOGIN & SIGN UP SCREEN -->
+            <main id="authView" class="flex-1 p-4 max-w-sm mx-auto w-full flex flex-col justify-center">
+              <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
+                <div class="text-center mb-4">
+                  <div class="w-16 h-16 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2" id="loginLogoSlot"></div>
                   <h2 class="text-base font-extrabold text-white">হাজিরা ও ছুটি পোর্টাল</h2>
-                  <p class="text-[11px] text-emerald-400 font-medium">Tamishna Group &bull; Gazipur Plant</p>
+                  <p class="text-[10px] text-emerald-400 font-medium">Tamishna Group &bull; Gazipur Plant</p>
                 </div>
 
-                <div id="loginAlert" class="hidden p-2.5 mb-4 rounded-xl text-xs text-center font-medium"></div>
+                <!-- TABS: LOGIN VS SIGN UP -->
+                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 mb-4 text-xs font-bold">
+                  <button id="tabBtnLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-emerald-500 text-slate-950 transition">লগইন (Login)</button>
+                  <button id="tabBtnSignUp" onclick="switchAuthTab('signup')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition">সাইন আপ (Sign Up)</button>
+                </div>
 
-                <form onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
+                <div id="authAlert" class="hidden p-2.5 mb-3 rounded-xl text-xs text-center font-medium"></div>
+
+                <!-- FORM A: LOGIN FORM -->
+                <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
                     <input type="text" id="loginId" required placeholder="যেমন: 10008895 বা 10000159" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
@@ -104,14 +114,47 @@ jobs:
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">গোপনীয় PIN</label>
                     <input type="password" id="loginPin" required maxlength="6" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                   </div>
-                  <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 active:scale-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-emerald-500/25 text-xs mt-2">
+                  <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 active:scale-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-emerald-500/25 text-xs mt-1">
                     লগইন করুন
                   </button>
+                  <div class="text-center pt-2">
+                    <button type="button" onclick="switchAuthTab('signup')" class="text-[11px] text-emerald-400 hover:underline">প্রথমবার এসেছেন? সাইন আপ করে PIN সেট করুন ➔</button>
+                  </div>
                 </form>
 
-                <div class="mt-4 text-center">
-                  <p class="text-[10px] text-slate-400">প্রথমবার লগইন করছেন? Card No এবং যেকোনো ৪-সংখ্যার PIN দিয়ে সাবমিট করলেই সেট হয়ে যাবে।</p>
-                </div>
+                <!-- FORM B: SIGN UP FORM -->
+                <form id="signupForm" onsubmit="handleSignUpSubmit(event)" class="hidden space-y-3">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">আপনার Card No দিন</label>
+                    <div class="flex space-x-1.5">
+                      <input type="text" id="signupId" required placeholder="যেমন: 10008895" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
+                      <button type="button" onclick="verifyEmployeeForSignUp()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold active:scale-95">যাচাই</button>
+                    </div>
+                  </div>
+
+                  <!-- VERIFIED INFO BADGE -->
+                  <div id="signupEmpDetails" class="hidden p-2.5 bg-slate-950/90 rounded-xl border border-slate-800 text-xs space-y-0.5">
+                    <p class="text-white font-bold" id="signupEmpName"></p>
+                    <p class="text-slate-400 text-[10px]" id="signupEmpDesigSec"></p>
+                  </div>
+
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">নতুন ৪-সংখ্যার গোপন PIN দিন</label>
+                    <input type="password" id="signupPin" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">PIN আবার লিখুন (Confirm PIN)</label>
+                    <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                  </div>
+
+                  <button type="submit" class="w-full bg-blue-600 active:scale-95 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/25 text-xs mt-1">
+                    ✓ সাইন আপ ও PIN সংরক্ষণ করুন
+                  </button>
+                  <div class="text-center pt-2">
+                    <button type="button" onclick="switchAuthTab('login')" class="text-[11px] text-slate-400 hover:underline">আগে PIN সেট করেছেন? সরাসরি লগইন করুন</button>
+                  </div>
+                </form>
+
               </div>
             </main>
 
@@ -197,6 +240,7 @@ jobs:
                 </div>
               </div>
 
+              <!-- STATS CARDS -->
               <div class="grid grid-cols-3 gap-2.5 text-center">
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
                   <span class="text-[10px] text-slate-400 block">মোট কর্মী</span>
@@ -207,7 +251,7 @@ jobs:
                   <p id="todayPresentCount" class="text-base font-bold text-emerald-400">0</p>
                 </div>
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">ছুটির আবেদন পেন্ডিং</span>
+                  <span class="text-[10px] text-slate-400 block">ছুটি অপেক্ষারত</span>
                   <p id="pendingLeaveBadge" class="text-base font-bold text-amber-400">0</p>
                 </div>
               </div>
@@ -219,7 +263,7 @@ jobs:
                   <span>ছুটি অনুমোদন (Leave)</span>
                   <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-amber-500 text-slate-950 text-[9px] rounded-full font-bold">0</span>
                 </button>
-                <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN রিসেট</button>
+                <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN তালিকা</button>
               </div>
 
               <!-- VIEW A: ATTENDANCE TABLE -->
@@ -256,7 +300,7 @@ jobs:
               <!-- VIEW C: PIN MANAGEMENT SECTION -->
               <div id="adminPinSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
-                  কর্মীদের গোপন PIN রিসেট তালিকা (কেউ পিন ভুলে গেলে এখান থেকে রিসেট করুন)
+                  কর্মীদের PIN স্ট্যাটাস ও রিসেট সুবিধা
                 </div>
                 <div class="overflow-x-auto max-h-96">
                   <table class="w-full text-left text-xs text-slate-300">
@@ -335,8 +379,8 @@ jobs:
                   <button onclick="triggerNativeShare()" class="w-full p-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
                     <span class="text-2xl">📲</span>
                     <div>
-                      <div class="text-xs font-bold text-white">মোবাইলে সেভ / সরাসরি শেয়ার করুন</div>
-                      <div class="text-[10px] text-emerald-100">WhatsApp, Drive, Gmail বা Files-এ পাঠান</div>
+                      <div class="text-xs font-bold text-white">Google Drive / WhatsApp-এ সরাসরি সেভ ও শেয়ার</div>
+                      <div class="text-[10px] text-emerald-100">আপনার নিজস্ব Google Drive বা ফাইলে সেভ করুন</div>
                     </div>
                   </button>
 
@@ -357,13 +401,6 @@ jobs:
                   </button>
                 </div>
 
-                <div class="border-t border-slate-800 pt-2">
-                  <details class="text-xs text-slate-400">
-                    <summary class="cursor-pointer text-[11px] text-slate-300 hover:underline">ডাটা প্রিভিউ দেখুন</summary>
-                    <textarea id="exportPreviewText" readonly rows="4" class="w-full mt-1.5 p-2 bg-slate-950 border border-slate-800 rounded font-mono text-[10px] text-slate-300"></textarea>
-                  </details>
-                </div>
-
                 <div class="text-right">
                   <button onclick="closeExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
                 </div>
@@ -382,9 +419,6 @@ jobs:
               document.addEventListener('DOMContentLoaded', injectLogos);
               setTimeout(injectLogos, 100);
 
-              // ============================================================
-              // 1. TAMISHNA EMPLOYEES LIST (NO PINS HARDCODED IN SOURCE CODE!)
-              // ============================================================
               const TAMISHNA_EMPLOYEES = [
                 { id: "10008895", name: "Mihir Roy Chowdhury", desig: "System Admin", section: "Administration", role: "ADMIN" },
                 { id: "10000159", name: "Manobendra Nath Biswas", desig: "Asst. Manager", section: "Maintenance", role: "EMPLOYEE" },
@@ -440,24 +474,105 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v6', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v8', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v6')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v6') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v6', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v6') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v6', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v8')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v8') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v8', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v8') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v8', JSON.stringify(d)); }
 
-              // DYNAMIC PIN VAULT (STORED ON DEVICE ONLY, ZERO PINS IN CODE)
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v6') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v6', JSON.stringify(v)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v8') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v8', JSON.stringify(v)); }
 
-              // CRYPTOGRAPHIC SHA-256 PIN HASHING
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
                 const data = encoder.encode(pin + "_tsl_secure_salt_2026");
                 const hashBuffer = await crypto.subtle.digest('SHA-256', data);
                 return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+              }
+
+              // ==========================================
+              // TAB SWITCH: LOGIN VS SIGN UP
+              // ==========================================
+              function switchAuthTab(tab) {
+                const alertEl = document.getElementById('authAlert');
+                alertEl.className = 'hidden';
+
+                if (tab === 'login') {
+                  document.getElementById('loginForm').classList.remove('hidden');
+                  document.getElementById('signupForm').classList.add('hidden');
+                  document.getElementById('tabBtnLogin').className = 'flex-1 py-2 rounded-lg bg-emerald-500 text-slate-950 transition';
+                  document.getElementById('tabBtnSignUp').className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
+                } else {
+                  document.getElementById('loginForm').classList.add('hidden');
+                  document.getElementById('signupForm').classList.remove('hidden');
+                  document.getElementById('tabBtnSignUp').className = 'flex-1 py-2 rounded-lg bg-blue-600 text-white transition';
+                  document.getElementById('tabBtnLogin').className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
+                }
+              }
+
+              function verifyEmployeeForSignUp() {
+                const cardInput = document.getElementById('signupId').value.trim();
+                const alertEl = document.getElementById('authAlert');
+                alertEl.className = 'hidden';
+
+                if (!cardInput) {
+                  alert('দয়া করে Card No দিন!');
+                  return;
+                }
+
+                const users = getUsers();
+                const found = users.find(u => u.id === cardInput);
+
+                if (!found) {
+                  alertEl.innerText = 'এই Card No পাওয়া যায়নি! সঠিক আইডি দিন।';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                document.getElementById('signupEmpName').innerText = '✓ কর্মী: ' + found.name;
+                document.getElementById('signupEmpDesigSec').innerText = found.desig + ' • ' + found.section;
+                document.getElementById('signupEmpDetails').classList.remove('hidden');
+              }
+
+              async function handleSignUpSubmit(e) {
+                e.preventDefault();
+                const cardInput = document.getElementById('signupId').value.trim();
+                const pin = document.getElementById('signupPin').value.trim();
+                const pinConfirm = document.getElementById('signupPinConfirm').value.trim();
+                const alertEl = document.getElementById('authAlert');
+                alertEl.className = 'hidden';
+
+                const users = getUsers();
+                const found = users.find(u => u.id === cardInput);
+
+                if (!found) {
+                  alertEl.innerText = 'ভুল Card No! কর্মী তালিকায় আইডি পাওয়া যায়নি।';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                if (pin.length < 4) {
+                  alertEl.innerText = 'PIN অবশ্যই অন্তত ৪ সংখ্যার হতে হবে!';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                if (pin !== pinConfirm) {
+                  alertEl.innerText = 'দুই ঘরের PIN এক হয়নি! সঠিকভাবে লিখুন।';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                const vault = getPinVault();
+                vault[found.id] = await hashPin(pin);
+                savePinVault(vault);
+
+                alert('✓ সাইন আপ সফল হয়েছে!\nকর্মী ' + found.name + '-এর PIN সফলভাবে সংরক্ষিত হয়েছে। এখন লগইন করুন।');
+                document.getElementById('loginId').value = cardInput;
+                document.getElementById('loginPin').value = '';
+                switchAuthTab('login');
               }
 
               let currentUser = null;
@@ -472,41 +587,35 @@ jobs:
               setInterval(tick, 1000);
               tick();
 
-              // SECURE LOGIN & DYNAMIC FIRST-TIME SETUP
               async function handleLoginSubmit(e) {
                 e.preventDefault();
                 const idInput = document.getElementById('loginId').value.trim();
                 const pinInput = document.getElementById('loginPin').value.trim();
-                const alertEl = document.getElementById('loginAlert');
-                alertEl.className = 'hidden p-2.5 mb-4 rounded-xl text-xs text-center font-medium';
+                const alertEl = document.getElementById('authAlert');
+                alertEl.className = 'hidden';
 
                 const users = getUsers();
                 const found = users.find(u => u.id === idInput);
 
                 if (!found) {
                   alertEl.innerText = 'ভুল Card No! এই আইডি তালিকায় পাওয়া যায়নি।';
-                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
-                  return;
-                }
-
-                if (pinInput.length < 4) {
-                  alertEl.innerText = 'PIN অবশ্যই অন্তত ৪ সংখ্যার হতে হবে!';
-                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
 
                 const vault = getPinVault();
                 const existingHashedPin = vault[found.id];
-                const inputHash = await hashPin(pinInput);
 
-                // FIRST TIME LOGIN -> SET USER'S CHOSEN PIN AUTOMATICALLY
                 if (!existingHashedPin) {
-                  vault[found.id] = inputHash;
-                  savePinVault(vault);
-                  alert('স্বাগতম ' + found.name + '!\nআপনার দেওয়া PIN সফলভাবে এই ডিভাইসে সেট হয়ে গেছে। পরবর্তী সময়ে লগইন করতে এই PIN ব্যবহার করুন।');
-                } else if (existingHashedPin !== inputHash) {
-                  alertEl.innerText = 'ভুল PIN! সঠিক গোপন পিন দিন। পিন ভুলে গেলে এডমিনকে জানান।';
-                  alertEl.className = 'p-2.5 mb-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  alertEl.innerText = 'আপনার PIN এখনও সেট করা হয়নি! উপরের "সাইন আপ" ট্যাবে গিয়ে PIN সেট করুন।';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
+                  return;
+                }
+
+                const inputHash = await hashPin(pinInput);
+                if (existingHashedPin !== inputHash) {
+                  alertEl.innerText = 'ভুল PIN! সঠিক গোপন পিন দিন।';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
 
@@ -517,7 +626,7 @@ jobs:
               }
 
               function showAppScreen() {
-                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('authView').classList.add('hidden');
                 document.getElementById('headerActions').classList.remove('hidden');
                 document.getElementById('headerName').innerText = currentUser.name.split(' ')[0];
                 injectLogos();
@@ -540,7 +649,7 @@ jobs:
 
               function logout() {
                 currentUser = null;
-                document.getElementById('loginView').classList.remove('hidden');
+                document.getElementById('authView').classList.remove('hidden');
                 document.getElementById('punchView').classList.add('hidden');
                 document.getElementById('adminView').classList.add('hidden');
                 document.getElementById('headerActions').classList.add('hidden');
@@ -811,7 +920,6 @@ jobs:
                 loadAdminDashboard();
               }
 
-              // PIN RESET MANAGEMENT BY ADMIN
               function loadAdminPinManagement() {
                 const users = getUsers();
                 const vault = getPinVault();
@@ -821,7 +929,7 @@ jobs:
                   const isSet = !!vault[u.id];
                   const statusHtml = isSet 
                     ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN সেট করা আছে</span>' 
-                    : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ এখনও সেট হয়নি</span>';
+                    : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ সেট হয়নি</span>';
                   
                   return `
                     <tr class="hover:bg-slate-800/40">
@@ -839,16 +947,15 @@ jobs:
               }
 
               function resetUserPin(empId, empName) {
-                if (confirm(empName + ' (' + empId + ')-এর PIN রিসেট করতে চান?\nরিসেট করার পর এই কর্মী পুনরায় নিজের ইচ্ছামতো নতুন পিন সেট করতে পারবে।')) {
+                if (confirm(empName + ' (' + empId + ')-এর PIN রিসেট করতে চান?')) {
                   const vault = getPinVault();
                   delete vault[empId];
                   savePinVault(vault);
-                  alert('✓ ' + empName + '-এর PIN সফলভাবে রিসেট করা হয়েছে!');
+                  alert('✓ ' + empName + '-এর PIN রিসেট করা হয়েছে!');
                   loadAdminPinManagement();
                 }
               }
 
-              // EXPORT HANDLING
               let activeExportPayload = { csv: '', filename: '', title: '' };
 
               function exportAttendance() {
@@ -861,7 +968,7 @@ jobs:
                 records.forEach(r => {
                   csv += `"${r.id}","${r.date}","${r.empId}","${r.name}","${r.desig}","${r.section}","${r.checkIn}","${r.checkOut || ''}","${r.status}"\n`;
                 });
-                openExportModal(csv, `Tamishna_Attendance_${new Date().toISOString().split('T')[0]}.csv`, 'হাজিরা রিপোর্ট ডাউনলোড ও শেয়ার');
+                openExportModal(csv, `Tamishna_Attendance_${new Date().toISOString().split('T')[0]}.csv`, 'হাজিরা রিপোর্ট ডাউনলোড ও ক্লাউড শেয়ার');
               }
 
               function exportLeaveReport() {
@@ -874,13 +981,12 @@ jobs:
                 leaves.forEach(l => {
                   csv += `"${l.id}","${l.empId}","${l.name}","${l.desig}","${l.section}","${l.type}","${l.fromDate}","${l.toDate}","${l.reason}","${l.status}","${l.appliedOn}"\n`;
                 });
-                openExportModal(csv, `Tamishna_Leave_Report_${new Date().toISOString().split('T')[0]}.csv`, 'ছুটির রিপোর্ট ডাউনলোড ও শেয়ার');
+                openExportModal(csv, `Tamishna_Leave_Report_${new Date().toISOString().split('T')[0]}.csv`, 'ছুটির রিপোর্ট ডাউনলোড ও ক্লাউড শেয়ার');
               }
 
               function openExportModal(csvContent, filename, title) {
                 activeExportPayload = { csv: csvContent, filename: filename, title: title };
                 document.getElementById('exportModalTitle').innerText = title;
-                document.getElementById('exportPreviewText').value = csvContent;
                 document.getElementById('exportModal').classList.remove('hidden');
               }
               function closeExportModal() {
@@ -959,7 +1065,7 @@ jobs:
 
               function clearAllData() {
                 if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?')) {
-                  localStorage.removeItem('tsl_records_v6');
+                  localStorage.removeItem('tsl_records_v8');
                   loadAdminDashboard();
                 }
               }
