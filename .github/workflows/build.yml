@@ -39,9 +39,8 @@ jobs:
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-            <title>Tamishna Synthetics Ltd. - Attendance Portal v2.0.0</title>
+            <title>Tamishna Synthetics Ltd. - Attendance Portal</title>
             <script src="https://cdn.tailwindcss.com"></script>
-            <!-- jsPDF & AutoTable for PDF Generation -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
           </head>
@@ -79,11 +78,11 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-emerald-500/20 text-emerald-300 font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">v2.0.0</span>
+                    <span class="text-[8px] bg-emerald-500/20 text-emerald-300 font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">v2.2</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">সেন্ট্রাল ক্লাউড সক্রিয়</span>
+                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">হার্ডওয়্যার ফিঙ্গারপ্রিন্ট সক্রিয়</span>
                   </div>
                 </div>
               </div>
@@ -100,9 +99,9 @@ jobs:
                   <div class="w-16 h-16 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2" id="loginLogoSlot"></div>
                   <div class="flex items-center justify-center space-x-1.5">
                     <h2 class="text-base font-extrabold text-white">হাজিরা ও ছুটি পোর্টাল</h2>
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.5 rounded border border-blue-500/30">v2.0</span>
+                    <span class="text-[9px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.5 rounded border border-blue-500/30">v2.2</span>
                   </div>
-                  <p class="text-[10px] text-emerald-400 font-medium mt-0.5">Tamishna Group &bull; Multi-Device Cloud</p>
+                  <p class="text-[10px] text-emerald-400 font-medium mt-0.5">Tamishna Group &bull; Biometric Sensor Ready</p>
                 </div>
 
                 <!-- TABS: LOGIN VS SIGN UP -->
@@ -113,7 +112,7 @@ jobs:
 
                 <div id="authAlert" class="hidden p-2.5 mb-3 rounded-xl text-xs text-center font-medium"></div>
 
-                <!-- FORM A: LOGIN FORM -->
+                <!-- LOGIN FORM -->
                 <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
@@ -124,7 +123,6 @@ jobs:
                     <input type="password" id="loginPin" required maxlength="6" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                   </div>
 
-                  <!-- REMEMBER PASSWORD CHECKBOX -->
                   <div class="flex items-center justify-between py-1">
                     <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer select-none">
                       <input type="checkbox" id="rememberPinCheckbox" class="w-4 h-4 rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0">
@@ -140,12 +138,12 @@ jobs:
                   </div>
                 </form>
 
-                <!-- FORM B: SIGN UP FORM -->
-                <form id="signupForm" onsubmit="handleSignUpSubmit(event)" class="hidden space-y-3">
+                <!-- SIGN UP FORM -->
+                <form id="signupForm" onsubmit="handleSignUpSubmit(event)" class="hidden space-y-3" autocomplete="off">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">আপনার Card No দিন</label>
                     <div class="flex space-x-1.5">
-                      <input type="text" id="signupId" required placeholder="যেমন: 10008895" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
+                      <input type="text" id="signupId" required placeholder="যেমন: 10008895" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500" autocomplete="off">
                       <button type="button" onclick="verifyEmployeeForSignUp()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold active:scale-95">যাচাই</button>
                     </div>
                   </div>
@@ -157,14 +155,14 @@ jobs:
 
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">নতুন ৪-সংখ্যার গোপন PIN দিন</label>
-                    <input type="password" id="signupPin" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                    <input type="password" id="signupPin" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">PIN আবার লিখুন (Confirm PIN)</label>
-                    <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                    <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
 
-                  <button type="submit" class="w-full bg-blue-600 active:scale-95 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/25 text-xs mt-1">
+                  <button id="signupSubmitBtn" type="submit" class="w-full bg-blue-600 active:scale-95 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/25 text-xs mt-1">
                     ✓ সাইন আপ ও PIN সংরক্ষণ করুন
                   </button>
                   <div class="text-center pt-2">
@@ -172,9 +170,6 @@ jobs:
                   </div>
                 </form>
 
-                <div class="mt-4 border-t border-slate-800 pt-2 text-center">
-                  <span class="text-[9px] text-slate-500 font-mono">Tamishna App Build: 2026.11.v2 (Stable)</span>
-                </div>
               </div>
             </main>
 
@@ -202,18 +197,21 @@ jobs:
                 <p id="dateStr" class="text-xs text-slate-300 font-medium"></p>
               </div>
 
-              <div id="punchStatusAlert" class="p-3 bg-slate-900 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium">
-                হাজিরা দিতে নিচের আঙ্গুলের ছাপ বাটনে চাপ দিন
+              <div id="punchStatusAlert" class="p-3 bg-slate-900 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium transition duration-200">
+                হাজিরা দিতে নিচের বাটনে চাপ দিন (ফোনের ফিঙ্গারপ্রিন্ট সেন্সর চালু হবে)
               </div>
 
+              <!-- PUNCH BUTTONS -->
               <div class="grid grid-cols-2 gap-3 pt-1">
-                <button onclick="handlePunch('CHECK_IN')" class="bg-emerald-600 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
-                  <span class="text-2xl mb-1">👆</span>
+                <button onclick="triggerBiometricAuth('CHECK_IN')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
+                  <span class="text-3xl mb-1">👆</span>
                   <span class="text-xs font-bold">Fingerprint Check-In</span>
+                  <span class="text-[9px] text-emerald-200 mt-0.5">সেন্সরে আঙ্গুল দিন</span>
                 </button>
-                <button onclick="handlePunch('CHECK_OUT')" class="bg-rose-600 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
-                  <span class="text-2xl mb-1">🚪</span>
+                <button onclick="triggerBiometricAuth('CHECK_OUT')" class="bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
+                  <span class="text-3xl mb-1">🚪</span>
                   <span class="text-xs font-bold">Fingerprint Check-Out</span>
+                  <span class="text-[9px] text-rose-200 mt-0.5">সেন্সরে আঙ্গুল দিন</span>
                 </button>
               </div>
 
@@ -248,15 +246,15 @@ jobs:
                   <div>
                     <div class="flex items-center space-x-1.5">
                       <h2 class="text-xs font-bold text-white">Mihir Roy Chowdhury (Admin)</h2>
-                      <span class="text-[8px] bg-emerald-500/20 text-emerald-300 font-mono px-1 py-0.2 rounded border border-emerald-500/30">v2.0.0</span>
+                      <span class="text-[8px] bg-emerald-500/20 text-emerald-300 font-mono px-1 py-0.2 rounded border border-emerald-500/30">v2.2</span>
                     </div>
                     <p class="text-[10px] text-emerald-400">Tamishna Synthetics Limited</p>
                   </div>
                 </div>
 
                 <div class="flex space-x-1.5">
-                  <button onclick="exportAttendancePDF()" class="bg-rose-500 hover:bg-rose-400 active:scale-95 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
-                    <span>📄 PDF রিপোর্ট</span>
+                  <button onclick="openPDFExportModal()" class="bg-rose-500 hover:bg-rose-400 active:scale-95 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
+                    <span>📄 PDF সেভ</span>
                   </button>
                   <button onclick="exportAttendance()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
                     <span>📊 Excel</span>
@@ -270,7 +268,7 @@ jobs:
                   <p id="totalEmpCount" class="text-base font-bold text-white">51</p>
                 </div>
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">আজ উপস্থিত (সব ফোনে)</span>
+                  <span class="text-[10px] text-slate-400 block">আজ উপস্থিত</span>
                   <p id="todayPresentCount" class="text-base font-bold text-emerald-400">0</p>
                 </div>
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
@@ -300,7 +298,7 @@ jobs:
 
               <div id="adminAttSection" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center text-xs">
-                  <span class="text-slate-300 font-semibold">সকল ফোনের সমন্বিত হাজিরা</span>
+                  <span class="text-slate-300 font-semibold">সকল ফোনের সমন্বিত হাজিরা (Hardware Fingerprint Verified)</span>
                   <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline">রেকর্ডস মুছুন</button>
                 </div>
                 <div class="overflow-x-auto max-h-96">
@@ -312,7 +310,7 @@ jobs:
                         <th class="p-2.5">সেকশন</th>
                         <th class="p-2.5">ইন</th>
                         <th class="p-2.5">আউট</th>
-                        <th class="p-2.5">স্ট্যাটাস</th>
+                        <th class="p-2.5">ভেরিফিকেশন</th>
                       </tr>
                     </thead>
                     <tbody id="adminTableBody" class="divide-y divide-slate-800 font-mono text-[11px]"></tbody>
@@ -432,6 +430,49 @@ jobs:
               </div>
             </div>
 
+            <!-- 6. ADVANCED PDF "SAVE AS" MODAL -->
+            <div id="pdfExportModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+              <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xl">📄</span>
+                    <h3 class="text-sm font-bold text-white">হাজিরা PDF 'Save As' ও প্রিন্ট</h3>
+                  </div>
+                  <button onclick="closePDFExportModal()" class="text-slate-400 text-xl hover:text-white">&times;</button>
+                </div>
+
+                <div class="space-y-2.5">
+                  <button onclick="savePDFWithSaveAs()" class="w-full p-3 bg-rose-600 hover:bg-rose-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
+                    <span class="text-2xl">💾</span>
+                    <div>
+                      <div class="text-xs font-bold text-white">ফোনে 'Save As' দিয়ে সেভ করুন</div>
+                      <div class="text-[10px] text-rose-100">পছন্দমতো ফোল্ডার ও লোকেশন নির্বাচন করে সেভ করুন</div>
+                    </div>
+                  </button>
+
+                  <button onclick="savePDFViaSystemPrint()" class="w-full p-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
+                    <span class="text-2xl">🖨️</span>
+                    <div>
+                      <div class="text-xs font-bold text-white">অ্যান্ড্রয়েড সিস্টেম 'Save as PDF' প্রিন্টার</div>
+                      <div class="text-[10px] text-indigo-100">সরাসরি অ্যান্ড্রয়েডের অফিসিয়াল PDF প্রিন্ট উইন্ডো খুলবে</div>
+                    </div>
+                  </button>
+
+                  <button onclick="savePDFDirectDownload()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-xl text-left flex items-center space-x-3 transition shadow">
+                    <span class="text-2xl">📥</span>
+                    <div>
+                      <div class="text-xs font-bold text-slate-200">সরাসরি Downloads ফোল্ডারে নামান</div>
+                      <div class="text-[10px] text-slate-400">কোনো কিছু বাছাই ছাড়া সরাসরি ডাউনলোড হবে</div>
+                    </div>
+                  </button>
+                </div>
+
+                <div class="text-right">
+                  <button onclick="closePDFExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
+                </div>
+              </div>
+            </div>
+
             <script>
               function injectLogos() {
                 const logoHtml = document.getElementById('tamishnaLogoTpl').innerHTML;
@@ -499,16 +540,16 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v10', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v12', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v10')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v10') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v10', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v10') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v10', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v12')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v12') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v12', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v12') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v12', JSON.stringify(d)); }
 
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v10') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v10', JSON.stringify(v)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v12') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v12', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -539,7 +580,7 @@ jobs:
                 }
               }
 
-              // 2. CENTRAL CLOUD SYNC ACROSS ALL PHONES
+              // 2. CENTRAL CLOUD SYNC
               async function pushPunchToCloud(record) {
                 try {
                   fetch('https://httpbin.org/post', {
@@ -557,89 +598,237 @@ jobs:
                 }
               }
 
-              // 3. OFFICIAL PDF REPORT GENERATION
-              function exportAttendancePDF() {
-                const records = getRecords();
-                if (records.length === 0) {
-                  alert('ডাউনলোড করার মতো হাজিরার ডাটা নেই!');
-                  return;
+              // ============================================================
+              // 3. HARDWARE BIOMETRIC PROMPT SENSOR INTEGRATION
+              // ============================================================
+              function triggerBiometricAuth(actionType) {
+                if (!currentUser) return;
+                const today = new Date().toISOString().split('T')[0];
+                const alertEl = document.getElementById('punchStatusAlert');
+                let records = getRecords();
+                let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
+
+                // PRE-VALIDATION BEFORE CALLING HARDWARE SENSOR
+                if (actionType === 'CHECK_IN') {
+                  if (existingIndex !== -1) {
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ ডুপ্লিকেট পাঞ্চ বাতিল! অলরেডি ইন করেছেন (' + records[existingIndex].checkIn + ')</span>';
+                    return;
+                  }
+                } else {
+                  if (existingIndex === -1) {
+                    alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ আগে চেক-ইন (Check-In) করতে হবে!</span>';
+                    return;
+                  }
+                  if (records[existingIndex].checkOut) {
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ আজকের শিফট অলরেডি শেষ হয়েছে (' + records[existingIndex].checkOut + ')</span>';
+                    return;
+                  }
                 }
 
-                try {
-                  const { jsPDF } = window.jspdf;
-                  const doc = new jsPDF('p', 'pt', 'a4');
+                alertEl.innerHTML = '<span class="text-blue-400 font-medium animate-pulse">অনুগ্রহ করে আপনার ফোনের ফিঙ্গারপ্রিন্ট সেন্সরে আঙ্গুল ছোঁয়ান...</span>';
 
-                  doc.setFillColor(12, 65, 130);
-                  doc.rect(0, 0, 595.28, 65, 'F');
-
-                  doc.setTextColor(255, 255, 255);
-                  doc.setFontSize(16);
-                  doc.setFont('helvetica', 'bold');
-                  doc.text('TAMISHNA SYNTHETICS LIMITED', 40, 30);
-
-                  doc.setFontSize(10);
-                  doc.setFont('helvetica', 'normal');
-                  doc.text('Industrial Attendance & Shift Log Report (v2.0.0)', 40, 48);
-
-                  doc.setTextColor(50, 50, 50);
-                  doc.setFontSize(9);
-                  doc.text('Generated By: Mihir Roy Chowdhury (Admin)', 40, 85);
-                  doc.text('Plant: Gazipur Factory | Central Realtime Sync', 40, 98);
-                  doc.text('Total Punches: ' + records.length, 450, 85);
-                  doc.text('Report Date: ' + new Date().toLocaleDateString(), 450, 98);
-
-                  const tableRows = records.map(r => [
-                    r.date,
-                    r.empId,
-                    r.name,
-                    r.section || 'General',
-                    r.checkIn || '--:--',
-                    r.checkOut || '--:--',
-                    r.status
-                  ]);
-
-                  doc.autoTable({
-                    startY: 115,
-                    head: [['Date', 'Card No', 'Employee Name', 'Section', 'Check-In', 'Check-Out', 'Status']],
-                    body: tableRows,
-                    theme: 'striped',
-                    headStyles: {
-                      fillColor: [12, 65, 130],
-                      textColor: [255, 255, 255],
-                      fontSize: 8,
-                      fontStyle: 'bold'
-                    },
-                    bodyStyles: {
-                      fontSize: 8,
-                      textColor: [40, 40, 40]
-                    },
-                    alternateRowStyles: {
-                      fillColor: [245, 247, 250]
-                    },
-                    margin: { left: 40, right: 40 }
-                  });
-
-                  const filename = 'Tamishna_Attendance_Report_' + new Date().toISOString().split('T')[0] + '.pdf';
-                  
-                  const pdfBlob = doc.output('blob');
-                  if (navigator.canShare) {
-                    const file = new File([pdfBlob], filename, { type: 'application/pdf' });
-                    if (navigator.canShare({ files: [file] })) {
-                      navigator.share({
-                        title: 'Tamishna Attendance PDF Report',
-                        files: [file]
-                      }).catch(() => doc.save(filename));
-                      return;
-                    }
+                // TRIGGER OFFICIAL NATIVE ANDROID BIOMETRIC SENSOR DIALOG
+                if (window.AndroidBiometric && window.AndroidBiometric.authenticate) {
+                  window.AndroidBiometric.authenticate(actionType);
+                } else {
+                  // Fallback simulation for desktop browser testing
+                  const confirmed = confirm("[Hardware Sensor Simulator]\nTamishna Synthetics Attendance\n\nআঙ্গুলের ছাপ ভেরিফাই করতে 'OK' চাপুন।");
+                  if (confirmed) {
+                    onBiometricSuccess(actionType);
+                  } else {
+                    onBiometricError("ভেরিফিকেশন বাতিল করা হয়েছে");
                   }
-                  doc.save(filename);
-                  alert('✓ PDF সফলভাবে তৈরি হয়েছে এবং ডাউনলোড হয়েছে!');
-                } catch(err) {
-                  alert('PDF তৈরিতে সমস্যা হয়েছে। দয়া করে Excel অপশনটি ব্যবহার করুন।');
                 }
               }
 
-              // TABS, LOGIN & SIGN UP
+              // NATIVE ANDROID CALLBACKS
+              window.onBiometricSuccess = function(actionType) {
+                if (!currentUser) return;
+                const today = new Date().toISOString().split('T')[0];
+                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const alertEl = document.getElementById('punchStatusAlert');
+                let records = getRecords();
+                let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
+
+                const punchRecord = {
+                  id: 'REC-' + Date.now(),
+                  date: today,
+                  empId: currentUser.id,
+                  name: currentUser.name,
+                  desig: currentUser.desig,
+                  section: currentUser.section,
+                  checkIn: actionType === 'CHECK_IN' ? timeStr : (records[existingIndex] ? records[existingIndex].checkIn : timeStr),
+                  checkOut: actionType === 'CHECK_OUT' ? timeStr : null,
+                  status: 'PRESENT (Sensor Verified)'
+                };
+
+                if (actionType === 'CHECK_IN') {
+                  records.unshift(punchRecord);
+                  saveRecords(records);
+                  pushPunchToCloud(punchRecord);
+                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ ফিঙ্গারপ্রিন্ট সেন্সর ভেরিফাইড! চেক-ইন হয়েছে (' + timeStr + ')</span>';
+                } else {
+                  records[existingIndex].checkOut = timeStr;
+                  saveRecords(records);
+                  pushPunchToCloud(records[existingIndex]);
+                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ ফিঙ্গারপ্রিন্ট সেন্সর ভেরিফাইড! চেক-আউট হয়েছে (' + timeStr + ')</span>';
+                }
+                refreshEmployeeTodayPunch();
+              };
+
+              window.onBiometricFailed = function() {
+                const alertEl = document.getElementById('punchStatusAlert');
+                alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ আঙ্গুলের ছাপ মেলেনি! আবার সঠিক আঙ্গুল সেন্সরে রাখুন।</span>';
+              };
+
+              window.onBiometricError = function(errMsg) {
+                const alertEl = document.getElementById('punchStatusAlert');
+                alertEl.innerHTML = '<span class="text-amber-400">⚠️ সেন্সর ভেরিফিকেশন বাতিল বা ত্রুটি: ' + errMsg + '</span>';
+              };
+
+              // 4. ADVANCED PDF 'SAVE AS' GENERATOR
+              let activePdfDoc = null;
+              let activePdfFilename = '';
+
+              function buildPdfDocument() {
+                const records = getRecords();
+                if (records.length === 0) return null;
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'pt', 'a4');
+
+                doc.setFillColor(12, 65, 130);
+                doc.rect(0, 0, 595.28, 65, 'F');
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text('TAMISHNA SYNTHETICS LIMITED', 40, 30);
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Industrial Attendance & Shift Log Report (Biometric Sensor)', 40, 48);
+
+                doc.setTextColor(50, 50, 50);
+                doc.setFontSize(9);
+                doc.text('Generated By: Mihir Roy Chowdhury (Admin)', 40, 85);
+                doc.text('Plant: Gazipur Factory | Hardware Biometric Verified', 40, 98);
+                doc.text('Total Punches: ' + records.length, 440, 85);
+                doc.text('Report Date: ' + new Date().toLocaleDateString(), 440, 98);
+
+                const tableRows = records.map(r => [
+                  r.date,
+                  r.empId,
+                  r.name,
+                  r.section || 'General',
+                  r.checkIn || '--:--',
+                  r.checkOut || '--:--',
+                  r.status
+                ]);
+
+                doc.autoTable({
+                  startY: 115,
+                  head: [['Date', 'Card No', 'Employee Name', 'Section', 'Check-In', 'Check-Out', 'Status']],
+                  body: tableRows,
+                  theme: 'striped',
+                  headStyles: {
+                    fillColor: [12, 65, 130],
+                    textColor: [255, 255, 255],
+                    fontSize: 8,
+                    fontStyle: 'bold'
+                  },
+                  bodyStyles: { fontSize: 8, textColor: [40, 40, 40] },
+                  alternateRowStyles: { fillColor: [245, 247, 250] },
+                  margin: { left: 40, right: 40 }
+                });
+
+                return doc;
+              }
+
+              function openPDFExportModal() {
+                const records = getRecords();
+                if (records.length === 0) {
+                  alert('ডাউনলোড করার মতো কোনো হাজিরার ডাটা নেই!');
+                  return;
+                }
+                activePdfDoc = buildPdfDocument();
+                activePdfFilename = 'Tamishna_Attendance_' + new Date().toISOString().split('T')[0] + '.pdf';
+                document.getElementById('pdfExportModal').classList.remove('hidden');
+              }
+              function closePDFExportModal() {
+                document.getElementById('pdfExportModal').classList.add('hidden');
+              }
+
+              async function savePDFWithSaveAs() {
+                if (!activePdfDoc) return;
+                const pdfBlob = activePdfDoc.output('blob');
+
+                if (window.showSaveFilePicker) {
+                  try {
+                    const handle = await window.showSaveFilePicker({
+                      suggestedName: activePdfFilename,
+                      types: [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(pdfBlob);
+                    await writable.close();
+                    alert('✓ আপনার নির্বাচিত ফোল্ডারে PDF সফলভাবে সেভ হয়েছে!');
+                    closePDFExportModal();
+                    return;
+                  } catch(e) {}
+                }
+
+                if (navigator.canShare) {
+                  try {
+                    const file = new File([pdfBlob], activePdfFilename, { type: 'application/pdf' });
+                    if (navigator.canShare({ files: [file] })) {
+                      await navigator.share({
+                        title: 'Tamishna Attendance PDF Report',
+                        files: [file]
+                      });
+                      closePDFExportModal();
+                      return;
+                    }
+                  } catch(e) {}
+                }
+
+                savePDFDirectDownload();
+              }
+
+              function savePDFViaSystemPrint() {
+                if (!activePdfDoc) return;
+                const pdfUrl = activePdfDoc.output('bloburl');
+                const printWindow = window.open(pdfUrl, '_blank');
+                if (printWindow) {
+                  printWindow.focus();
+                } else {
+                  savePDFDirectDownload();
+                }
+              }
+
+              function savePDFDirectDownload() {
+                if (!activePdfDoc) return;
+                activePdfDoc.save(activePdfFilename);
+                alert('✓ Downloads ফোল্ডারে PDF ফাইলটি সেভ হয়েছে!');
+                closePDFExportModal();
+              }
+
+              // 5. FRESH SIGN UP & FORM RESET
+              function clearSignUpForm() {
+                const form = document.getElementById('signupForm');
+                if (form) form.reset();
+                document.getElementById('signupId').value = '';
+                document.getElementById('signupPin').value = '';
+                document.getElementById('signupPinConfirm').value = '';
+                document.getElementById('signupEmpDetails').classList.add('hidden');
+                document.getElementById('signupEmpName').innerText = '';
+                document.getElementById('signupEmpDesigSec').innerText = '';
+                const alertEl = document.getElementById('authAlert');
+                alertEl.className = 'hidden';
+                document.getElementById('signupSubmitBtn').disabled = false;
+                document.getElementById('signupSubmitBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+              }
+
               function switchAuthTab(tab) {
                 const alertEl = document.getElementById('authAlert');
                 alertEl.className = 'hidden';
@@ -650,6 +839,7 @@ jobs:
                   document.getElementById('tabBtnLogin').className = 'flex-1 py-2 rounded-lg bg-emerald-500 text-slate-950 transition';
                   document.getElementById('tabBtnSignUp').className = 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition';
                 } else {
+                  clearSignUpForm();
                   document.getElementById('loginForm').classList.add('hidden');
                   document.getElementById('signupForm').classList.remove('hidden');
                   document.getElementById('tabBtnSignUp').className = 'flex-1 py-2 rounded-lg bg-blue-600 text-white transition';
@@ -673,7 +863,22 @@ jobs:
                 if (!found) {
                   alertEl.innerText = 'এই Card No পাওয়া যায়নি! সঠিক আইডি দিন।';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                  document.getElementById('signupEmpDetails').classList.add('hidden');
                   return;
+                }
+
+                const vault = getPinVault();
+                if (vault[found.id]) {
+                  alertEl.innerText = '⚠️ এই Card No-এর PIN ইতিমধ্যে সেট করা আছে! আপনি সরাসরি লগইন করতে পারবেন।';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
+                  
+                  document.getElementById('signupPin').value = '';
+                  document.getElementById('signupPinConfirm').value = '';
+                  document.getElementById('signupSubmitBtn').disabled = true;
+                  document.getElementById('signupSubmitBtn').classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                  document.getElementById('signupSubmitBtn').disabled = false;
+                  document.getElementById('signupSubmitBtn').classList.remove('opacity-50', 'cursor-not-allowed');
                 }
 
                 document.getElementById('signupEmpName').innerText = '✓ কর্মী: ' + found.name;
@@ -698,6 +903,13 @@ jobs:
                   return;
                 }
 
+                const vault = getPinVault();
+                if (vault[found.id]) {
+                  alertEl.innerText = '⚠️ এই কর্মীর PIN ইতিমধ্যে সেট করা রয়েছে। সরাসরি লগইন করুন।';
+                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
+                  return;
+                }
+
                 if (pin.length < 4) {
                   alertEl.innerText = 'PIN অবশ্যই অন্তত ৪ সংখ্যার হতে হবে!';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
@@ -710,11 +922,12 @@ jobs:
                   return;
                 }
 
-                const vault = getPinVault();
                 vault[found.id] = await hashPin(pin);
                 savePinVault(vault);
 
                 alert('✓ সাইন আপ সফল হয়েছে!\nকর্মী ' + found.name + '-এর PIN সফলভাবে সংরক্ষিত হয়েছে।');
+                
+                clearSignUpForm();
                 document.getElementById('loginId').value = cardInput;
                 document.getElementById('loginPin').value = pin;
                 handleRememberPinSave(cardInput, pin);
@@ -799,8 +1012,9 @@ jobs:
                 document.getElementById('punchView').classList.add('hidden');
                 document.getElementById('adminView').classList.add('hidden');
                 document.getElementById('headerActions').classList.add('hidden');
-                document.getElementById('punchStatusAlert').innerText = 'হাজিরা দিতে নিচের আঙ্গুলের ছাপ বাটনে চাপ দিন';
+                document.getElementById('punchStatusAlert').innerText = 'হাজিরা দিতে নিচের বাটনে চাপ দিন (ফোনের ফিঙ্গারপ্রিন্ট সেন্সর চালু হবে)';
                 injectLogos();
+                clearSignUpForm();
                 loadRememberedCredentials();
               }
 
@@ -817,52 +1031,6 @@ jobs:
                 if (approvedToday) {
                   document.getElementById('punchStatusAlert').innerHTML = '<span class="text-blue-400 font-bold">ℹ️ আপনি আজ অনুমোদিত ছুটিতে আছেন (' + approvedToday.type + ')</span>';
                 }
-              }
-
-              function handlePunch(type) {
-                if (!currentUser) return;
-                const today = new Date().toISOString().split('T')[0];
-                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const alertEl = document.getElementById('punchStatusAlert');
-                let records = getRecords();
-                let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
-
-                const punchRecord = {
-                  id: 'REC-' + Date.now(),
-                  date: today,
-                  empId: currentUser.id,
-                  name: currentUser.name,
-                  desig: currentUser.desig,
-                  section: currentUser.section,
-                  checkIn: timeStr,
-                  checkOut: null,
-                  status: 'PRESENT'
-                };
-
-                if (type === 'CHECK_IN') {
-                  if (existingIndex !== -1) {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ ডুপ্লিকেট পাঞ্চ বাতিল! অলরেডি ইন করেছেন (' + records[existingIndex].checkIn + ')</span>';
-                    return;
-                  }
-                  records.unshift(punchRecord);
-                  saveRecords(records);
-                  pushPunchToCloud(punchRecord);
-                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ ফিঙ্গারপ্রিন্ট ভেরিফাইড! চেক-ইন হয়েছে (' + timeStr + ')</span>';
-                } else {
-                  if (existingIndex === -1) {
-                    alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ আগে চেক-ইন (Check-In) করতে হবে!</span>';
-                    return;
-                  }
-                  if (records[existingIndex].checkOut) {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ আজকের শিফট শেষ হয়েছে (' + records[existingIndex].checkOut + ')</span>';
-                    return;
-                  }
-                  records[existingIndex].checkOut = timeStr;
-                  saveRecords(records);
-                  pushPunchToCloud(records[existingIndex]);
-                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ ফিঙ্গারপ্রিন্ট ভেরিফাইড! চেক-আউট হয়েছে (' + timeStr + ')</span>';
-                }
-                refreshEmployeeTodayPunch();
               }
 
               function openLeaveApplyModal() {
@@ -1122,19 +1290,6 @@ jobs:
                 openExportModal(csv, `Tamishna_Attendance_${new Date().toISOString().split('T')[0]}.csv`, 'হাজিরা রিপোর্ট ডাউনলোড ও ক্লাউড শেয়ার');
               }
 
-              function exportLeaveReport() {
-                const leaves = getLeaves();
-                if (leaves.length === 0) {
-                  alert('ডাউনলোড করার মতো ছুটির ডাটা নেই!');
-                  return;
-                }
-                let csv = 'Leave ID,Card No,Name,Designation,Section,Type,From Date,To Date,Reason,Status,Applied On\n';
-                leaves.forEach(l => {
-                  csv += `"${l.id}","${l.empId}","${l.name}","${l.desig}","${l.section}","${l.type}","${l.fromDate}","${l.toDate}","${l.reason}","${l.status}","${l.appliedOn}"\n`;
-                });
-                openExportModal(csv, `Tamishna_Leave_Report_${new Date().toISOString().split('T')[0]}.csv`, 'ছুটির রিপোর্ট ডাউনলোড ও ক্লাউড শেয়ার');
-              }
-
               function openExportModal(csvContent, filename, title) {
                 activeExportPayload = { csv: csvContent, filename: filename, title: title };
                 document.getElementById('exportModalTitle').innerText = title;
@@ -1158,17 +1313,13 @@ jobs:
                     });
                     return;
                   }
-                } catch (e) {
-                  console.log('File share fallback', e);
-                }
+                } catch (e) {}
 
                 if (navigator.share) {
                   try {
                     await navigator.share({ title: title, text: csv });
                     return;
-                  } catch (e) {
-                    console.log('Share cancel', e);
-                  }
+                  } catch (e) {}
                 }
                 triggerDirectDownload();
               }
@@ -1216,7 +1367,7 @@ jobs:
 
               function clearAllData() {
                 if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?')) {
-                  localStorage.removeItem('tsl_records_v10');
+                  localStorage.removeItem('tsl_records_v12');
                   loadAdminDashboard();
                 }
               }
@@ -1230,11 +1381,82 @@ jobs:
           npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
           npx cap add android
 
-      # UPDATE ANDROID BUILD.GRADLE VERSION CODE & VERSION NAME
-      - name: Bump Android App Version to v2.0.0
+      # ADD BIOMETRIC PERMISSIONS TO ANDROID MANIFEST
+      - name: Add Biometric Permissions to AndroidManifest
         run: |
-          sed -i 's/versionCode 1/versionCode 2/g' tamishna/android/app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "2.0.0"/g' tamishna/android/app/build.gradle
+          sed -i '/<application/i <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n<uses-permission android:name="android.permission.USE_FINGERPRINT" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
+
+      # ADD ANDROIDX BIOMETRIC DEPENDENCY TO BUILD.GRADLE
+      - name: Add AndroidX Biometric Dependency
+        run: |
+          sed -i '/dependencies {/a \    implementation "androidx.biometric:biometric:1.1.0"' tamishna/android/app/build.gradle
+          sed -i 's/versionCode 1/versionCode 4/g' tamishna/android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "2.2.0"/g' tamishna/android/app/build.gradle
+
+      # INJECT NATIVE HARDWARE BIOMETRIC PROMPT SENSOR BRIDGE INTO MAINACTIVITY
+      - name: Inject Native Android BiometricPrompt Bridge into MainActivity
+        run: |
+          cat << 'EOF' > tamishna/android/app/src/main/java/com/tamishna/synthetics/attendance/MainActivity.java
+          package com.tamishna.synthetics.attendance;
+
+          import android.os.Bundle;
+          import android.webkit.JavascriptInterface;
+          import androidx.annotation.NonNull;
+          import androidx.biometric.BiometricManager;
+          import androidx.biometric.BiometricPrompt;
+          import androidx.core.content.ContextCompat;
+          import com.getcapacitor.BridgeActivity;
+          import java.util.concurrent.Executor;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  // Inject Hardware Biometric Sensor Bridge directly to WebView
+                  this.bridge.getWebView().addJavascriptInterface(new BiometricBridge(), "AndroidBiometric");
+              }
+
+              public class BiometricBridge {
+                  @JavascriptInterface
+                  public void authenticate(final String actionType) {
+                      runOnUiThread(() -> {
+                          Executor executor = ContextCompat.getMainExecutor(MainActivity.this);
+                          BiometricPrompt biometricPrompt = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+                              @Override
+                              public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                                  super.onAuthenticationSucceeded(result);
+                                  bridge.getWebView().evaluateJavascript("window.onBiometricSuccess('" + actionType + "')", null);
+                              }
+
+                              @Override
+                              public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                                  super.onAuthenticationError(errorCode, errString);
+                                  bridge.getWebView().evaluateJavascript("window.onBiometricError('" + errString + "')", null);
+                              }
+
+                              @Override
+                              public void onAuthenticationFailed() {
+                                  super.onAuthenticationFailed();
+                                  bridge.getWebView().evaluateJavascript("window.onBiometricFailed()", null);
+                              }
+                          });
+
+                          String title = actionType.equals("CHECK_IN") ? "হাজিরা (Check-In) নিশ্চিতকরণ" : "প্রস্থান (Check-Out) নিশ্চিতকরণ";
+                          String subtitle = "Tamishna Synthetics Limited - আঙ্গুলের ছাপ স্ক্যান করুন";
+
+                          BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                                  .setTitle(title)
+                                  .setSubtitle(subtitle)
+                                  .setNegativeButtonText("বাতিল (Cancel)")
+                                  .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.BIOMETRIC_WEAK)
+                                  .build();
+
+                          biometricPrompt.authenticate(promptInfo);
+                      });
+                  }
+              }
+          }
+          EOF
 
       # GENERATE TAMISHNA GROUP APP LAUNCHER ICONS (ALL SIZES)
       - name: Generate Official Tamishna Group App Icons
@@ -1297,5 +1519,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Tamishna-Attendance-APK-v2.0.0
+          name: Tamishna-Attendance-APK-v2.2
           path: tamishna/android/app/build/outputs/apk/debug/*.apk
