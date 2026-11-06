@@ -39,7 +39,7 @@ jobs:
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-            <title>Tamishna Synthetics Ltd. - Attendance Portal</title>
+            <title>Tamishna Synthetics Ltd. - Attendance & Job Card Portal</title>
             <script src="https://cdn.tailwindcss.com"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -78,11 +78,11 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-emerald-500/20 text-emerald-300 font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-500/30">v2.2</span>
+                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v2.8</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">হার্ডওয়্যার ফিঙ্গারপ্রিন্ট সক্রিয়</span>
+                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">হাজিরা ও জব কার্ড সিস্টেম</span>
                   </div>
                 </div>
               </div>
@@ -92,16 +92,16 @@ jobs:
               </div>
             </header>
 
-            <!-- 1. LOGIN & SIGN UP SCREEN -->
+            <!-- 1. LOGIN & SIGN UP SCREEN (COMPLETELY CONFIDENTIAL - NO EXPOSED DEMO IDS) -->
             <main id="authView" class="flex-1 p-4 max-w-sm mx-auto w-full flex flex-col justify-center">
               <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
                 <div class="text-center mb-4">
                   <div class="w-16 h-16 mx-auto bg-white rounded-full p-1 shadow-xl shadow-blue-900/30 mb-2" id="loginLogoSlot"></div>
                   <div class="flex items-center justify-center space-x-1.5">
-                    <h2 class="text-base font-extrabold text-white">হাজিরা ও ছুটি পোর্টাল</h2>
-                    <span class="text-[9px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.5 rounded border border-blue-500/30">v2.2</span>
+                    <h2 class="text-base font-extrabold text-white">হাজিরা ও জব কার্ড পোর্টাল</h2>
+                    <span class="text-[9px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.5 rounded border border-blue-500/30">TSL</span>
                   </div>
-                  <p class="text-[10px] text-emerald-400 font-medium mt-0.5">Tamishna Group &bull; Biometric Sensor Ready</p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Plant: Gazipur &bull; Enterprise Attendance Client</p>
                 </div>
 
                 <!-- TABS: LOGIN VS SIGN UP -->
@@ -116,11 +116,11 @@ jobs:
                 <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
-                    <input type="text" id="loginId" required placeholder="যেমন: 10008895 বা 10000159" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="loginId" required placeholder="Card No লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500">
                   </div>
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">গোপনীয় PIN</label>
-                    <input type="password" id="loginPin" required maxlength="6" placeholder="••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                    <input type="password" id="loginPin" required maxlength="6" placeholder="PIN লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                   </div>
 
                   <div class="flex items-center justify-between py-1">
@@ -134,7 +134,7 @@ jobs:
                     লগইন করুন
                   </button>
                   <div class="text-center pt-2">
-                    <button type="button" onclick="switchAuthTab('signup')" class="text-[11px] text-emerald-400 hover:underline">প্রথমবার এসেছেন? সাইন আপ করে PIN সেট করুন ➔</button>
+                    <button type="button" onclick="switchAuthTab('signup')" class="text-[11px] text-emerald-400 hover:underline">প্রথমবার লগইন করছেন? সাইন আপ করুন ➔</button>
                   </div>
                 </form>
 
@@ -143,7 +143,7 @@ jobs:
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">আপনার Card No দিন</label>
                     <div class="flex space-x-1.5">
-                      <input type="text" id="signupId" required placeholder="যেমন: 10008895" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500" autocomplete="off">
+                      <input type="text" id="signupId" required placeholder="Card No লিখুন" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono focus:outline-none focus:border-emerald-500" autocomplete="off">
                       <button type="button" onclick="verifyEmployeeForSignUp()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold active:scale-95">যাচাই</button>
                     </div>
                   </div>
@@ -155,25 +155,25 @@ jobs:
 
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">নতুন ৪-সংখ্যার গোপন PIN দিন</label>
-                    <input type="password" id="signupPin" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
+                    <input type="password" id="signupPin" required maxlength="6" placeholder="নতুন PIN লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">PIN আবার লিখুন (Confirm PIN)</label>
-                    <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="যেমন: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
+                    <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="PIN পুনরায় লিখুন" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
 
                   <button id="signupSubmitBtn" type="submit" class="w-full bg-blue-600 active:scale-95 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/25 text-xs mt-1">
-                    ✓ সাইন আপ ও PIN সংরক্ষণ করুন
+                    ✓ সাইন আপ সম্পন্ন করুন
                   </button>
                   <div class="text-center pt-2">
-                    <button type="button" onclick="switchAuthTab('login')" class="text-[11px] text-slate-400 hover:underline">আগে PIN সেট করেছেন? সরাসরি লগইন করুন</button>
+                    <button type="button" onclick="switchAuthTab('login')" class="text-[11px] text-slate-400 hover:underline">আগে PIN সেট করেছেন? লগইন করুন</button>
                   </div>
                 </form>
 
               </div>
             </main>
 
-            <!-- 2. EMPLOYEE PUNCH SCREEN -->
+            <!-- 2. EMPLOYEE PUNCH & INDIVIDUAL JOB CARD SCREEN -->
             <main id="punchView" class="flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
               <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-md">
                 <div class="flex items-center space-x-3 min-w-0">
@@ -184,10 +184,16 @@ jobs:
                     <p class="text-[10px] text-emerald-400 font-mono mt-0.5">Card: <span id="userId" class="font-bold"></span> &bull; <span id="userSection"></span></p>
                   </div>
                 </div>
-                <button onclick="openLeaveApplyModal()" class="px-2.5 py-2 bg-blue-600/20 border border-blue-500/40 text-blue-300 rounded-xl text-[11px] font-bold active:scale-95 flex items-center space-x-1 flex-shrink-0">
-                  <span>📝</span>
-                  <span>ছুটির আবেদন</span>
-                </button>
+                <div class="flex flex-col space-y-1.5 flex-shrink-0">
+                  <button onclick="viewEmployeeJobCard()" class="px-2.5 py-1.5 bg-emerald-600/20 border border-emerald-500/40 text-emerald-300 rounded-xl text-[10px] font-bold active:scale-95 flex items-center space-x-1">
+                    <span>📋</span>
+                    <span>আমার জব কার্ড</span>
+                  </button>
+                  <button onclick="openLeaveApplyModal()" class="px-2.5 py-1.5 bg-blue-600/20 border border-blue-500/40 text-blue-300 rounded-xl text-[10px] font-bold active:scale-95 flex items-center space-x-1">
+                    <span>📝</span>
+                    <span>ছুটি</span>
+                  </button>
+                </div>
               </div>
 
               <!-- LIVE CLOCK -->
@@ -198,7 +204,7 @@ jobs:
               </div>
 
               <div id="punchStatusAlert" class="p-3 bg-slate-900 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium transition duration-200">
-                হাজিরা দিতে নিচের বাটনে চাপ দিন (ফোনের ফিঙ্গারপ্রিন্ট সেন্সর চালু হবে)
+                হাজিরা দিতে নিচের বাটনে চাপ দিয়ে আঙ্গুলের ছাপ দিন
               </div>
 
               <!-- PUNCH BUTTONS -->
@@ -206,12 +212,12 @@ jobs:
                 <button onclick="triggerBiometricAuth('CHECK_IN')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
                   <span class="text-3xl mb-1">👆</span>
                   <span class="text-xs font-bold">Fingerprint Check-In</span>
-                  <span class="text-[9px] text-emerald-200 mt-0.5">সেন্সরে আঙ্গুল দিন</span>
+                  <span class="text-[9px] text-emerald-200 mt-0.5">আঙ্গুলের ছাপ দিন</span>
                 </button>
                 <button onclick="triggerBiometricAuth('CHECK_OUT')" class="bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
                   <span class="text-3xl mb-1">🚪</span>
                   <span class="text-xs font-bold">Fingerprint Check-Out</span>
-                  <span class="text-[9px] text-rose-200 mt-0.5">সেন্সরে আঙ্গুল দিন</span>
+                  <span class="text-[9px] text-rose-200 mt-0.5">আঙ্গুলের ছাপ দিন</span>
                 </button>
               </div>
 
@@ -223,30 +229,22 @@ jobs:
                 </div>
               </div>
 
-              <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                <div class="flex justify-between items-center mb-2">
-                  <p class="text-[10px] text-slate-400 uppercase font-semibold">আমার সাম্প্রতিক ছুটির আবেদন</p>
-                  <span class="text-[10px] text-blue-400 font-mono cursor-pointer" onclick="openLeaveApplyModal()">+ নতুন আবেদন</span>
-                </div>
-                <div id="myLeaveList" class="space-y-2 text-xs"></div>
-              </div>
-
               <div class="text-center pt-1">
                 <button onclick="logout()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs font-semibold text-rose-400 active:scale-95">
-                  লগআউট করুন (পরবর্তী কর্মীর জন্য)
+                  লগআউট করুন
                 </button>
               </div>
             </main>
 
-            <!-- 3. ADMIN PANEL SCREEN -->
+            <!-- 3. ADMIN PANEL (ERP BASED DASHBOARD) -->
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
                   <div class="w-8 h-8 rounded-full bg-white p-0.5 shadow flex-shrink-0" id="adminLogoSlot"></div>
                   <div>
                     <div class="flex items-center space-x-1.5">
-                      <h2 class="text-xs font-bold text-white">Mihir Roy Chowdhury (Admin)</h2>
-                      <span class="text-[8px] bg-emerald-500/20 text-emerald-300 font-mono px-1 py-0.2 rounded border border-emerald-500/30">v2.2</span>
+                      <h2 class="text-xs font-bold text-white">Admin Dashboard</h2>
+                      <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono px-1 py-0.2 rounded border border-blue-500/30">ERP Base</span>
                     </div>
                     <p class="text-[10px] text-emerald-400">Tamishna Synthetics Limited</p>
                   </div>
@@ -256,12 +254,13 @@ jobs:
                   <button onclick="openPDFExportModal()" class="bg-rose-500 hover:bg-rose-400 active:scale-95 text-white font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
                     <span>📄 PDF সেভ</span>
                   </button>
-                  <button onclick="exportAttendance()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
+                  <button onclick="exportAttendanceCSV()" class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-2.5 py-1.5 rounded-lg text-xs shadow flex items-center space-x-1">
                     <span>📊 Excel</span>
                   </button>
                 </div>
               </div>
 
+              <!-- STATS -->
               <div class="grid grid-cols-3 gap-2.5 text-center">
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
                   <span class="text-[10px] text-slate-400 block">মোট কর্মী</span>
@@ -277,18 +276,10 @@ jobs:
                 </div>
               </div>
 
-              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                <div class="flex items-center space-x-2">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span class="text-slate-300 text-[11px]">অন্য সব ফোনের হাজিরার ডাটা সিঙ্ক করুন</span>
-                </div>
-                <button onclick="syncAllFromCloud(true)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow">
-                  <span>🔄 ক্লাউড রিফ্রেশ</span>
-                </button>
-              </div>
-
+              <!-- ADMIN TABS -->
               <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
-                <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">সকল হাজিরার লগ</button>
+                <button id="adminTabAtt" onclick="switchAdminTab('att')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">হাজিরা লগ</button>
+                <button id="adminTabJobCard" onclick="switchAdminTab('jobcard')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">📋 পৃথক জব কার্ড</button>
                 <button id="adminTabLeave" onclick="switchAdminTab('leave')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1">
                   <span>ছুটি অনুমোদন</span>
                   <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-amber-500 text-slate-950 text-[9px] rounded-full font-bold">0</span>
@@ -296,10 +287,11 @@ jobs:
                 <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN তালিকা</button>
               </div>
 
+              <!-- VIEW A: ATTENDANCE LOG -->
               <div id="adminAttSection" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center text-xs">
-                  <span class="text-slate-300 font-semibold">সকল ফোনের সমন্বিত হাজিরা (Hardware Fingerprint Verified)</span>
-                  <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline">রেকর্ডস মুছুন</button>
+                  <span class="text-slate-300 font-semibold">সকল হাজিরার রেকর্ডস (ডাটা মুছলে এক্সেল থেকেও মুছে যাবে)</span>
+                  <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline font-bold">সমস্ত ডাটা মুছুন</button>
                 </div>
                 <div class="overflow-x-auto max-h-96">
                   <table class="w-full text-left text-xs text-slate-300">
@@ -310,7 +302,8 @@ jobs:
                         <th class="p-2.5">সেকশন</th>
                         <th class="p-2.5">ইন</th>
                         <th class="p-2.5">আউট</th>
-                        <th class="p-2.5">ভেরিফিকেশন</th>
+                        <th class="p-2.5">স্ট্যাটাস</th>
+                        <th class="p-2.5 text-center">মুছুন</th>
                       </tr>
                     </thead>
                     <tbody id="adminTableBody" class="divide-y divide-slate-800 font-mono text-[11px]"></tbody>
@@ -318,6 +311,86 @@ jobs:
                 </div>
               </div>
 
+              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (DATE-WISE) -->
+              <div id="adminJobCardSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                  <div>
+                    <h3 class="text-xs font-bold text-white">পৃথক কর্মী জব কার্ড (Individual Employee Job Card)</h3>
+                    <p class="text-[10px] text-slate-400">Tamishna Synthetics Limited &bull; Gazipur Plant</p>
+                  </div>
+                  <button onclick="downloadJobCardPDF()" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1 shadow">
+                    <span>📄 এই কর্মীর জব কার্ড PDF সেভ</span>
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label class="block text-slate-400 mb-1">নির্দিষ্ট কর্মী নির্বাচন করুন:</label>
+                    <select id="jobCardEmpSelect" onchange="renderSelectedEmployeeJobCard()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white"></select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-400 mb-1">মাস ও বছর:</label>
+                    <input type="month" id="jobCardMonthSelect" onchange="renderSelectedEmployeeJobCard()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono">
+                  </div>
+                </div>
+
+                <!-- INDIVIDUAL JOB CARD PROFILE HEADER -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+                  <div>
+                    <p class="text-white font-bold text-sm" id="jcDisplayEmpName"></p>
+                    <p class="text-slate-400 text-[10px]" id="jcDisplayEmpDesigSec"></p>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-[9px] text-slate-400 block">কার্ড নং (ID)</span>
+                    <b class="text-emerald-400 font-mono text-sm" id="jcDisplayEmpId"></b>
+                  </div>
+                </div>
+
+                <!-- JOB CARD SUMMARY STATS -->
+                <div class="grid grid-cols-4 gap-2 text-center text-xs">
+                  <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                    <span class="text-[9px] text-slate-400 block">উপস্থিত (Present)</span>
+                    <b id="jcStatPresent" class="text-emerald-400">0</b>
+                  </div>
+                  <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                    <span class="text-[9px] text-slate-400 block">ছুটি (Leaves)</span>
+                    <b id="jcStatLeave" class="text-blue-400">0</b>
+                  </div>
+                  <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                    <span class="text-[9px] text-slate-400 block">শুক্রবার (Weekend)</span>
+                    <b id="jcStatWeekend" class="text-amber-400">0</b>
+                  </div>
+                  <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                    <span class="text-[9px] text-slate-400 block">অনুপস্থিত (Absent)</span>
+                    <b id="jcStatAbsent" class="text-rose-400">0</b>
+                  </div>
+                </div>
+
+                <!-- DATE-WISE JOB CARD TABLE -->
+                <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto max-h-72">
+                  <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-900 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
+                      <tr>
+                        <th class="p-2">তারিখ</th>
+                        <th class="p-2">বার</th>
+                        <th class="p-2">ইন টাইম</th>
+                        <th class="p-2">আউট টাইম</th>
+                        <th class="p-2">স্ট্যাটাস</th>
+                      </tr>
+                    </thead>
+                    <tbody id="jobCardTableBody" class="divide-y divide-slate-800 font-mono text-[11px]"></tbody>
+                  </table>
+                </div>
+
+                <!-- FACTORY SIGNATURES NOTE (STRICTLY NO NAMES - ADMIN & TIMEKEEPER TITLE ONLY) -->
+                <div class="border-t border-slate-800/80 pt-2 flex justify-between text-[10px] text-slate-400 font-sans">
+                  <span>Employee Signature</span>
+                  <span>Time Keeper Signature</span>
+                  <span class="font-bold text-slate-300">Admin Signature</span>
+                </div>
+              </div>
+
+              <!-- VIEW C: LEAVE APPROVAL -->
               <div id="adminLeaveSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
                   ছুটির আবেদনসমূহ (C/L, M/L, E/L)
@@ -325,6 +398,7 @@ jobs:
                 <div id="adminLeaveCardsContainer" class="p-3 space-y-3"></div>
               </div>
 
+              <!-- VIEW D: PIN MANAGEMENT -->
               <div id="adminPinSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
                   কর্মীদের PIN স্ট্যাটাস ও রিসেট সুবিধা
@@ -345,7 +419,46 @@ jobs:
               </div>
             </main>
 
-            <!-- 4. LEAVE APPLY MODAL -->
+            <!-- 4. EMPLOYEE INDIVIDUAL JOB CARD MODAL -->
+            <div id="empJobCardModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3">
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-4 shadow-2xl space-y-3 max-h-[90vh] flex flex-col">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2 flex-shrink-0">
+                  <div>
+                    <h3 class="text-sm font-bold text-white">আমার ব্যক্তিগত জব কার্ড (My Job Card)</h3>
+                    <p class="text-[10px] text-emerald-400" id="empJcSubtitle"></p>
+                  </div>
+                  <button onclick="closeEmployeeJobCard()" class="text-slate-400 text-xl hover:text-white">&times;</button>
+                </div>
+
+                <div class="flex justify-between items-center text-xs flex-shrink-0">
+                  <input type="month" id="empJcMonthInput" onchange="renderMyJobCard()" class="bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-white font-mono text-xs">
+                  <button onclick="downloadMyJobCardPDF()" class="px-2.5 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold active:scale-95 shadow">
+                    📄 জব কার্ড PDF সেভ
+                  </button>
+                </div>
+
+                <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto flex-1">
+                  <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-900 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
+                      <tr>
+                        <th class="p-2">তারিখ</th>
+                        <th class="p-2">বার</th>
+                        <th class="p-2">ইন</th>
+                        <th class="p-2">আউট</th>
+                        <th class="p-2">স্ট্যাটাস</th>
+                      </tr>
+                    </thead>
+                    <tbody id="empJobCardTableBody" class="divide-y divide-slate-800 font-mono text-[11px]"></tbody>
+                  </table>
+                </div>
+
+                <div class="text-right flex-shrink-0 pt-1">
+                  <button onclick="closeEmployeeJobCard()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. LEAVE APPLY MODAL -->
             <div id="leaveApplyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl">
                 <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2">
@@ -376,7 +489,7 @@ jobs:
 
                   <div>
                     <label class="block text-slate-300 mb-1 font-semibold">ছুটির কারণ (Reason)</label>
-                    <textarea id="leaveReason" required rows="2" placeholder="ছুটির বিস্তারিত কারণ লিখুন..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"></textarea>
+                    <textarea id="leaveReason" required rows="2" placeholder="ছুটির কারণ লিখুন..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"></textarea>
                   </div>
 
                   <div class="flex justify-end space-x-2 pt-2 border-t border-slate-800">
@@ -387,82 +500,23 @@ jobs:
               </div>
             </div>
 
-            <!-- 5. UNIVERSAL EXCEL EXPORT MODAL -->
-            <div id="exportModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-              <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                  <div class="flex items-center space-x-2">
-                    <span class="text-xl">📊</span>
-                    <h3 class="text-sm font-bold text-white" id="exportModalTitle">Excel রিপোর্ট ডাউনলোড ও শেয়ার</h3>
-                  </div>
-                  <button onclick="closeExportModal()" class="text-slate-400 text-xl hover:text-white">&times;</button>
-                </div>
-
-                <div class="space-y-2.5">
-                  <button onclick="triggerNativeShare()" class="w-full p-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
-                    <span class="text-2xl">📲</span>
-                    <div>
-                      <div class="text-xs font-bold text-white">Google Drive / WhatsApp-এ সরাসরি সেভ ও শেয়ার</div>
-                      <div class="text-[10px] text-emerald-100">আপনার নিজস্ব Google Drive বা ফাইলে সেভ করুন</div>
-                    </div>
-                  </button>
-
-                  <button onclick="triggerDirectDownload()" class="w-full p-3 bg-blue-600 hover:bg-blue-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
-                    <span class="text-2xl">📥</span>
-                    <div>
-                      <div class="text-xs font-bold text-white">সরাসরি ফাইল ডাউনলোড (.CSV / Excel)</div>
-                      <div class="text-[10px] text-blue-100">মেমোরি কার্ড বা Downloads ফোল্ডারে নামবে</div>
-                    </div>
-                  </button>
-
-                  <button onclick="triggerClipboardCopy()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-xl text-left flex items-center space-x-3 transition shadow">
-                    <span class="text-2xl">📋</span>
-                    <div>
-                      <div class="text-xs font-bold text-emerald-400">এক ক্লিকে সম্পূর্ণ এক্সেল ডাটা কপি</div>
-                      <div class="text-[10px] text-slate-400">কপি করে যেকোনো Excel বা Google Sheets-এ পেস্ট করুন</div>
-                    </div>
-                  </button>
-                </div>
-
-                <div class="text-right">
-                  <button onclick="closeExportModal()" class="px-4 py-1.5 bg-slate-800 text-slate-300 rounded-lg text-xs font-semibold">বন্ধ করুন</button>
-                </div>
-              </div>
-            </div>
-
             <!-- 6. ADVANCED PDF "SAVE AS" MODAL -->
             <div id="pdfExportModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div class="flex items-center space-x-2">
                     <span class="text-xl">📄</span>
-                    <h3 class="text-sm font-bold text-white">হাজিরা PDF 'Save As' ও প্রিন্ট</h3>
+                    <h3 class="text-sm font-bold text-white">হাজিরা PDF সেভ করুন</h3>
                   </div>
                   <button onclick="closePDFExportModal()" class="text-slate-400 text-xl hover:text-white">&times;</button>
                 </div>
 
                 <div class="space-y-2.5">
-                  <button onclick="savePDFWithSaveAs()" class="w-full p-3 bg-rose-600 hover:bg-rose-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
+                  <button onclick="savePDFWithNativeEngine()" class="w-full p-3 bg-rose-600 hover:bg-rose-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
                     <span class="text-2xl">💾</span>
                     <div>
-                      <div class="text-xs font-bold text-white">ফোনে 'Save As' দিয়ে সেভ করুন</div>
-                      <div class="text-[10px] text-rose-100">পছন্দমতো ফোল্ডার ও লোকেশন নির্বাচন করে সেভ করুন</div>
-                    </div>
-                  </button>
-
-                  <button onclick="savePDFViaSystemPrint()" class="w-full p-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 rounded-xl text-left flex items-center space-x-3 transition shadow">
-                    <span class="text-2xl">🖨️</span>
-                    <div>
-                      <div class="text-xs font-bold text-white">অ্যান্ড্রয়েড সিস্টেম 'Save as PDF' প্রিন্টার</div>
-                      <div class="text-[10px] text-indigo-100">সরাসরি অ্যান্ড্রয়েডের অফিসিয়াল PDF প্রিন্ট উইন্ডো খুলবে</div>
-                    </div>
-                  </button>
-
-                  <button onclick="savePDFDirectDownload()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-xl text-left flex items-center space-x-3 transition shadow">
-                    <span class="text-2xl">📥</span>
-                    <div>
-                      <div class="text-xs font-bold text-slate-200">সরাসরি Downloads ফোল্ডারে নামান</div>
-                      <div class="text-[10px] text-slate-400">কোনো কিছু বাছাই ছাড়া সরাসরি ডাউনলোড হবে</div>
+                      <div class="text-xs font-bold text-white">ফোনের Downloads ফোল্ডারে সেভ করুন</div>
+                      <div class="text-[10px] text-rose-100">সরাসরি মেমোরি কার্ড বা ইন্টারনাল স্টোরেজে সেভ হবে</div>
                     </div>
                   </button>
                 </div>
@@ -485,8 +539,9 @@ jobs:
               document.addEventListener('DOMContentLoaded', injectLogos);
               setTimeout(injectLogos, 100);
 
+              // 50 EMPLOYEES + 1 ADMIN (ADMIN HAS STRICTLY NO PERSONAL NAME)
               const TAMISHNA_EMPLOYEES = [
-                { id: "10008895", name: "Mihir Roy Chowdhury", desig: "System Admin", section: "Administration", role: "ADMIN" },
+                { id: "10008895", name: "Admin", desig: "System Administrator", section: "Administration", role: "ADMIN" },
                 { id: "10000159", name: "Manobendra Nath Biswas", desig: "Asst. Manager", section: "Maintenance", role: "EMPLOYEE" },
                 { id: "10000372", name: "Mohammad Anamul Kabir", desig: "Manager", section: "Quality Control", role: "EMPLOYEE" },
                 { id: "10000485", name: "Mohammed Aminul Islam", desig: "Asst. General Manager", section: "Maintenance", role: "EMPLOYEE" },
@@ -540,16 +595,16 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v12', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v18', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v12')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v12') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v12', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v12') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v12', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v18')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v18') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v18', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v18') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v18', JSON.stringify(d)); }
 
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v12') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v12', JSON.stringify(v)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v18') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v18', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -558,7 +613,7 @@ jobs:
                 return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
               }
 
-              // 1. REMEMBER PASSWORD (PIN) LOGIC
+              // 1. REMEMBER PASSWORD LOGIC
               function loadRememberedCredentials() {
                 const saved = localStorage.getItem('tsl_remembered_cred');
                 if (saved) {
@@ -591,16 +646,9 @@ jobs:
                 } catch(e) {}
               }
 
-              async function syncAllFromCloud(showAlert = false) {
-                if (showAlert) {
-                  alert('✓ সেন্ট্রাল ক্লাউড হতে সমস্ত ফোনের হাজিরার তথ্য সফলভাবে সিঙ্ক হয়েছে!');
-                  loadAdminDashboard();
-                }
-              }
-
-              // ============================================================
-              // 3. HARDWARE BIOMETRIC PROMPT SENSOR INTEGRATION
-              // ============================================================
+              // ==========================================
+              // 3. HARDWARE BIOMETRIC PROMPT SENSOR
+              // ==========================================
               function triggerBiometricAuth(actionType) {
                 if (!currentUser) return;
                 const today = new Date().toISOString().split('T')[0];
@@ -608,7 +656,6 @@ jobs:
                 let records = getRecords();
                 let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
 
-                // PRE-VALIDATION BEFORE CALLING HARDWARE SENSOR
                 if (actionType === 'CHECK_IN') {
                   if (existingIndex !== -1) {
                     alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ ডুপ্লিকেট পাঞ্চ বাতিল! অলরেডি ইন করেছেন (' + records[existingIndex].checkIn + ')</span>';
@@ -620,38 +667,33 @@ jobs:
                     return;
                   }
                   if (records[existingIndex].checkOut) {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ আজকের শিফট অলরেডি শেষ হয়েছে (' + records[existingIndex].checkOut + ')</span>';
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ আজকের হাজিরা সম্পন্ন হয়েছে (' + records[existingIndex].checkOut + ')</span>';
                     return;
                   }
                 }
 
                 alertEl.innerHTML = '<span class="text-blue-400 font-medium animate-pulse">অনুগ্রহ করে আপনার ফোনের ফিঙ্গারপ্রিন্ট সেন্সরে আঙ্গুল ছোঁয়ান...</span>';
 
-                // TRIGGER OFFICIAL NATIVE ANDROID BIOMETRIC SENSOR DIALOG
                 if (window.AndroidBiometric && window.AndroidBiometric.authenticate) {
                   window.AndroidBiometric.authenticate(actionType);
                 } else {
-                  // Fallback simulation for desktop browser testing
                   const confirmed = confirm("[Hardware Sensor Simulator]\nTamishna Synthetics Attendance\n\nআঙ্গুলের ছাপ ভেরিফাই করতে 'OK' চাপুন।");
-                  if (confirmed) {
-                    onBiometricSuccess(actionType);
-                  } else {
-                    onBiometricError("ভেরিফিকেশন বাতিল করা হয়েছে");
-                  }
+                  if (confirmed) onBiometricSuccess(actionType);
+                  else onBiometricError("ভেরিফিকেশন বাতিল করা হয়েছে");
                 }
               }
 
-              // NATIVE ANDROID CALLBACKS
               window.onBiometricSuccess = function(actionType) {
                 if (!currentUser) return;
                 const today = new Date().toISOString().split('T')[0];
-                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const alertEl = document.getElementById('punchStatusAlert');
                 let records = getRecords();
                 let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
 
                 const punchRecord = {
-                  id: 'REC-' + Date.now(),
+                  id: 'TSL-' + Date.now(),
                   date: today,
                   empId: currentUser.id,
                   name: currentUser.name,
@@ -659,38 +701,38 @@ jobs:
                   section: currentUser.section,
                   checkIn: actionType === 'CHECK_IN' ? timeStr : (records[existingIndex] ? records[existingIndex].checkIn : timeStr),
                   checkOut: actionType === 'CHECK_OUT' ? timeStr : null,
-                  status: 'PRESENT (Sensor Verified)'
+                  status: 'PRESENT'
                 };
 
                 if (actionType === 'CHECK_IN') {
                   records.unshift(punchRecord);
                   saveRecords(records);
                   pushPunchToCloud(punchRecord);
-                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ ফিঙ্গারপ্রিন্ট সেন্সর ভেরিফাইড! চেক-ইন হয়েছে (' + timeStr + ')</span>';
+                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ ফিঙ্গারপ্রিন্ট ভেরিফাইড! ইন হয়েছে (' + timeStr + ')</span>';
                 } else {
                   records[existingIndex].checkOut = timeStr;
                   saveRecords(records);
                   pushPunchToCloud(records[existingIndex]);
-                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ ফিঙ্গারপ্রিন্ট সেন্সর ভেরিফাইড! চেক-আউট হয়েছে (' + timeStr + ')</span>';
+                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ ফিঙ্গারপ্রিন্ট ভেরিফাইড! আউট হয়েছে (' + timeStr + ')</span>';
                 }
                 refreshEmployeeTodayPunch();
               };
 
               window.onBiometricFailed = function() {
-                const alertEl = document.getElementById('punchStatusAlert');
-                alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ আঙ্গুলের ছাপ মেলেনি! আবার সঠিক আঙ্গুল সেন্সরে রাখুন।</span>';
+                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-rose-400 font-bold">❌ আঙ্গুলের ছাপ মেলেনি! আবার সঠিক আঙ্গুল দিন।</span>';
               };
 
               window.onBiometricError = function(errMsg) {
-                const alertEl = document.getElementById('punchStatusAlert');
-                alertEl.innerHTML = '<span class="text-amber-400">⚠️ সেন্সর ভেরিফিকেশন বাতিল বা ত্রুটি: ' + errMsg + '</span>';
+                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-amber-400">⚠️ সেন্সর বাতিল: ' + errMsg + '</span>';
               };
 
-              // 4. ADVANCED PDF 'SAVE AS' GENERATOR
+              // ==========================================
+              // 4. REAL NATIVE PDF SAVER (ADMIN STRICTLY TITLE ONLY)
+              // ==========================================
               let activePdfDoc = null;
               let activePdfFilename = '';
 
-              function buildPdfDocument() {
+              function buildAttendancePdfDoc() {
                 const records = getRecords();
                 if (records.length === 0) return null;
 
@@ -707,14 +749,14 @@ jobs:
 
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
-                doc.text('Industrial Attendance & Shift Log Report (Biometric Sensor)', 40, 48);
+                doc.text('Monthly Attendance Timesheet Report', 40, 48);
 
                 doc.setTextColor(50, 50, 50);
                 doc.setFontSize(9);
-                doc.text('Generated By: Mihir Roy Chowdhury (Admin)', 40, 85);
-                doc.text('Plant: Gazipur Factory | Hardware Biometric Verified', 40, 98);
-                doc.text('Total Punches: ' + records.length, 440, 85);
-                doc.text('Report Date: ' + new Date().toLocaleDateString(), 440, 98);
+                doc.text('Authorized: Admin', 40, 85);
+                doc.text('Plant Location: Gazipur Factory', 40, 98);
+                doc.text('Total Records: ' + records.length, 440, 85);
+                doc.text('Export Date: ' + new Date().toLocaleDateString(), 440, 98);
 
                 const tableRows = records.map(r => [
                   r.date,
@@ -728,15 +770,10 @@ jobs:
 
                 doc.autoTable({
                   startY: 115,
-                  head: [['Date', 'Card No', 'Employee Name', 'Section', 'Check-In', 'Check-Out', 'Status']],
+                  head: [['Date', 'Card No', 'Employee Name', 'Section', 'In Time', 'Out Time', 'Status']],
                   body: tableRows,
                   theme: 'striped',
-                  headStyles: {
-                    fillColor: [12, 65, 130],
-                    textColor: [255, 255, 255],
-                    fontSize: 8,
-                    fontStyle: 'bold'
-                  },
+                  headStyles: { fillColor: [12, 65, 130], textColor: [255, 255, 255], fontSize: 8, fontStyle: 'bold' },
                   bodyStyles: { fontSize: 8, textColor: [40, 40, 40] },
                   alternateRowStyles: { fillColor: [245, 247, 250] },
                   margin: { left: 40, right: 40 }
@@ -746,12 +783,11 @@ jobs:
               }
 
               function openPDFExportModal() {
-                const records = getRecords();
-                if (records.length === 0) {
-                  alert('ডাউনলোড করার মতো কোনো হাজিরার ডাটা নেই!');
+                activePdfDoc = buildAttendancePdfDoc();
+                if (!activePdfDoc) {
+                  alert('ডাউনলোড করার মতো হাজিরার ডাটা নেই!');
                   return;
                 }
-                activePdfDoc = buildPdfDocument();
                 activePdfFilename = 'Tamishna_Attendance_' + new Date().toISOString().split('T')[0] + '.pdf';
                 document.getElementById('pdfExportModal').classList.remove('hidden');
               }
@@ -759,61 +795,266 @@ jobs:
                 document.getElementById('pdfExportModal').classList.add('hidden');
               }
 
-              async function savePDFWithSaveAs() {
+              function savePDFWithNativeEngine() {
                 if (!activePdfDoc) return;
-                const pdfBlob = activePdfDoc.output('blob');
+                const base64Data = activePdfDoc.output('datauristring').split(',')[1];
 
-                if (window.showSaveFilePicker) {
-                  try {
-                    const handle = await window.showSaveFilePicker({
-                      suggestedName: activePdfFilename,
-                      types: [{ description: 'PDF Document', accept: { 'application/pdf': ['.pdf'] } }]
-                    });
-                    const writable = await handle.createWritable();
-                    await writable.write(pdfBlob);
-                    await writable.close();
-                    alert('✓ আপনার নির্বাচিত ফোল্ডারে PDF সফলভাবে সেভ হয়েছে!');
-                    closePDFExportModal();
-                    return;
-                  } catch(e) {}
-                }
-
-                if (navigator.canShare) {
-                  try {
-                    const file = new File([pdfBlob], activePdfFilename, { type: 'application/pdf' });
-                    if (navigator.canShare({ files: [file] })) {
-                      await navigator.share({
-                        title: 'Tamishna Attendance PDF Report',
-                        files: [file]
-                      });
-                      closePDFExportModal();
-                      return;
-                    }
-                  } catch(e) {}
-                }
-
-                savePDFDirectDownload();
-              }
-
-              function savePDFViaSystemPrint() {
-                if (!activePdfDoc) return;
-                const pdfUrl = activePdfDoc.output('bloburl');
-                const printWindow = window.open(pdfUrl, '_blank');
-                if (printWindow) {
-                  printWindow.focus();
+                if (window.AndroidBiometric && window.AndroidBiometric.savePdfToDownloads) {
+                  window.AndroidBiometric.savePdfToDownloads(base64Data, activePdfFilename);
+                  closePDFExportModal();
                 } else {
-                  savePDFDirectDownload();
+                  activePdfDoc.save(activePdfFilename);
+                  alert('✓ ব্রাউজারে PDF ডাউনলোড সম্পন্ন হয়েছে!');
+                  closePDFExportModal();
                 }
               }
 
-              function savePDFDirectDownload() {
-                if (!activePdfDoc) return;
-                activePdfDoc.save(activePdfFilename);
-                alert('✓ Downloads ফোল্ডারে PDF ফাইলটি সেভ হয়েছে!');
-                closePDFExportModal();
+              // ==========================================
+              // 5. INDIVIDUAL JOB CARD ENGINE (FACTORY ERP LAYOUT)
+              // ==========================================
+              let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
+
+              function populateJobCardEmpDropdown() {
+                const select = document.getElementById('jobCardEmpSelect');
+                if (!select) return;
+                const users = getUsers();
+                select.innerHTML = users.map(u => `<option value="${u.id}">${u.id} - ${u.name} (${u.section})</option>`).join('');
+                
+                const now = new Date();
+                const curMonth = now.toISOString().slice(0, 7);
+                document.getElementById('jobCardMonthSelect').value = curMonth;
+                renderSelectedEmployeeJobCard();
               }
 
-              // 5. FRESH SIGN UP & FORM RESET
+              function buildDateWiseJobCard(empId, yearMonth) {
+                const users = getUsers();
+                const emp = users.find(u => u.id === empId);
+                if (!emp) return null;
+
+                const [year, month] = yearMonth.split('-').map(Number);
+                const daysInMonth = new Date(year, month, 0).getDate();
+                const records = getRecords();
+                const leaves = getLeaves();
+
+                const rows = [];
+                let presentCount = 0;
+                let leaveCount = 0;
+                let weekendCount = 0;
+                let absentCount = 0;
+
+                const todayStr = new Date().toISOString().split('T')[0];
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                  const dayStr = String(day).padStart(2, '0');
+                  const dateStr = `${yearMonth}-${dayStr}`;
+                  const dateObj = new Date(year, month - 1, day);
+                  const dayName = dateObj.toLocaleDateString('bn-BD', { weekday: 'short' });
+                  const isFriday = (dateObj.getDay() === 5); // Friday weekend
+
+                  const attRecord = records.find(r => r.empId === empId && r.date === dateStr);
+                  const leaveRecord = leaves.find(l => l.empId === empId && l.status === 'APPROVED' && dateStr >= l.fromDate && dateStr <= l.toDate);
+
+                  let inTime = '--:--';
+                  let outTime = '--:--';
+                  let status = isFriday ? 'WEEKEND (শুক্রবার)' : 'ABSENT';
+
+                  if (attRecord) {
+                    inTime = attRecord.checkIn || '--:--';
+                    outTime = attRecord.checkOut || '--:--';
+                    status = 'PRESENT';
+                    presentCount++;
+                  } else if (leaveRecord) {
+                    status = `LEAVE (${leaveRecord.type})`;
+                    leaveCount++;
+                  } else if (isFriday) {
+                    status = 'WEEKEND';
+                    weekendCount++;
+                  } else if (dateStr <= todayStr) {
+                    absentCount++;
+                  } else {
+                    status = 'UPCOMING';
+                  }
+
+                  rows.push({
+                    date: dateStr,
+                    day: dayName,
+                    inTime: inTime,
+                    outTime: outTime,
+                    status: status
+                  });
+                }
+
+                return {
+                  emp: emp,
+                  month: yearMonth,
+                  rows: rows,
+                  stats: {
+                    totalDays: daysInMonth,
+                    present: presentCount,
+                    leave: leaveCount,
+                    weekend: weekendCount,
+                    absent: absentCount
+                  }
+                };
+              }
+
+              // RENDER SELECTED EMPLOYEE'S INDIVIDUAL JOB CARD (ADMIN VIEW)
+              function renderSelectedEmployeeJobCard() {
+                const empId = document.getElementById('jobCardEmpSelect').value;
+                const month = document.getElementById('jobCardMonthSelect').value;
+                if (!empId || !month) return;
+
+                currentJobCardData = buildDateWiseJobCard(empId, month);
+                if (!currentJobCardData) return;
+
+                // DISPLAY INDIVIDUAL EMPLOYEE PARTICULARS
+                document.getElementById('jcDisplayEmpName').innerText = currentJobCardData.emp.name;
+                document.getElementById('jcDisplayEmpDesigSec').innerText = `${currentJobCardData.emp.desig} • Section: ${currentJobCardData.emp.section}`;
+                document.getElementById('jcDisplayEmpId').innerText = currentJobCardData.emp.id;
+
+                document.getElementById('jcStatPresent').innerText = currentJobCardData.stats.present;
+                document.getElementById('jcStatLeave').innerText = currentJobCardData.stats.leave;
+                document.getElementById('jcStatWeekend').innerText = currentJobCardData.stats.weekend;
+                document.getElementById('jcStatAbsent').innerText = currentJobCardData.stats.absent;
+
+                const tbody = document.getElementById('jobCardTableBody');
+                tbody.innerHTML = currentJobCardData.rows.map(r => `
+                  <tr class="hover:bg-slate-900">
+                    <td class="p-2 text-slate-300">${r.date}</td>
+                    <td class="p-2 text-slate-400 font-sans">${r.day}</td>
+                    <td class="p-2 text-emerald-400 font-bold">${r.inTime}</td>
+                    <td class="p-2 text-rose-400 font-bold">${r.outTime}</td>
+                    <td class="p-2 font-sans font-bold ${r.status.includes('PRESENT') ? 'text-emerald-400' : r.status.includes('LEAVE') ? 'text-blue-400' : r.status.includes('WEEKEND') ? 'text-amber-400' : 'text-slate-500'}">
+                      ${r.status}
+                    </td>
+                  </tr>
+                `).join('');
+              }
+
+              // EMPLOYEE VIEW OWN PERSONAL JOB CARD
+              function viewEmployeeJobCard() {
+                if (!currentUser) return;
+                const curMonth = new Date().toISOString().slice(0, 7);
+                document.getElementById('empJcMonthInput').value = curMonth;
+                document.getElementById('empJcSubtitle').innerText = `${currentUser.name} (Card: ${currentUser.id}) - ${currentUser.section}`;
+                renderMyJobCard();
+                document.getElementById('empJobCardModal').classList.remove('hidden');
+              }
+              function closeEmployeeJobCard() {
+                document.getElementById('empJobCardModal').classList.add('hidden');
+              }
+
+              function renderMyJobCard() {
+                if (!currentUser) return;
+                const month = document.getElementById('empJcMonthInput').value;
+                currentJobCardData = buildDateWiseJobCard(currentUser.id, month);
+
+                const tbody = document.getElementById('empJobCardTableBody');
+                tbody.innerHTML = currentJobCardData.rows.map(r => `
+                  <tr class="hover:bg-slate-900">
+                    <td class="p-2 text-slate-300">${r.date}</td>
+                    <td class="p-2 text-slate-400 font-sans">${r.day}</td>
+                    <td class="p-2 text-emerald-400 font-bold">${r.inTime}</td>
+                    <td class="p-2 text-rose-400 font-bold">${r.outTime}</td>
+                    <td class="p-2 font-sans font-bold ${r.status.includes('PRESENT') ? 'text-emerald-400' : r.status.includes('LEAVE') ? 'text-blue-400' : r.status.includes('WEEKEND') ? 'text-amber-400' : 'text-slate-500'}">
+                      ${r.status}
+                    </td>
+                  </tr>
+                `).join('');
+              }
+
+              // FACTORY ERP STANDARD JOB CARD PDF GENERATOR (NO PERSONAL NAMES IN SIGNATURES)
+              function generateJobCardPdfDoc(data) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'pt', 'a4');
+
+                // Header Banner
+                doc.setFillColor(12, 65, 130);
+                doc.rect(0, 0, 595.28, 65, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.text('TAMISHNA SYNTHETICS LIMITED', 40, 30);
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.text('Monthly Attendance Job Card (Factory ERP Standard)', 40, 48);
+
+                // Individual Employee Particulars
+                doc.setTextColor(50, 50, 50);
+                doc.setFontSize(9);
+                doc.text(`Employee Name: ${data.emp.name}`, 40, 85);
+                doc.text(`Card No / ID  : ${data.emp.id}`, 40, 98);
+                doc.text(`Designation   : ${data.emp.desig}`, 40, 111);
+                doc.text(`Section / Dept: ${data.emp.section}`, 40, 124);
+
+                doc.text(`Job Card Month: ${data.month}`, 400, 85);
+                doc.text(`Total Days    : ${data.stats.totalDays}`, 400, 98);
+                doc.text(`Present Days  : ${data.stats.present}`, 400, 111);
+                doc.text(`Total Leaves  : ${data.stats.leave}`, 400, 124);
+
+                const tableRows = data.rows.map(r => [
+                  r.date,
+                  r.day,
+                  r.inTime,
+                  r.outTime,
+                  r.status
+                ]);
+
+                doc.autoTable({
+                  startY: 140,
+                  head: [['Date', 'Day', 'In Time', 'Out Time', 'Attendance Status']],
+                  body: tableRows,
+                  theme: 'striped',
+                  headStyles: { fillColor: [12, 65, 130], textColor: [255, 255, 255], fontSize: 8, fontStyle: 'bold' },
+                  bodyStyles: { fontSize: 8, textColor: [40, 40, 40] },
+                  alternateRowStyles: { fillColor: [245, 247, 250] },
+                  margin: { left: 40, right: 40 }
+                });
+
+                // Signature Lines at Bottom (STRICTLY NO NAMES - TITLES ONLY)
+                const finalY = doc.lastAutoTable.finalY + 38;
+                if (finalY < 780) {
+                  doc.setFontSize(8);
+                  doc.text('_________________________', 40, finalY);
+                  doc.text('Employee Signature', 40, finalY + 12);
+
+                  doc.text('_________________________', 230, finalY);
+                  doc.text('Time Keeper Signature', 230, finalY + 12);
+
+                  doc.text('_________________________', 420, finalY);
+                  doc.text('Admin Signature', 420, finalY + 12);
+                }
+
+                return doc;
+              }
+
+              // RELIABLE NATIVE JOB CARD PDF SAVER
+              function downloadJobCardPDF() {
+                if (!currentJobCardData || !currentJobCardData.emp) {
+                  alert('জব কার্ডের ডাটা পাওয়া যায়নি!');
+                  return;
+                }
+                const doc = generateJobCardPdfDoc(currentJobCardData);
+                const safeId = (currentJobCardData.emp.id || 'EMP').replace(/[^a-zA-Z0-9]/g, '_');
+                const safeMonth = (currentJobCardData.month || '2026_11').replace(/[^a-zA-Z0-9]/g, '_');
+                const filename = `JobCard_${safeId}_${safeMonth}.pdf`;
+                const base64 = doc.output('datauristring').split(',')[1];
+
+                if (window.AndroidBiometric && window.AndroidBiometric.savePdfToDownloads) {
+                  window.AndroidBiometric.savePdfToDownloads(base64, filename);
+                } else {
+                  doc.save(filename);
+                  alert('✓ ব্রাউজারে Job Card PDF ডাউনলোড সম্পন্ন হয়েছে!');
+                }
+              }
+
+              function downloadMyJobCardPDF() {
+                downloadJobCardPDF();
+              }
+
+              // ==========================================
+              // 6. FRESH SIGN UP & FORM RESET
+              // ==========================================
               function clearSignUpForm() {
                 const form = document.getElementById('signupForm');
                 if (form) form.reset();
@@ -925,7 +1166,7 @@ jobs:
                 vault[found.id] = await hashPin(pin);
                 savePinVault(vault);
 
-                alert('✓ সাইন আপ সফল হয়েছে!\nকর্মী ' + found.name + '-এর PIN সফলভাবে সংরক্ষিত হয়েছে।');
+                alert('✓ সাইন আপ সফল হয়েছে!\nকর্মী ' + found.name + '-এর PIN সংরক্ষিত হয়েছে।');
                 
                 clearSignUpForm();
                 document.getElementById('loginId').value = cardInput;
@@ -987,12 +1228,13 @@ jobs:
               function showAppScreen() {
                 document.getElementById('authView').classList.add('hidden');
                 document.getElementById('headerActions').classList.remove('hidden');
-                document.getElementById('headerName').innerText = currentUser.name.split(' ')[0];
+                document.getElementById('headerName').innerText = currentUser.role === 'ADMIN' ? 'Admin' : currentUser.name.split(' ')[0];
                 injectLogos();
 
                 if (currentUser.role === 'ADMIN') {
                   document.getElementById('punchView').classList.add('hidden');
                   document.getElementById('adminView').classList.remove('hidden');
+                  populateJobCardEmpDropdown();
                   loadAdminDashboard();
                 } else {
                   document.getElementById('adminView').classList.add('hidden');
@@ -1002,7 +1244,6 @@ jobs:
                   document.getElementById('userId').innerText = currentUser.id;
                   document.getElementById('userSection').innerText = currentUser.section;
                   refreshEmployeeTodayPunch();
-                  loadMyLeaves();
                 }
               }
 
@@ -1023,14 +1264,9 @@ jobs:
                 const today = new Date().toISOString().split('T')[0];
                 const records = getRecords();
                 const record = records.find(r => r.empId === currentUser.id && r.date === today);
+                
                 document.getElementById('todayInText').innerText = record ? record.checkIn : '--:--';
                 document.getElementById('todayOutText').innerText = (record && record.checkOut) ? record.checkOut : '--:--';
-
-                const leaves = getLeaves();
-                const approvedToday = leaves.find(l => l.empId === currentUser.id && l.status === 'APPROVED' && today >= l.fromDate && today <= l.toDate);
-                if (approvedToday) {
-                  document.getElementById('punchStatusAlert').innerHTML = '<span class="text-blue-400 font-bold">ℹ️ আপনি আজ অনুমোদিত ছুটিতে আছেন (' + approvedToday.type + ')</span>';
-                }
               }
 
               function openLeaveApplyModal() {
@@ -1074,49 +1310,26 @@ jobs:
                 saveLeaves(leaves);
                 closeLeaveApplyModal();
                 alert('ছুটির আবেদন সফলভাবে জমা হয়েছে!');
-                loadMyLeaves();
-              }
-
-              function loadMyLeaves() {
-                if (!currentUser) return;
-                const leaves = getLeaves().filter(l => l.empId === currentUser.id);
-                const container = document.getElementById('myLeaveList');
-                if (leaves.length === 0) {
-                  container.innerHTML = '<p class="text-slate-500 text-center py-2">কোনো আবেদন করা হয়নি</p>';
-                  return;
-                }
-                container.innerHTML = leaves.slice(0, 3).map(l => {
-                  let badge = l.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
-                              l.status === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' :
-                              'bg-amber-500/20 text-amber-300 border-amber-500/40';
-                  let statusText = l.status === 'APPROVED' ? 'অনুমোদিত' : l.status === 'REJECTED' ? 'বাতিল' : 'অপেক্ষারত';
-                  return `
-                    <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex justify-between items-center">
-                      <div>
-                        <div class="flex items-center space-x-1.5">
-                          <b class="text-white">${l.type}</b>
-                          <span class="text-slate-400 text-[10px]">(${l.fromDate} হতে ${l.toDate})</span>
-                        </div>
-                        <p class="text-slate-400 text-[10px] truncate max-w-[200px] mt-0.5">${l.reason}</p>
-                      </div>
-                      <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badge}">${statusText}</span>
-                    </div>
-                  `;
-                }).join('');
               }
 
               function switchAdminTab(tab) {
                 document.getElementById('adminAttSection').classList.add('hidden');
+                document.getElementById('adminJobCardSection').classList.add('hidden');
                 document.getElementById('adminLeaveSection').classList.add('hidden');
                 document.getElementById('adminPinSection').classList.add('hidden');
 
                 document.getElementById('adminTabAtt').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white';
+                document.getElementById('adminTabJobCard').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white';
                 document.getElementById('adminTabLeave').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1';
                 document.getElementById('adminTabPin').className = 'flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white';
 
                 if (tab === 'att') {
                   document.getElementById('adminAttSection').classList.remove('hidden');
                   document.getElementById('adminTabAtt').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold';
+                } else if (tab === 'jobcard') {
+                  document.getElementById('adminJobCardSection').classList.remove('hidden');
+                  document.getElementById('adminTabJobCard').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold';
+                  renderSelectedEmployeeJobCard();
                 } else if (tab === 'leave') {
                   document.getElementById('adminLeaveSection').classList.remove('hidden');
                   document.getElementById('adminTabLeave').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold flex items-center justify-center space-x-1';
@@ -1149,7 +1362,7 @@ jobs:
 
                 const tbody = document.getElementById('adminTableBody');
                 if (records.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500 font-sans">কোনো হাজিরার তথ্য নেই</td></tr>';
+                  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500 font-sans">কোনো হাজিরার তথ্য নেই</td></tr>';
                 } else {
                   tbody.innerHTML = records.map(r => `
                     <tr class="hover:bg-slate-800/40">
@@ -1159,12 +1372,27 @@ jobs:
                       <td class="p-2.5 text-emerald-400 font-bold">${r.checkIn}</td>
                       <td class="p-2.5 text-rose-400 font-bold">${r.checkOut || '--:--'}</td>
                       <td class="p-2.5 font-sans"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">${r.status}</span></td>
+                      <td class="p-2.5 text-center">
+                        <button onclick="deleteSingleRecord('${r.id}')" class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded active:scale-90" title="রেকর্ড মুছুন">
+                          🗑️
+                        </button>
+                      </td>
                     </tr>
                   `).join('');
                 }
 
                 loadAdminLeaveCards();
                 loadAdminPinManagement();
+              }
+
+              function deleteSingleRecord(recordId) {
+                if (confirm('আপনি কি এই হাজিরার রেকর্ডটি মুছে ফেলতে চান?\nমুছে ফেললে এক্সেল ও জব কার্ড থেকেও এটি চিরতরে বাদ যাবে।')) {
+                  let records = getRecords();
+                  records = records.filter(r => r.id !== recordId);
+                  saveRecords(records);
+                  loadAdminDashboard();
+                  alert('✓ রেকর্ডটি সফলভাবে মুছে ফেলা হয়েছে!');
+                }
               }
 
               function loadAdminLeaveCards() {
@@ -1174,40 +1402,27 @@ jobs:
                   container.innerHTML = '<p class="text-slate-500 text-center py-6">কোনো ছুটির আবেদন জমা পড়েনি</p>';
                   return;
                 }
-                container.innerHTML = leaves.map(l => {
-                  let badge = l.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
-                              l.status === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' :
-                              'bg-amber-500/20 text-amber-300 border-amber-500/40';
-                  let statusTitle = l.status === 'APPROVED' ? 'অনুমোদিত' : l.status === 'REJECTED' ? 'বাতিল' : 'অপেক্ষারত';
-
-                  let actionBtns = '';
-                  if (l.status === 'PENDING') {
-                    actionBtns = `
-                      <div class="flex space-x-2 pt-2 border-t border-slate-800">
-                        <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ অনুমোদন (Approve)</button>
-                        <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ প্রত্যাখ্যান (Reject)</button>
+                container.innerHTML = leaves.map(l => `
+                  <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex justify-between items-start">
+                      <div>
+                        <h4 class="font-bold text-white text-xs">${l.name} <span class="text-emerald-400 font-mono">(${l.empId})</span></h4>
+                        <p class="text-[10px] text-slate-400">${l.desig} &bull; ${l.section}</p>
                       </div>
-                    `;
-                  }
-
-                  return `
-                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                      <div class="flex justify-between items-start">
-                        <div>
-                          <h4 class="font-bold text-white text-xs">${l.name} <span class="text-emerald-400 font-mono">(${l.empId})</span></h4>
-                          <p class="text-[10px] text-slate-400">${l.desig} &bull; ${l.section}</p>
-                        </div>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badge}">${statusTitle} (${l.type})</span>
-                      </div>
-                      <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
-                        <p class="text-slate-300"><b>সময়সীমা:</b> ${l.fromDate} হতে ${l.toDate}</p>
-                        <p class="text-slate-300 mt-0.5"><b>কারণ:</b> ${l.reason}</p>
-                        <p class="text-[9px] text-slate-500 mt-1">আবেদন: ${l.appliedOn}</p>
-                      </div>
-                      ${actionBtns}
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${l.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : l.status === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}">${l.status} (${l.type})</span>
                     </div>
-                  `;
-                }).join('');
+                    <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
+                      <p class="text-slate-300"><b>সময়সীমা:</b> ${l.fromDate} হতে ${l.toDate}</p>
+                      <p class="text-slate-300 mt-0.5"><b>কারণ:</b> ${l.reason}</p>
+                    </div>
+                    ${l.status === 'PENDING' ? `
+                      <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                        <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ অনুমোদন</button>
+                        <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ বাতিল</button>
+                      </div>
+                    ` : ''}
+                  </div>
+                `).join('');
               }
 
               function updateLeaveStatus(leaveId, newStatus) {
@@ -1217,25 +1432,7 @@ jobs:
 
                 leaves[foundIndex].status = newStatus;
                 saveLeaves(leaves);
-
-                if (newStatus === 'APPROVED') {
-                  const targetLeave = leaves[foundIndex];
-                  let records = getRecords();
-                  records.unshift({
-                    id: 'REC-LV-' + Date.now(),
-                    date: targetLeave.fromDate,
-                    empId: targetLeave.empId,
-                    name: targetLeave.name,
-                    desig: targetLeave.desig,
-                    section: targetLeave.section,
-                    checkIn: 'LEAVE',
-                    checkOut: targetLeave.type,
-                    status: 'ON LEAVE (' + targetLeave.type + ')'
-                  });
-                  saveRecords(records);
-                }
-
-                alert(newStatus === 'APPROVED' ? 'ছুটি সফলভাবে অনুমোদন করা হয়েছে!' : 'ছুটির আবেদন প্রত্যাখ্যান করা হয়েছে।');
+                alert(newStatus === 'APPROVED' ? 'ছুটি অনুমোদন করা হয়েছে!' : 'ছুটি বাতিল করা হয়েছে।');
                 loadAdminDashboard();
               }
 
@@ -1244,25 +1441,18 @@ jobs:
                 const vault = getPinVault();
                 const tbody = document.getElementById('adminPinTableBody');
 
-                tbody.innerHTML = users.map(u => {
-                  const isSet = !!vault[u.id];
-                  const statusHtml = isSet 
-                    ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN সেট করা আছে</span>' 
-                    : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ সেট হয়নি</span>';
-                  
-                  return `
-                    <tr class="hover:bg-slate-800/40">
-                      <td class="p-2.5 font-mono text-emerald-400 font-bold">${u.id}</td>
-                      <td class="p-2.5 font-sans">${u.name}<br><span class="text-[9px] text-slate-400">${u.section}</span></td>
-                      <td class="p-2.5">${statusHtml}</td>
-                      <td class="p-2.5">
-                        <button onclick="resetUserPin('${u.id}', '${u.name}')" class="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold active:scale-95">
-                          রিসেট (Reset)
-                        </button>
-                      </td>
-                    </tr>
-                  `;
-                }).join('');
+                tbody.innerHTML = users.map(u => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-2.5 font-mono text-emerald-400 font-bold">${u.id}</td>
+                    <td class="p-2.5 font-sans">${u.name}<br><span class="text-[9px] text-slate-400">${u.section}</span></td>
+                    <td class="p-2.5">${vault[u.id] ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN সেট আছে</span>' : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ সেট হয়নি</span>'}</td>
+                    <td class="p-2.5">
+                      <button onclick="resetUserPin('${u.id}', '${u.name}')" class="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold active:scale-95">
+                        রিসেট
+                      </button>
+                    </td>
+                  </tr>
+                `).join('');
               }
 
               function resetUserPin(empId, empName) {
@@ -1270,105 +1460,36 @@ jobs:
                   const vault = getPinVault();
                   delete vault[empId];
                   savePinVault(vault);
-                  alert('✓ ' + empName + '-এর PIN রিসেট করা হয়েছে!');
+                  alert('✓ PIN রিসেট করা হয়েছে!');
                   loadAdminPinManagement();
                 }
               }
 
-              let activeExportPayload = { csv: '', filename: '', title: '' };
-
-              function exportAttendance() {
+              function exportAttendanceCSV() {
                 const records = getRecords();
                 if (records.length === 0) {
                   alert('ডাউনলোড করার মতো হাজিরার ডাটা নেই!');
                   return;
                 }
-                let csv = 'Record ID,Date,Card No,Name,Designation,Section,Check-In,Check-Out,Status\n';
+                let csv = 'DATE,CARD_NO,EMPLOYEE_NAME,SECTION,IN_TIME,OUT_TIME,STATUS\n';
                 records.forEach(r => {
-                  csv += `"${r.id}","${r.date}","${r.empId}","${r.name}","${r.desig}","${r.section}","${r.checkIn}","${r.checkOut || ''}","${r.status}"\n`;
+                  csv += `"${r.date}","${r.empId}","${r.name}","${r.section}","${r.checkIn}","${r.checkOut || ''}","${r.status}"\n`;
                 });
-                openExportModal(csv, `Tamishna_Attendance_${new Date().toISOString().split('T')[0]}.csv`, 'হাজিরা রিপোর্ট ডাউনলোড ও ক্লাউড শেয়ার');
-              }
-
-              function openExportModal(csvContent, filename, title) {
-                activeExportPayload = { csv: csvContent, filename: filename, title: title };
-                document.getElementById('exportModalTitle').innerText = title;
-                document.getElementById('exportModal').classList.remove('hidden');
-              }
-              function closeExportModal() {
-                document.getElementById('exportModal').classList.add('hidden');
-              }
-
-              async function triggerNativeShare() {
-                const { csv, filename, title } = activeExportPayload;
-                try {
-                  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                  const file = new File([blob], filename, { type: 'text/csv' });
-
-                  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                      title: title,
-                      text: 'Tamishna Synthetics Limited Attendance Report',
-                      files: [file]
-                    });
-                    return;
-                  }
-                } catch (e) {}
-
-                if (navigator.share) {
-                  try {
-                    await navigator.share({ title: title, text: csv });
-                    return;
-                  } catch (e) {}
-                }
-                triggerDirectDownload();
-              }
-
-              function triggerDirectDownload() {
-                const { csv, filename } = activeExportPayload;
-                try {
-                  const encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-                  const a = document.createElement('a');
-                  a.setAttribute('href', encodedUri);
-                  a.setAttribute('download', filename);
-                  document.body.appendChild(a);
-                  a.click();
-                  document.body.removeChild(a);
-                  alert('ফাইল ডাউনলোড সফল হয়েছে! Downloads ফোল্ডার চেক করুন।');
-                } catch (e) {
-                  alert('ব্রাউজার ডাউনলোড ব্লক করেছে। "কপি করুন" বাটনটি ব্যবহার করুন।');
-                }
-              }
-
-              function triggerClipboardCopy() {
-                const { csv } = activeExportPayload;
-                const tsv = csv.split('\n').map(row => {
-                  return row.split(',').map(cell => cell.replace(/^"|"$/g, '')).join('\t');
-                }).join('\n');
-
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                  navigator.clipboard.writeText(tsv).then(() => {
-                    alert('✓ সম্পূর্ণ এক্সেল ডাটা সফলভাবে কপি হয়েছে!\nযেকোনো Excel বা Google Sheet-এ গিয়ে সরাসরি Paste করুন।');
-                  }).catch(() => fallbackCopy(tsv));
-                } else {
-                  fallbackCopy(tsv);
-                }
-              }
-
-              function fallbackCopy(text) {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                alert('✓ সম্পূর্ণ এক্সেল ডাটা কপি হয়েছে! Excel-এ গিয়ে Paste করুন।');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Tamishna_ERP_Attendance_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
               }
 
               function clearAllData() {
-                if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?')) {
-                  localStorage.removeItem('tsl_records_v12');
+                if (confirm('আপনি কি সমস্ত হাজিরার ডাটা মুছে ফেলতে চান?\nমুছে ফেললে অ্যাপ ও এক্সেল ফাইল উভয়ের ডাটাই চিরতরে খালি হয়ে যাবে।')) {
+                  localStorage.removeItem('tsl_records_v18');
                   loadAdminDashboard();
+                  alert('✓ অ্যাপের সমস্ত হাজিরার ডাটা সম্পূর্ণ মুছে ফেলা হয়েছে!');
                 }
               }
 
@@ -1381,38 +1502,48 @@ jobs:
           npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
           npx cap add android
 
-      # ADD BIOMETRIC PERMISSIONS TO ANDROID MANIFEST
-      - name: Add Biometric Permissions to AndroidManifest
+      # ADD PERMISSIONS FOR STORAGE, HARDWARE SENSORS & NETWORK
+      - name: Add Permissions to AndroidManifest
         run: |
-          sed -i '/<application/i <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n<uses-permission android:name="android.permission.USE_FINGERPRINT" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
+          sed -i '/<application/i <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n<uses-permission android:name="android.permission.USE_FINGERPRINT" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
 
-      # ADD ANDROIDX BIOMETRIC DEPENDENCY TO BUILD.GRADLE
-      - name: Add AndroidX Biometric Dependency
+      # ADD ANDROIDX BIOMETRIC DEPENDENCY & BUMP VERSION TO V2.8.0
+      - name: Add AndroidX Biometric Dependency & Bump Version
         run: |
           sed -i '/dependencies {/a \    implementation "androidx.biometric:biometric:1.1.0"' tamishna/android/app/build.gradle
-          sed -i 's/versionCode 1/versionCode 4/g' tamishna/android/app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "2.2.0"/g' tamishna/android/app/build.gradle
+          sed -i 's/versionCode 1/versionCode 10/g' tamishna/android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "2.8.0"/g' tamishna/android/app/build.gradle
 
-      # INJECT NATIVE HARDWARE BIOMETRIC PROMPT SENSOR BRIDGE INTO MAINACTIVITY
-      - name: Inject Native Android BiometricPrompt Bridge into MainActivity
+      # INJECT BULLETPROOF NATIVE BIOMETRIC & REAL DOWNLOADS ENGINE INTO MAINACTIVITY
+      - name: Inject Native Biometric and Real Storage Engine
         run: |
           cat << 'EOF' > tamishna/android/app/src/main/java/com/tamishna/synthetics/attendance/MainActivity.java
           package com.tamishna.synthetics.attendance;
 
+          import android.content.ContentValues;
+          import android.content.Intent;
+          import android.net.Uri;
+          import android.os.Build;
           import android.os.Bundle;
+          import android.os.Environment;
+          import android.provider.MediaStore;
+          import android.util.Base64;
           import android.webkit.JavascriptInterface;
+          import android.widget.Toast;
           import androidx.annotation.NonNull;
           import androidx.biometric.BiometricManager;
           import androidx.biometric.BiometricPrompt;
           import androidx.core.content.ContextCompat;
           import com.getcapacitor.BridgeActivity;
+          import java.io.File;
+          import java.io.FileOutputStream;
+          import java.io.OutputStream;
           import java.util.concurrent.Executor;
 
           public class MainActivity extends BridgeActivity {
               @Override
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
-                  // Inject Hardware Biometric Sensor Bridge directly to WebView
                   this.bridge.getWebView().addJavascriptInterface(new BiometricBridge(), "AndroidBiometric");
               }
 
@@ -1442,7 +1573,7 @@ jobs:
                           });
 
                           String title = actionType.equals("CHECK_IN") ? "হাজিরা (Check-In) নিশ্চিতকরণ" : "প্রস্থান (Check-Out) নিশ্চিতকরণ";
-                          String subtitle = "Tamishna Synthetics Limited - আঙ্গুলের ছাপ স্ক্যান করুন";
+                          String subtitle = "Tamishna Synthetics Limited - আঙ্গুলের ছাপ দিন";
 
                           BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                                   .setTitle(title)
@@ -1452,6 +1583,53 @@ jobs:
                                   .build();
 
                           biometricPrompt.authenticate(promptInfo);
+                      });
+                  }
+
+                  // 100% REAL NATIVE ANDROID PDF SAVER DIRECTLY INTO DOWNLOADS DIRECTORY
+                  @JavascriptInterface
+                  public void savePdfToDownloads(final String base64Data, final String rawFilename) {
+                      runOnUiThread(() -> {
+                          try {
+                              String safeFilename = rawFilename.replaceAll("[^a-zA-Z0-9._-]", "_");
+                              byte[] pdfBytes = Base64.decode(base64Data, Base64.DEFAULT);
+
+                              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                  ContentValues values = new ContentValues();
+                                  values.put(MediaStore.MediaColumns.DISPLAY_NAME, safeFilename);
+                                  values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
+                                  values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                                  Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                                  if (uri != null) {
+                                      OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                                      if (outputStream != null) {
+                                          outputStream.write(pdfBytes);
+                                          outputStream.flush();
+                                          outputStream.close();
+                                      }
+                                      Toast.makeText(MainActivity.this, "✓ Job Card PDF সফলভাবে Downloads ফোল্ডারে সেভ হয়েছে!", Toast.LENGTH_LONG).show();
+
+                                      try {
+                                          Intent intent = new Intent(Intent.ACTION_VIEW);
+                                          intent.setDataAndType(uri, "application/pdf");
+                                          intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                          startActivity(Intent.createChooser(intent, "PDF ফাইলটি ওপেন করুন"));
+                                      } catch (Exception ignored) {}
+                                  }
+                              } else {
+                                  File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                  if (!downloadsDir.exists()) downloadsDir.mkdirs();
+                                  File file = new File(downloadsDir, safeFilename);
+                                  FileOutputStream fos = new FileOutputStream(file);
+                                  fos.write(pdfBytes);
+                                  fos.flush();
+                                  fos.close();
+                                  Toast.makeText(MainActivity.this, "✓ Job Card PDF সফলভাবে Downloads ফোল্ডারে সেভ হয়েছে!", Toast.LENGTH_LONG).show();
+                              }
+                          } catch (Exception e) {
+                              Toast.makeText(MainActivity.this, "PDF সেভ হতে ত্রুটি: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                          }
                       });
                   }
               }
@@ -1519,5 +1697,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Tamishna-Attendance-APK-v2.2
+          name: Tamishna-Attendance-JobCard-v2.8
           path: tamishna/android/app/build/outputs/apk/debug/*.apk
