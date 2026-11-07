@@ -191,11 +191,11 @@ jobs:
                   <div class="grid grid-cols-2 gap-2">
                     <div>
                       <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">Secret PIN</label>
-                      <input type="password" id="newStaffPin" required maxlength="6" placeholder="4-digit PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                      <input type="password" id="newStaffPin" required maxlength="6" placeholder="4-digit PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
                       <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">Confirm PIN</label>
-                      <input type="password" id="newStaffPinConfirm" required maxlength="6" placeholder="Re-enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                      <input type="password" id="newStaffPinConfirm" required maxlength="6" placeholder="Re-enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                     </div>
                   </div>
 
@@ -649,8 +649,36 @@ jobs:
               function saveRecords(d) { localStorage.setItem('tsl_records_v65', JSON.stringify(d)); }
               function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v65') || '[]'); }
               function saveLeaves(d) { localStorage.setItem('tsl_leaves_v65', JSON.stringify(d)); }
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v65') || '{}'); }
+              
+              // UNIVERSAL PIN RECOVERY (PREVENTS ANY PIN LOSS FROM OLD APP VERSIONS)
+              function getPinVault() {
+                let vault = {};
+                const keys = ['tsl_pins_v65', 'tsl_pins_v64', 'tsl_pins_v63', 'tsl_pins', 'tamishna_pins'];
+                for (const k of keys) {
+                  try {
+                    const item = localStorage.getItem(k);
+                    if (item) {
+                      const p = JSON.parse(item);
+                      if (p && typeof p === 'object') {
+                        vault = Object.assign({}, p, vault);
+                      }
+                    }
+                  } catch(e) {}
+                }
+                return vault;
+              }
               function savePinVault(v) { localStorage.setItem('tsl_pins_v65', JSON.stringify(v)); }
+
+              function getPinFromVault(vault, empId) {
+                if (!vault || !empId) return null;
+                const target = String(empId).trim();
+                for (const k in vault) {
+                  if (String(k).trim() === target) {
+                    return String(vault[k]).trim();
+                  }
+                }
+                return null;
+              }
 
               function getBstDateStr(d = new Date()) {
                 const bst = new Date(d.getTime() + (6 * 60 + d.getTimezoneOffset()) * 60000);
@@ -660,11 +688,40 @@ jobs:
                 return `${y}-${m}-${day}`;
               }
 
-              async function hashPin(pin) {
+              // SMART SHA256 HELPER
+              async function sha256Hex(str) {
                 const encoder = new TextEncoder();
-                const data = encoder.encode(pin + "_tsl_secure_salt_2026");
+                const data = encoder.encode(str);
                 const hashBuffer = await crypto.subtle.digest('SHA-256', data);
                 return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+              }
+
+              async function hashPin(pin) {
+                return await sha256Hex(pin + "_tsl_secure_salt_2026");
+              }
+
+              // 100% COMPATIBLE PIN VERIFIER (ACCEPTS OLD PLAIN PIN, OLD HASH & NEW HASH)
+              async function verifyPin(inputPin, storedPin) {
+                if (!storedPin || !inputPin) return false;
+                const s = String(storedPin).trim();
+                const p = String(inputPin).trim();
+
+                // 1. Plain text PIN match
+                if (s === p) return true;
+
+                // 2. New salted hash
+                const hashCurrent = await sha256Hex(p + "_tsl_secure_salt_2026");
+                if (s === hashCurrent) return true;
+
+                // 3. Previous salted hash
+                const hashOld = await sha256Hex(p + "_tsl_secure_salt");
+                if (s === hashOld) return true;
+
+                // 4. Raw SHA-256 without salt
+                const hashRaw = await sha256Hex(p);
+                if (s === hashRaw) return true;
+
+                return false;
               }
 
               function loadRememberedCredentials() {
@@ -730,10 +787,8 @@ jobs:
                 const res = await callGoogleSheet({ action: 'getRecords' });
                 if (res && res.status === 'success') {
                   if (Array.isArray(res.records)) {
-                    // DEDUPLICATE RECORDS SAFELY
                     let localRecs = getRecords();
                     let map = new Map();
-                    // Merge local and cloud seamlessly
                     localRecs.forEach(r => map.set(r.id || `${r.empId}_${r.date}`, r));
                     res.records.forEach(r => map.set(r.id || `${r.empId}_${r.date}`, r));
                     let merged = Array.from(map.values());
@@ -744,7 +799,8 @@ jobs:
                     saveLeaves(res.leaves);
                   }
                   if (res.pins && typeof res.pins === 'object') {
-                    savePinVault(res.pins);
+                    let localPins = getPinVault();
+                    savePinVault(Object.assign({}, localPins, res.pins));
                   }
                   
                   let erasedIds = JSON.parse(localStorage.getItem('tsl_erased_ids_v65') || '[]');
@@ -785,17 +841,16 @@ jobs:
                 pullAllFromCloud(false);
                 centralSyncInterval = setInterval(() => {
                   pullAllFromCloud(false);
-                }, 5000); // SUPER FAST 5-SECOND SYNC
+                }, 5000);
               }
 
-              // ONE-TAP STRICT SINGLE PUNCH LOGIC (ZERO MULTIPLE PUNCH ALLOWED)
+              // ONE-TAP STRICT SINGLE PUNCH LOGIC
               let isPunching = false;
               async function recordPunch(actionType) {
                 if (!currentUser || isPunching) return;
                 const today = getBstDateStr();
                 const alertEl = document.getElementById('punchStatusAlert');
 
-                // Quick pre-sync check to prevent multi-phone simultaneous punches
                 isPunching = true;
                 const btnIn = document.getElementById('btnCheckIn');
                 const btnOut = document.getElementById('btnCheckOut');
@@ -805,7 +860,6 @@ jobs:
                 let records = getRecords();
                 let existingRecord = records.find(r => String(r.empId).trim() === String(currentUser.id).trim() && String(r.date).trim() === today);
 
-                // STRICT VALIDATION 1: Check-in once and only once
                 if (actionType === 'CHECK_IN') {
                   if (existingRecord && existingRecord.checkIn && existingRecord.checkIn !== '--:--') {
                     alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked In today at ' + existingRecord.checkIn + '! Duplicate punch not allowed.</span>';
@@ -854,11 +908,9 @@ jobs:
                   records[existingIndex] = punchRecord;
                 }
                 
-                // SAVE IMMEDIATELY LOCALLY FOR PERMANENT ERP & JOB CARD
                 saveRecords(records);
                 refreshEmployeeTodayPunch();
 
-                // ASYNC CLOUD SYNC
                 pushPunchToCloud(punchRecord).then((ok) => {
                   if (ok) {
                     alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Successfully ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr} (Google Sheet Synced)</span>`;
@@ -885,7 +937,6 @@ jobs:
                 const btnIn = document.getElementById('btnCheckIn');
                 const btnOut = document.getElementById('btnCheckOut');
 
-                // LOCK BUTTONS ACCORDING TO ATTENDANCE STATE
                 if (hasIn) {
                   btnIn.classList.add('opacity-40', 'pointer-events-none');
                   document.getElementById('txtBtnCheckIn').innerText = 'Checked In';
@@ -901,7 +952,6 @@ jobs:
                   document.getElementById('txtBtnCheckOut').innerText = 'Checked Out';
                   document.getElementById('subTxtBtnCheckOut').innerText = record.checkOut;
                 } else if (!hasIn) {
-                  // Cannot checkout before checkin
                   btnOut.classList.add('opacity-50', 'pointer-events-none');
                   document.getElementById('txtBtnCheckOut').innerText = 'Punch Check-Out';
                   document.getElementById('subTxtBtnCheckOut').innerText = 'Punch In First';
@@ -912,7 +962,7 @@ jobs:
                 }
               }
 
-              // REAL NATIVE PDF SAVER
+              // PDF SAVER
               let activePdfDoc = null;
               let activePdfFilename = '';
 
@@ -995,7 +1045,7 @@ jobs:
                 }
               }
 
-              // INDIVIDUAL JOB CARD ENGINE (PERMANENT APPROVED LEAVES & IN TIME)
+              // INDIVIDUAL JOB CARD ENGINE
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
               let searchDebounceTimer = null;
 
@@ -1085,7 +1135,6 @@ jobs:
 
                   const attRecord = records.find(r => String(r.empId).trim() === String(empId).trim() && String(r.date).trim() === dateStr);
                   
-                  // PERMANENT APPROVED LEAVE DISPLAY (Unless Admin deletes it)
                   const approvedLeave = leaves.find(l => String(l.empId).trim() === String(empId).trim() && 
                     l.status === 'APPROVED' && 
                     dateStr >= String(l.fromDate).trim() && dateStr <= String(l.toDate).trim());
@@ -1094,7 +1143,6 @@ jobs:
                   let outTime = '--:--';
                   let status = isFriday ? 'WEEKEND' : 'ABSENT';
 
-                  // IMMEDIATE & PERMANENT IN-TIME AND PRESENT STATUS
                   if (attRecord && (attRecord.status === 'PRESENT' || (attRecord.checkIn && attRecord.checkIn !== '--:--'))) {
                     inTime = attRecord.checkIn || '--:--';
                     outTime = attRecord.checkOut || '--:--';
@@ -1333,7 +1381,7 @@ jobs:
                 await pullAllFromCloud(false);
                 const vault = getPinVault();
 
-                if (vault[found.id]) {
+                if (getPinFromVault(vault, found.id)) {
                   alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly from any phone.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   
@@ -1537,13 +1585,13 @@ jobs:
                   return;
                 }
 
-                // Master Admin Universal Login
+                // 1. MASTER ADMIN LOGIN (DEFAULT 1234 OR CUSTOM ADMIN PIN)
                 if (found.role === 'ADMIN') {
-                  const inputHash = await hashPin(pinInput);
                   let vault = getPinVault();
-                  let adminHash = vault[found.id];
+                  let adminStoredPin = getPinFromVault(vault, found.id);
+                  let isAdminMatched = (pinInput === '1234') || (adminStoredPin && await verifyPin(pinInput, adminStoredPin));
 
-                  if (pinInput === '1234' || (adminHash && adminHash === inputHash)) {
+                  if (isAdminMatched) {
                     handleRememberPinSave(idInput, pinInput);
                     currentUser = found;
                     showAppScreen();
@@ -1555,26 +1603,34 @@ jobs:
                   }
                 }
 
+                // 2. EMPLOYEE PIN VERIFICATION (ROBUST MULTI-FALLBACK)
                 let vault = getPinVault();
-                let existingHashedPin = vault[found.id];
+                let existingPin = getPinFromVault(vault, found.id);
 
-                if (!existingHashedPin) {
+                if (!existingPin) {
                   await pullAllFromCloud(false);
                   vault = getPinVault();
-                  existingHashedPin = vault[found.id];
+                  existingPin = getPinFromVault(vault, found.id);
                 }
 
-                if (!existingHashedPin) {
+                if (!existingPin) {
                   alertEl.innerText = 'PIN not set yet! Please register via Set PIN or New Staff.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   return;
                 }
 
-                const inputHash = await hashPin(pinInput);
-                if (existingHashedPin !== inputHash) {
+                const isPinValid = await verifyPin(pinInput, existingPin);
+                if (!isPinValid) {
                   alertEl.innerText = 'Incorrect PIN! Please enter the correct PIN.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
+                }
+
+                // SEAMLESS AUTO-UPGRADE TO SECURE HASH
+                const currentSecureHash = await hashPin(pinInput);
+                if (existingPin !== currentSecureHash) {
+                  vault[found.id] = currentSecureHash;
+                  savePinVault(vault);
                 }
 
                 handleRememberPinSave(idInput, pinInput);
@@ -1602,7 +1658,6 @@ jobs:
                   document.getElementById('userId').innerText = currentUser.id;
                   document.getElementById('userSection').innerText = currentUser.section;
                   refreshEmployeeTodayPunch();
-                  // Pull from cloud immediately upon opening screen
                   pullAllFromCloud(false).then(() => {
                     refreshEmployeeTodayPunch();
                   });
@@ -1697,12 +1752,10 @@ jobs:
                 }
               }
 
-              // REALTIME ACCURATE PRESENT DATA CALCULATION FOR ADMIN
               function loadAdminDashboard() {
                 const records = getRecords();
                 const today = getBstDateStr();
                 
-                // Real-time unique present count
                 const todayPresents = records.filter(r => String(r.date).trim() === today && (r.status === 'PRESENT' || (r.checkIn && r.checkIn !== '--:--')));
                 const uniquePresentEmpIds = new Set(todayPresents.map(r => String(r.empId).trim()));
 
@@ -1792,7 +1845,6 @@ jobs:
                 `).join('');
               }
 
-              // PERMANENT LEAVE APPROVAL LINKED TO JOB CARD
               async function updateLeaveStatus(leaveId, newStatus) {
                 let leaves = getLeaves();
                 let foundIndex = leaves.findIndex(l => l.id === leaveId);
@@ -1835,7 +1887,7 @@ jobs:
                   <tr class="hover:bg-slate-800/40">
                     <td class="p-2.5 font-mono text-emerald-400 font-bold">${u.id}</td>
                     <td class="p-2.5 font-sans">${u.name}<br><span class="text-[9px] text-slate-400">${u.section} (${u.desig})</span></td>
-                    <td class="p-2.5">${vault[u.id] ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN Active</span>' : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ Not Set</span>'}</td>
+                    <td class="p-2.5">${getPinFromVault(vault, u.id) ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN Active</span>' : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ Not Set</span>'}</td>
                     <td class="p-2.5">
                       <div class="flex items-center space-x-1.5">
                         <button onclick="resetUserPin('${u.id}', '${u.name}')" class="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold active:scale-95">
@@ -1901,7 +1953,11 @@ jobs:
                 }
               }
 
-              document.addEventListener('DOMContentLoaded', loadRememberedCredentials);
+              // AUTO BACKGROUND SYNC ON INITIAL LOAD
+              document.addEventListener('DOMContentLoaded', () => {
+                loadRememberedCredentials();
+                pullAllFromCloud(false);
+              });
               setTimeout(loadRememberedCredentials, 200);
             </script>
           </body>
@@ -1941,8 +1997,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 46')
-          content = content.replace('versionName "1.0"', 'versionName "6.6.0"')
+          content = content.replace('versionCode 1', 'versionCode 47')
+          content = content.replace('versionName "1.0"', 'versionName "6.7.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2157,5 +2213,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v6.6
+          name: Tsl-attendance-v6.7
           path: "output_apk/Tsl attendance.apk"
