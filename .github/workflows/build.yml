@@ -78,7 +78,7 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">Release v5.0</span>
+                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">Official App</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -385,7 +385,7 @@ jobs:
                   </div>
                 </div>
 
-                <!-- TABLE: IN TIME, OUT TIME, LEAVE SHOWS EVERY DAY WITHOUT FAIL -->
+                <!-- TABLE: IN TIME, OUT TIME, APPROVED LEAVE SHOWS EVERY DAY -->
                 <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto max-h-72">
                   <table class="w-full text-left text-xs text-slate-300">
                     <thead class="bg-slate-900 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
@@ -408,10 +408,10 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW C: LEAVE APPROVAL -->
+              <!-- VIEW C: LEAVE APPROVAL & DELETE MANAGEMENT -->
               <div id="adminLeaveSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
-                  Leave Applications (C/L, M/L, E/L)
+                  Leave Applications (Admin Approval & Management)
                 </div>
                 <div id="adminLeaveCardsContainer" class="p-3 space-y-3"></div>
               </div>
@@ -475,7 +475,7 @@ jobs:
               </div>
             </div>
 
-            <!-- 5. LEAVE APPLY MODAL -->
+            <!-- 5. LEAVE APPLY MODAL (NO REASON BOX, ONLY LEAVE TYPE & DATES) -->
             <div id="leaveApplyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
               <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 shadow-2xl">
                 <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2">
@@ -502,11 +502,6 @@ jobs:
                       <label class="block text-slate-300 mb-1 font-semibold">To Date</label>
                       <input type="date" id="leaveTo" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono focus:outline-none focus:border-emerald-500">
                     </div>
-                  </div>
-
-                  <div>
-                    <label class="block text-slate-300 mb-1 font-semibold">Reason for Leave</label>
-                    <textarea id="leaveReason" required rows="2" placeholder="Write leave reason..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500"></textarea>
                   </div>
 
                   <div class="flex justify-end space-x-2 pt-2 border-t border-slate-800">
@@ -612,15 +607,15 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v50', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v55', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v50')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v50') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v50', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v50') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v50', JSON.stringify(d)); }
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v50') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pins_v50', JSON.stringify(v)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v55')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v55') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v55', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v55') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v55', JSON.stringify(d)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v55') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pins_v55', JSON.stringify(v)); }
 
               // BANGLADESH STANDARD TIME DATE HELPER (BST GMT+6)
               function getBstDateStr(d = new Date()) {
@@ -676,17 +671,6 @@ jobs:
                 const query = new URLSearchParams(params).toString();
                 const fullUrl = `${GOOGLE_SHEET_API_URL}?${query}`;
 
-                if (window.AndroidBridge && window.AndroidBridge.cloudGetRequest) {
-                  try {
-                    const raw = window.AndroidBridge.cloudGetRequest(fullUrl);
-                    if (raw && raw.trim().startsWith('{')) {
-                      return JSON.parse(raw);
-                    }
-                  } catch(e) {
-                    console.warn('Native request fallback', e);
-                  }
-                }
-
                 try {
                   const res = await fetch(fullUrl, { method: 'GET', redirect: 'follow' });
                   if (res.ok) {
@@ -741,7 +725,7 @@ jobs:
                 pullAllFromCloud(false);
                 centralSyncInterval = setInterval(() => {
                   pullAllFromCloud(false);
-                }, 5000);
+                }, 8000);
               }
 
               // ============================================================
@@ -888,14 +872,14 @@ jobs:
               }
 
               // ============================================================
-              // 5. INDIVIDUAL JOB CARD ENGINE (PERMANENT IN/OUT/LEAVE EVERY DAY)
+              // 5. INDIVIDUAL JOB CARD ENGINE (IN/OUT AND APPROVED LEAVES)
               // ============================================================
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
               let searchDebounceTimer = null;
 
               function debounceJobCardSearch() {
                 clearTimeout(searchDebounceTimer);
-                searchDebounceTimer = setTimeout(handleJobCardSearchInput, 250);
+                searchDebounceTimer = setTimeout(handleJobCardSearchInput, 200);
               }
 
               function populateJobCardEmpDropdown() {
@@ -978,8 +962,9 @@ jobs:
                   const isFriday = (dateObj.getDay() === 5);
 
                   const attRecord = records.find(r => String(r.empId).trim() === String(empId).trim() && String(r.date).trim() === dateStr);
-                  const activeLeave = leaves.find(l => String(l.empId).trim() === String(empId).trim() && 
-                    (l.status === 'APPROVED' || l.status === 'PENDING') && 
+                  // ONLY APPROVED LEAVES DISPLAY ON JOB CARD PERMANENTLY!
+                  const approvedLeave = leaves.find(l => String(l.empId).trim() === String(empId).trim() && 
+                    l.status === 'APPROVED' && 
                     dateStr >= String(l.fromDate).trim() && dateStr <= String(l.toDate).trim());
 
                   let inTime = '--:--';
@@ -991,8 +976,8 @@ jobs:
                     outTime = attRecord.checkOut || '--:--';
                     status = 'PRESENT';
                     presentCount++;
-                  } else if (activeLeave) {
-                    status = `LEAVE (${activeLeave.type})`;
+                  } else if (approvedLeave) {
+                    status = `LEAVE (${approvedLeave.type})`;
                     leaveCount++;
                   } else if (isFriday) {
                     status = 'WEEKEND';
@@ -1279,6 +1264,7 @@ jobs:
                 vault[found.id] = hashed;
                 savePinVault(vault);
 
+                // Save permanently into Google Sheet (Pins tab)
                 await callGoogleSheet({ action: 'savePin', data: JSON.stringify({ id: found.id, hash: hashed, name: found.name }) });
 
                 alert('✓ Sign Up Successful!\nPIN created for ' + found.name + '. You can now log in from ANY phone using this PIN even after app update or re-install.');
@@ -1318,6 +1304,7 @@ jobs:
                   return;
                 }
 
+                // Master Admin Universal Login
                 if (found.role === 'ADMIN') {
                   const inputHash = await hashPin(pinInput);
                   let vault = getPinVault();
@@ -1335,6 +1322,7 @@ jobs:
                   }
                 }
 
+                // Check PIN from Local Vault or Pull from Cloud Sheet
                 let vault = getPinVault();
                 let existingHashedPin = vault[found.id];
 
@@ -1413,7 +1401,6 @@ jobs:
                 const today = getBstDateStr();
                 document.getElementById('leaveFrom').value = today;
                 document.getElementById('leaveTo').value = today;
-                document.getElementById('leaveReason').value = '';
                 document.getElementById('leaveApplyModal').classList.remove('hidden');
               }
               function closeLeaveApplyModal() {
@@ -1426,7 +1413,6 @@ jobs:
                 const type = document.getElementById('leaveType').value;
                 const fromDate = document.getElementById('leaveFrom').value;
                 const toDate = document.getElementById('leaveTo').value;
-                const reason = document.getElementById('leaveReason').value.trim();
 
                 if (fromDate > toDate) {
                   alert('From Date cannot be later than To Date!');
@@ -1442,9 +1428,8 @@ jobs:
                   type: type,
                   fromDate: fromDate,
                   toDate: toDate,
-                  reason: reason,
                   appliedOn: getBstDateStr(),
-                  status: 'APPROVED'
+                  status: 'PENDING'
                 };
 
                 const leaves = getLeaves();
@@ -1454,7 +1439,7 @@ jobs:
                 await callGoogleSheet({ action: 'applyLeave', data: JSON.stringify(leaveObj) });
 
                 closeLeaveApplyModal();
-                alert('✓ Leave application submitted successfully to Google Sheet! Permanent across all Job Cards.');
+                alert('✓ Leave application submitted successfully! It will appear on Job Card once Admin approves it.');
               }
 
               function switchAdminTab(tab) {
@@ -1487,6 +1472,7 @@ jobs:
                 }
               }
 
+              // SIMPLIFIED ATTENDANCE LOG: DATE, EMPLOYEE NAME & ID, SECTION, STATUS, DELETE
               function loadAdminDashboard() {
                 const records = getRecords();
                 const today = getBstDateStr();
@@ -1545,6 +1531,7 @@ jobs:
                 }
               }
 
+              // ADMIN LEAVES: SHOWS STATUS, APPROVE BUTTON, AND DELETE BUTTON
               function loadAdminLeaveCards() {
                 const leaves = getLeaves();
                 const container = document.getElementById('adminLeaveCardsContainer');
@@ -1562,15 +1549,17 @@ jobs:
                       <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${l.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : l.status === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}">${l.status} (${l.type})</span>
                     </div>
                     <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
-                      <p class="text-slate-300"><b>Duration:</b> ${l.fromDate} to ${l.toDate}</p>
-                      <p class="text-slate-300 mt-0.5"><b>Reason:</b> ${l.reason}</p>
+                      <p class="text-slate-300"><b>Date:</b> ${l.fromDate} to ${l.toDate}</p>
                     </div>
-                    ${l.status === 'PENDING' ? `
-                      <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                    <div class="flex items-center space-x-2 pt-2 border-t border-slate-800">
+                      ${l.status === 'PENDING' ? `
                         <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ Approve</button>
-                        <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ Reject</button>
-                      </div>
-                    ` : ''}
+                        <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ Reject</button>
+                      ` : ''}
+                      <button onclick="deleteLeaveRecord('${l.id}')" class="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1" title="Delete Leave">
+                        <span>🗑️ Delete</span>
+                      </button>
+                    </div>
                   </div>
                 `).join('');
               }
@@ -1585,10 +1574,26 @@ jobs:
 
                 await callGoogleSheet({ action: 'updateLeaveStatus', data: JSON.stringify({ id: leaveId, status: newStatus }) });
 
-                alert(newStatus === 'APPROVED' ? '✓ Leave Approved! Synced across Job Cards and Sheet.' : 'Leave rejected.');
+                alert(newStatus === 'APPROVED' ? '✓ Leave Approved! Now permanently visible on Job Card.' : 'Leave rejected.');
                 loadAdminDashboard();
                 if (currentJobCardData && currentJobCardData.emp) {
                   renderSelectedEmployeeJobCard();
+                }
+              }
+
+              async function deleteLeaveRecord(leaveId) {
+                if (confirm('Delete this leave application?\nIt will be permanently removed from Google Sheet and Job Card.')) {
+                  let leaves = getLeaves();
+                  leaves = leaves.filter(l => l.id !== leaveId);
+                  saveLeaves(leaves);
+
+                  await callGoogleSheet({ action: 'deleteLeave', id: leaveId });
+
+                  alert('✓ Leave record deleted successfully!');
+                  loadAdminDashboard();
+                  if (currentJobCardData && currentJobCardData.emp) {
+                    renderSelectedEmployeeJobCard();
+                  }
                 }
               }
 
@@ -1654,7 +1659,7 @@ jobs:
 
               async function clearAllData() {
                 if (confirm('Delete ALL attendance records permanently?\nThis will clear the Google Sheet, device records, and Excel.')) {
-                  localStorage.removeItem('tsl_records_v50');
+                  localStorage.removeItem('tsl_records_v55');
                   await clearCloudDatabase();
                   loadAdminDashboard();
                   alert('✓ All attendance records have been cleared from Google Sheet and app!');
@@ -1670,21 +1675,20 @@ jobs:
           npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
           npx cap add android
 
-      # ADD STORAGE & FULL NETWORK PERMISSIONS (WITH CLEARTEXT TRAFFIC)
-      - name: Add Permissions and Network Settings to AndroidManifest
+      # CLEAN PERMISSIONS (REMOVES CLEARTEXT AND DEPRECATED PERMISSIONS TO SATISFY PLAY PROTECT)
+      - name: Configure Clean AndroidManifest
         run: |
-          sed -i '/<application/i <uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
-          sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' tamishna/android/app/src/main/AndroidManifest.xml
+          sed -i '/<application/i <uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
 
-      # GENERATE PRODUCTION RELEASE KEYSTORE (PREVENTS PLAY PROTECT WARNINGS)
+      # GENERATE PRODUCTION RELEASE KEYSTORE (RSA 2048, 10,000 DAYS VALIDITY)
       - name: Generate Official Release Keystore
         run: |
           keytool -genkeypair -v -keystore tamishna/android/release.keystore -alias tamishna -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass tamishna123 -keypass tamishna123 \
-            -dname "CN=Tamishna Synthetics Ltd, OU=IT ERP Division, O=Tamishna Group, L=Gazipur, ST=Dhaka, C=BD"
+            -dname "CN=Tamishna Synthetics Ltd, OU=IT Division, O=Tamishna Group, L=Gazipur, ST=Dhaka, C=BD"
 
-      # INJECT RELEASE SIGNING CONFIG INTO GRADLE & BUMP VERSION TO V5.0.0
-      - name: Configure Production Release Signing in Gradle
+      # CONFIGURE GRADLE FOR PRODUCTION RELEASE & BUMP VERSION
+      - name: Configure Gradle for Production Release
         run: |
           python3 - << 'EOF'
           with open('tamishna/android/app/build.gradle', 'r') as f:
@@ -1705,16 +1709,15 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 30')
-          content = content.replace('versionName "1.0"', 'versionName "5.0.0"')
+          content = content.replace('versionCode 1', 'versionCode 35')
+          content = content.replace('versionName "1.0"', 'versionName "5.5.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
-          print("✓ Configured production release signing successfully!")
           EOF
 
-      # INJECT NATIVE STORAGE & FAST ASYNC REDIRECT HANDLER (NO BIOMETRIC SENSOR DEPENDENCY)
-      - name: Inject Native Storage and Cloud Bridge into MainActivity
+      # INJECT NATIVE STORAGE BRIDGE (NO LAG, ASYNC NATIVE EXECUTION)
+      - name: Inject Native Storage Bridge into MainActivity
         run: |
           cat << 'EOF' > tamishna/android/app/src/main/java/com/tamishna/synthetics/attendance/MainActivity.java
           package com.tamishna.synthetics.attendance;
@@ -1730,13 +1733,9 @@ jobs:
           import android.webkit.JavascriptInterface;
           import android.widget.Toast;
           import com.getcapacitor.BridgeActivity;
-          import java.io.BufferedReader;
           import java.io.File;
           import java.io.FileOutputStream;
-          import java.io.InputStreamReader;
           import java.io.OutputStream;
-          import java.net.HttpURLConnection;
-          import java.net.URL;
           import java.nio.charset.StandardCharsets;
 
           public class MainActivity extends BridgeActivity {
@@ -1747,38 +1746,6 @@ jobs:
               }
 
               public class StorageBridge {
-                  // NATIVE HTTP HANDLER: INSTANT RESPONSE & HANDLES GOOGLE APPS SCRIPT REDIRECTS
-                  @JavascriptInterface
-                  public String cloudGetRequest(final String targetUrl) {
-                      try {
-                          URL url = new URL(targetUrl);
-                          HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                          conn.setInstanceFollowRedirects(true);
-                          conn.setRequestMethod("GET");
-                          conn.setConnectTimeout(10000);
-                          conn.setReadTimeout(10000);
-
-                          int status = conn.getResponseCode();
-                          if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == 307) {
-                              String newUrl = conn.getHeaderField("Location");
-                              conn = (HttpURLConnection) new URL(newUrl).openConnection();
-                              conn.setRequestMethod("GET");
-                          }
-
-                          BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-                          StringBuilder resp = new StringBuilder();
-                          String line;
-                          while ((line = in.readLine()) != null) {
-                              resp.append(line);
-                          }
-                          in.close();
-                          return resp.toString();
-                      } catch (Exception e) {
-                          return "";
-                      }
-                  }
-
-                  // NATIVE PDF SAVER DIRECTLY INTO DOWNLOADS
                   @JavascriptInterface
                   public void savePdfToDownloads(final String base64Data, final String rawFilename) {
                       runOnUiThread(() -> {
@@ -1825,7 +1792,6 @@ jobs:
                       });
                   }
 
-                  // NATIVE EXCEL / CSV SAVER DIRECTLY INTO DOWNLOADS
                   @JavascriptInterface
                   public void saveCsvToDownloads(final String csvContent, final String rawFilename) {
                       runOnUiThread(() -> {
@@ -1934,15 +1900,35 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon
 
-      # RENAME APK DIRECTLY TO "Tsl attendance.apk"
-      - name: Rename APK to Tsl attendance.apk
+      # RE-SIGN AND ALIGN USING APKSIGNER (V1, V2, V3 SCHEMES FOR ZERO PLAY PROTECT BLOCK)
+      - name: Align and Sign with Apksigner
         run: |
+          BUILD_TOOLS_DIR=$(find $ANDROID_SDK_ROOT/build-tools -maxdepth 1 -type d | sort -V | tail -n 1)
+          echo "Using Android Build Tools at: $BUILD_TOOLS_DIR"
+          
           mkdir -p output_apk
-          cp tamishna/android/app/build/outputs/apk/release/app-release.apk "output_apk/Tsl attendance.apk"
+          ORIGINAL_APK="tamishna/android/app/build/outputs/apk/release/app-release.apk"
+          if [ ! -f "$ORIGINAL_APK" ]; then
+            ORIGINAL_APK="tamishna/android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          fi
+
+          $BUILD_TOOLS_DIR/zipalign -v -p 4 "$ORIGINAL_APK" "output_apk/aligned.apk"
+          
+          $BUILD_TOOLS_DIR/apksigner sign --ks tamishna/android/release.keystore \
+            --ks-pass pass:tamishna123 \
+            --ks-key-alias tamishna \
+            --key-pass pass:tamishna123 \
+            --v1-signing-enabled true \
+            --v2-signing-enabled true \
+            --v3-signing-enabled true \
+            --out "output_apk/Tsl attendance.apk" "output_apk/aligned.apk"
+
+          $BUILD_TOOLS_DIR/apksigner verify --verbose "output_apk/Tsl attendance.apk"
+          echo "✓ Verified official v1, v2 & v3 signatures successfully!"
 
       # UPLOAD DIRECT PRODUCTION SIGNED APK
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v5.0
+          name: Tsl-attendance-v5.5
           path: "output_apk/Tsl attendance.apk"
