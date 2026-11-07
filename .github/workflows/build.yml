@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Setup Python for Icon Generation
+      - name: Setup Python for Scripts
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
@@ -49,9 +49,18 @@ jobs:
             <!-- TAMISHNA GROUP LOGO COMPONENT -->
             <template id="tamishnaLogoTpl">
               <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
-                <defs><path id="tgTextPath" d="M 28,125 A 72,72 0 0,0 172,125" /></defs>
+                <defs>
+                  <path id="tgTextPath" d="M 28,125 A 72,72 0 0,0 172,125" />
+                </defs>
                 <circle cx="100" cy="100" r="92" fill="#0c4182" />
-                <path d="M 88 5 L 112 5 L 109 18 L 91 18 Z M 148 24 L 166 40 L 155 50 L 137 36 Z M 183 82 L 196 100 L 183 108 L 170 94 Z M 166 153 L 148 169 L 137 156 L 155 142 Z M 112 195 L 88 195 L 91 182 L 109 182 Z M 34 169 L 16 153 L 29 141 L 46 155 Z M 5 100 L 18 82 L 30 94 L 18 108 Z M 16 40 L 34 24 L 46 38 L 30 52 Z" fill="#ffffff" />
+                <path d="M 88 5 L 112 5 L 109 18 L 91 18 Z
+                         M 148 24 L 166 40 L 155 50 L 137 36 Z
+                         M 183 82 L 196 100 L 183 108 L 170 94 Z
+                         M 166 153 L 148 169 L 137 156 L 155 142 Z
+                         M 112 195 L 88 195 L 91 182 L 109 182 Z
+                         M 34 169 L 16 153 L 29 141 L 46 155 Z
+                         M 5 100 L 18 82 L 30 94 L 18 108 Z
+                         M 16 40 L 34 24 L 46 38 L 30 52 Z" fill="#ffffff" />
                 <circle cx="100" cy="100" r="82" fill="none" stroke="#0c4182" stroke-width="12" />
                 <circle cx="100" cy="100" r="66" fill="#ffffff" stroke="#0c4182" stroke-width="4" />
                 <path d="M 52 74 L 148 74 C 146 64 134 60 100 60 C 66 60 54 64 52 74 Z" fill="#f26522" stroke="#0c4182" stroke-width="3" />
@@ -69,7 +78,7 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v5.2</span>
+                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">Release v5.0</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -102,6 +111,7 @@ jobs:
 
                 <div id="authAlert" class="hidden p-2.5 mb-3 rounded-xl text-xs text-center font-medium"></div>
 
+                <!-- LOGIN FORM -->
                 <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3" autocomplete="off">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Card No / Employee ID</label>
@@ -111,12 +121,14 @@ jobs:
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Secret PIN</label>
                     <input type="password" id="loginPin" required maxlength="6" placeholder="Enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
+
                   <div class="flex items-center justify-between py-1">
                     <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer select-none">
                       <input type="checkbox" id="rememberPinCheckbox" class="w-4 h-4 rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-0">
                       <span>Remember PIN</span>
                     </label>
                   </div>
+
                   <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 active:scale-95 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg shadow-emerald-500/25 text-xs mt-1">
                     Login Now
                   </button>
@@ -125,6 +137,7 @@ jobs:
                   </div>
                 </form>
 
+                <!-- SIGN UP FORM -->
                 <form id="signupForm" onsubmit="handleSignUpSubmit(event)" class="hidden space-y-3" autocomplete="off">
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Employee Card No</label>
@@ -133,10 +146,12 @@ jobs:
                       <button type="button" onclick="verifyEmployeeForSignUp()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold active:scale-95">Verify</button>
                     </div>
                   </div>
+
                   <div id="signupEmpDetails" class="hidden p-2.5 bg-slate-950/90 rounded-xl border border-slate-800 text-xs space-y-0.5">
                     <p class="text-white font-bold" id="signupEmpName"></p>
                     <p class="text-slate-400 text-[10px]" id="signupEmpDesigSec"></p>
                   </div>
+
                   <div>
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">New 4-Digit Secret PIN</label>
                     <input type="password" id="signupPin" required maxlength="6" placeholder="Enter new PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
@@ -145,6 +160,7 @@ jobs:
                     <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1">Confirm Secret PIN</label>
                     <input type="password" id="signupPinConfirm" required maxlength="6" placeholder="Re-enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500" autocomplete="new-password">
                   </div>
+
                   <button id="signupSubmitBtn" type="submit" class="w-full bg-blue-600 active:scale-95 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/25 text-xs mt-1">
                     ✓ Complete Sign Up
                   </button>
@@ -152,10 +168,11 @@ jobs:
                     <button type="button" onclick="switchAuthTab('login')" class="text-[11px] text-slate-400 hover:underline">Already set PIN? Login</button>
                   </div>
                 </form>
+
               </div>
             </main>
 
-            <!-- 2. EMPLOYEE PUNCH SCREEN (STRICT 1-TIME DAILY LOCK ENFORCED) -->
+            <!-- 2. EMPLOYEE PUNCH SCREEN (SUPER FAST ONE-TAP PUNCH) -->
             <main id="punchView" class="flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
               <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-md">
                 <div class="flex items-center space-x-3 min-w-0">
@@ -191,15 +208,15 @@ jobs:
 
               <!-- ONE-TAP DIRECT PUNCH BUTTONS -->
               <div class="grid grid-cols-2 gap-3 pt-1">
-                <button id="btnCheckIn" onclick="recordPunch('CHECK_IN')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center transition">
+                <button onclick="recordPunch('CHECK_IN')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
                   <span class="text-3xl mb-1">⏱️</span>
-                  <span id="btnCheckInText" class="text-xs font-bold">Punch Check-In</span>
-                  <span id="btnCheckInSub" class="text-[9px] text-emerald-200 mt-0.5">Instant Entry</span>
+                  <span class="text-xs font-bold">Punch Check-In</span>
+                  <span class="text-[9px] text-emerald-200 mt-0.5">Instant Entry</span>
                 </button>
-                <button id="btnCheckOut" onclick="recordPunch('CHECK_OUT')" class="bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center transition">
+                <button onclick="recordPunch('CHECK_OUT')" class="bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
                   <span class="text-3xl mb-1">🚪</span>
-                  <span id="btnCheckOutText" class="text-xs font-bold">Punch Check-Out</span>
-                  <span id="btnCheckOutSub" class="text-[9px] text-rose-200 mt-0.5">Instant Exit</span>
+                  <span class="text-xs font-bold">Punch Check-Out</span>
+                  <span class="text-[9px] text-rose-200 mt-0.5">Instant Exit</span>
                 </button>
               </div>
 
@@ -218,7 +235,7 @@ jobs:
               </div>
             </main>
 
-            <!-- 3. ADMIN PANEL (CENTRAL DASHBOARD WITH REAL-TIME DAILY ATTENDANCE COUNT) -->
+            <!-- 3. ADMIN PANEL (CENTRAL DASHBOARD - PERMANENT DATA UNLESS DELETED) -->
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
@@ -242,23 +259,19 @@ jobs:
                 </div>
               </div>
 
-              <!-- CENTRAL DAILY ATTENDANCE STATS COUNTER -->
-              <div class="grid grid-cols-4 gap-2 text-center">
-                <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 shadow">
-                  <span class="text-[9px] text-slate-400 block font-semibold uppercase">Total Staff</span>
-                  <p id="totalEmpCount" class="text-sm font-bold text-white mt-0.5">51</p>
+              <!-- STATS -->
+              <div class="grid grid-cols-3 gap-2.5 text-center">
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                  <span class="text-[10px] text-slate-400 block">Total Staff</span>
+                  <p id="totalEmpCount" class="text-base font-bold text-white">51</p>
                 </div>
-                <div class="bg-slate-900 p-2.5 rounded-xl border border-emerald-500/30 shadow bg-emerald-950/20">
-                  <span class="text-[9px] text-emerald-400 block font-semibold uppercase">Present Today</span>
-                  <p id="todayPresentCount" class="text-sm font-bold text-emerald-400 mt-0.5">0</p>
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                  <span class="text-[10px] text-slate-400 block">Present Today (All Phones)</span>
+                  <p id="todayPresentCount" class="text-base font-bold text-emerald-400">0</p>
                 </div>
-                <div class="bg-slate-900 p-2.5 rounded-xl border border-rose-500/30 shadow bg-rose-950/20">
-                  <span class="text-[9px] text-rose-400 block font-semibold uppercase">Absent Today</span>
-                  <p id="todayAbsentCount" class="text-sm font-bold text-rose-400 mt-0.5">51</p>
-                </div>
-                <div class="bg-slate-900 p-2.5 rounded-xl border border-amber-500/30 shadow bg-amber-950/20">
-                  <span class="text-[9px] text-amber-400 block font-semibold uppercase">Pending Leaves</span>
-                  <p id="pendingLeaveBadge" class="text-sm font-bold text-amber-400 mt-0.5">0</p>
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                  <span class="text-[10px] text-slate-400 block">Pending Leaves</span>
+                  <p id="pendingLeaveBadge" class="text-base font-bold text-amber-400">0</p>
                 </div>
               </div>
 
@@ -266,7 +279,7 @@ jobs:
               <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                 <div class="flex items-center space-x-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span class="text-slate-300 text-[11px]">Real-time Daily Attendance Sync Active</span>
+                  <span class="text-slate-300 text-[11px]">Google Sheet Connected (Syncs across all phones)</span>
                 </div>
                 <button onclick="pullAllFromCloud(true)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow">
                   <span>🔄 Refresh Now</span>
@@ -284,10 +297,10 @@ jobs:
                 <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN List</button>
               </div>
 
-              <!-- VIEW A: ATTENDANCE LOG -->
+              <!-- VIEW A: SIMPLIFIED ATTENDANCE LOG (DATE, NAME, SECTION, STATUS, DELETE) -->
               <div id="adminAttSection" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center text-xs">
-                  <span class="text-slate-300 font-semibold">All Attendance Records (Direct Google Sheet Sync)</span>
+                  <span class="text-slate-300 font-semibold">Attendance Log (Date, Employee, Section, Status)</span>
                   <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline font-bold">Clear All Records</button>
                 </div>
                 <div class="overflow-x-auto max-h-96">
@@ -295,10 +308,8 @@ jobs:
                     <thead class="bg-slate-950 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
                       <tr>
                         <th class="p-2.5">Date</th>
-                        <th class="p-2.5">Employee</th>
+                        <th class="p-2.5">Employee Name & ID</th>
                         <th class="p-2.5">Section</th>
-                        <th class="p-2.5">In</th>
-                        <th class="p-2.5">Out</th>
                         <th class="p-2.5">Status</th>
                         <th class="p-2.5 text-center">Action</th>
                       </tr>
@@ -308,7 +319,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (WITHOUT DAY COLUMN) -->
+              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (IN TIME, OUT TIME, LEAVE FULL MONTH) -->
               <div id="adminJobCardSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div>
@@ -320,11 +331,11 @@ jobs:
                   </button>
                 </div>
 
-                <!-- LIVE SEARCH BAR -->
+                <!-- FAST DEBOUNCED SEARCH BAR -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
                   <label class="block text-slate-300 font-semibold text-xs">🔍 Search Job Card by Card No / ID:</label>
                   <div class="flex space-x-2">
-                    <input type="text" id="jobCardSearchInput" oninput="handleJobCardSearchInput()" onkeypress="if(event.key==='Enter') searchEmployeeJobCard()" placeholder="Type Employee ID (e.g. 10000159)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="jobCardSearchInput" oninput="debounceJobCardSearch()" onkeypress="if(event.key==='Enter') searchEmployeeJobCard()" placeholder="Type Employee ID (e.g. 10000159)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
                     <button onclick="searchEmployeeJobCard()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold active:scale-95 shadow">Search</button>
                   </div>
                   <div id="jcSearchFeedback" class="hidden text-[10px] font-medium pt-0.5"></div>
@@ -354,7 +365,7 @@ jobs:
                   </div>
                 </div>
 
-                <!-- JOB CARD SUMMARY STATS -->
+                <!-- JOB CARD SUMMARY STATS (PRESENT COUNT AUTO-INCREMENTED ON CHECK-IN) -->
                 <div class="grid grid-cols-4 gap-2 text-center text-xs">
                   <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
                     <span class="text-[9px] text-slate-400 block">Present</span>
@@ -601,16 +612,24 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_master', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v50', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              // PERMANENT KEYS - WILL NEVER CHANGE WITH VERSION UPDATES
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_master')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_master_records') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_master_records', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_master_leaves') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_master_leaves', JSON.stringify(d)); }
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_master_pins_vault') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_master_pins_vault', JSON.stringify(v)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v50')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v50') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v50', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v50') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v50', JSON.stringify(d)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v50') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pins_v50', JSON.stringify(v)); }
+
+              // BANGLADESH STANDARD TIME DATE HELPER (BST GMT+6)
+              function getBstDateStr(d = new Date()) {
+                const bst = new Date(d.getTime() + (6 * 60 + d.getTimezoneOffset()) * 60000);
+                const y = bst.getFullYear();
+                const m = String(bst.getMonth() + 1).padStart(2, '0');
+                const day = String(bst.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+              }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -648,7 +667,7 @@ jobs:
               }
 
               // ============================================================
-              // 2. ULTRA-FAST GOOGLE APPS SCRIPT ENGINE WITH ASYNC BACKGROUND SYNC
+              // 2. ULTRA-FAST ASYNC CLOUD SHEET CALL (NON-BLOCKING)
               // ============================================================
               const GOOGLE_SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbyArqQrKOY5p3T6ACEMlLPiYaCv1umVOB6uudbLnU_-pC6T_IKv8uN_8XkZPG_OZf6A/exec';
               let centralSyncInterval = null;
@@ -657,7 +676,6 @@ jobs:
                 const query = new URLSearchParams(params).toString();
                 const fullUrl = `${GOOGLE_SHEET_API_URL}?${query}`;
 
-                // 1. Native Java Request (Highest priority, fastest and bypasses CORS/redirects)
                 if (window.AndroidBridge && window.AndroidBridge.cloudGetRequest) {
                   try {
                     const raw = window.AndroidBridge.cloudGetRequest(fullUrl);
@@ -665,11 +683,10 @@ jobs:
                       return JSON.parse(raw);
                     }
                   } catch(e) {
-                    console.warn('Native request error', e);
+                    console.warn('Native request fallback', e);
                   }
                 }
 
-                // 2. Standard fetch fallback
                 try {
                   const res = await fetch(fullUrl, { method: 'GET', redirect: 'follow' });
                   if (res.ok) {
@@ -705,23 +722,18 @@ jobs:
                     saveLeaves(res.leaves);
                   }
                   if (res.pins && typeof res.pins === 'object') {
-                    // Update master persistent pins vault
-                    const existingVault = getPinVault();
-                    const mergedPins = { ...existingVault, ...res.pins };
-                    savePinVault(mergedPins);
+                    savePinVault(res.pins);
                   }
                   if (showAlert) alert('✓ Connected to Google Sheet! Live data synced.');
-                  
-                  if (currentUser) {
-                    if (currentUser.role === 'ADMIN') {
-                      loadAdminDashboard();
-                    } else {
-                      refreshEmployeeTodayPunch();
+                  if (currentUser && currentUser.role === 'ADMIN') {
+                    loadAdminDashboard();
+                    if (currentJobCardData && currentJobCardData.emp) {
+                      renderSelectedEmployeeJobCard();
                     }
                   }
                   return;
                 }
-                if (showAlert) alert('Google Sheet check completed.');
+                if (showAlert) alert('Google Sheet sync check completed.');
               }
 
               function startRealtimeCloudSync() {
@@ -733,82 +745,29 @@ jobs:
               }
 
               // ============================================================
-              // 3. STRICT 1-CHECKIN & 1-CHECKOUT DAILY LOCK ENGINE (LOCKED ON ALL DEVICES)
+              // 3. ONE-TAP FAST PUNCH WITH ACCURATE BANGLADESH DATE
               // ============================================================
-              function refreshEmployeeTodayPunch() {
-                if (!currentUser) return;
-                const today = new Date().toISOString().split('T')[0];
-                const records = getRecords();
-                const record = records.find(r => r.empId === currentUser.id && r.date === today);
-                
-                const btnIn = document.getElementById('btnCheckIn');
-                const btnOut = document.getElementById('btnCheckOut');
-                const alertEl = document.getElementById('punchStatusAlert');
-
-                const checkInVal = (record && record.checkIn && record.checkIn !== '--:--') ? record.checkIn : null;
-                const checkOutVal = (record && record.checkOut && record.checkOut !== '--:--') ? record.checkOut : null;
-
-                document.getElementById('todayInText').innerText = checkInVal || '--:--';
-                document.getElementById('todayOutText').innerText = checkOutVal || '--:--';
-
-                // Reset button defaults
-                btnIn.disabled = false;
-                btnOut.disabled = false;
-                btnIn.className = "bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center transition";
-                btnOut.className = "bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center transition";
-                document.getElementById('btnCheckInText').innerText = "Punch Check-In";
-                document.getElementById('btnCheckInSub').innerText = "Instant Entry";
-                document.getElementById('btnCheckOutText').innerText = "Punch Check-Out";
-                document.getElementById('btnCheckOutSub').innerText = "Instant Exit";
-
-                if (checkInVal && checkOutVal) {
-                  // Both completed -> Fully locked for today on all phones
-                  btnIn.disabled = true;
-                  btnOut.disabled = true;
-                  btnIn.className = "bg-slate-800 text-slate-500 p-4 rounded-2xl border border-slate-700 text-center flex flex-col items-center opacity-60 cursor-not-allowed";
-                  btnOut.className = "bg-slate-800 text-slate-500 p-4 rounded-2xl border border-slate-700 text-center flex flex-col items-center opacity-60 cursor-not-allowed";
-                  document.getElementById('btnCheckInText').innerText = "Checked In";
-                  document.getElementById('btnCheckInSub').innerText = checkInVal;
-                  document.getElementById('btnCheckOutText').innerText = "Checked Out";
-                  document.getElementById('btnCheckOutSub').innerText = checkOutVal;
-                  alertEl.innerHTML = '<span class="text-amber-400 font-bold">✅ Attendance Cycle Completed for Today. Punches locked.</span>';
-                } else if (checkInVal && !checkOutVal) {
-                  // Check-In completed -> Lock Check-In, Keep Check-Out available
-                  btnIn.disabled = true;
-                  btnIn.className = "bg-slate-800 text-emerald-400 p-4 rounded-2xl border border-slate-700 text-center flex flex-col items-center opacity-70 cursor-not-allowed";
-                  document.getElementById('btnCheckInText').innerText = "Checked In";
-                  document.getElementById('btnCheckInSub').innerText = checkInVal;
-                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ Checked In at ' + checkInVal + '. Ready for Check-Out when shift ends.</span>';
-                } else {
-                  // Ready for check-in
-                  alertEl.innerHTML = 'Tap button below to record attendance (One-Tap Instant Punch)';
-                }
-              }
-
               async function recordPunch(actionType) {
                 if (!currentUser) return;
-                const today = new Date().toISOString().split('T')[0];
+                const today = getBstDateStr();
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                 const alertEl = document.getElementById('punchStatusAlert');
                 let records = getRecords();
-                let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
+                let existingIndex = records.findIndex(r => String(r.empId).trim() === String(currentUser.id).trim() && String(r.date).trim() === today);
 
-                // STRICT DAILY CHECK RULE ENFORCEMENT
                 if (actionType === 'CHECK_IN') {
                   if (existingIndex !== -1 && records[existingIndex].checkIn && records[existingIndex].checkIn !== '--:--') {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked In today at ' + records[existingIndex].checkIn + '. Multiple check-ins not allowed!</span>';
-                    refreshEmployeeTodayPunch();
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked In today at ' + records[existingIndex].checkIn + '</span>';
                     return;
                   }
                 } else {
-                  if (existingIndex === -1 || !records[existingIndex].checkIn || records[existingIndex].checkIn === '--:--') {
+                  if (existingIndex === -1) {
                     alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Please Check-In first before Check-Out!</span>';
                     return;
                   }
                   if (records[existingIndex].checkOut && records[existingIndex].checkOut !== '--:--') {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked Out today at ' + records[existingIndex].checkOut + '. Punches locked for today!</span>';
-                    refreshEmployeeTodayPunch();
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked Out today at ' + records[existingIndex].checkOut + '</span>';
                     return;
                   }
                 }
@@ -818,16 +777,16 @@ jobs:
                 const punchRecord = {
                   id: (actionType === 'CHECK_IN' || existingIndex === -1) ? ('TSL-' + currentUser.id + '-' + today.replace(/-/g, '')) : records[existingIndex].id,
                   date: today,
-                  empId: currentUser.id,
+                  empId: String(currentUser.id).trim(),
                   name: currentUser.name,
                   desig: currentUser.desig,
                   section: currentUser.section,
                   checkIn: actionType === 'CHECK_IN' ? timeStr : records[existingIndex].checkIn,
-                  checkOut: actionType === 'CHECK_OUT' ? timeStr : null,
+                  checkOut: actionType === 'CHECK_OUT' ? timeStr : (records[existingIndex] ? records[existingIndex].checkOut : null),
                   status: 'PRESENT'
                 };
 
-                if (actionType === 'CHECK_IN') {
+                if (existingIndex === -1) {
                   records.unshift(punchRecord);
                 } else {
                   records[existingIndex] = punchRecord;
@@ -835,18 +794,16 @@ jobs:
                 saveRecords(records);
                 refreshEmployeeTodayPunch();
 
-                // Background sync to Google Sheet
                 const cloudSuccess = await pushPunchToCloud(punchRecord);
                 if (cloudSuccess) {
                   alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Success! ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr} (Google Sheet Synced)</span>`;
                 } else {
-                  alertEl.innerHTML = `<span class="text-amber-400 font-bold">✓ Saved Locally (${timeStr}). Cloud sync in background.</span>`;
+                  alertEl.innerHTML = `<span class="text-amber-400 font-bold">✓ Saved Locally (${timeStr}). Auto-syncing in background.</span>`;
                 }
-                refreshEmployeeTodayPunch();
               }
 
               // ==========================================
-              // 4. NATIVE PDF SAVER (AUTHORIZED BLANK)
+              // 4. REAL NATIVE PDF SAVER (AUTHORIZED BLANK)
               // ==========================================
               let activePdfDoc = null;
               let activePdfFilename = '';
@@ -875,21 +832,19 @@ jobs:
                 doc.text('Authorized: ____________________', 40, 85);
                 doc.text('Plant Location: Gazipur Factory', 40, 98);
                 doc.text('Total Records: ' + records.length, 420, 85);
-                doc.text('Export Date: ' + new Date().toISOString().split('T')[0], 420, 98);
+                doc.text('Export Date: ' + getBstDateStr(), 420, 98);
 
                 const tableRows = records.map(r => [
                   r.date,
                   r.empId,
                   r.name,
                   r.section || 'General',
-                  r.checkIn || '--:--',
-                  r.checkOut || '--:--',
                   r.status
                 ]);
 
                 doc.autoTable({
                   startY: 115,
-                  head: [['Date', 'Card No', 'Employee Name', 'Section', 'In Time', 'Out Time', 'Status']],
+                  head: [['Date', 'Card No', 'Employee Name', 'Section', 'Status']],
                   body: tableRows,
                   theme: 'striped',
                   headStyles: { fillColor: [12, 65, 130], textColor: [255, 255, 255], fontSize: 8, fontStyle: 'bold' },
@@ -912,7 +867,7 @@ jobs:
                   alert('No attendance data available to download!');
                   return;
                 }
-                activePdfFilename = 'Tamishna_Attendance_' + new Date().toISOString().split('T')[0] + '.pdf';
+                activePdfFilename = 'Tamishna_Attendance_' + getBstDateStr() + '.pdf';
                 document.getElementById('pdfExportModal').classList.remove('hidden');
               }
               function closePDFExportModal() {
@@ -936,6 +891,12 @@ jobs:
               // 5. INDIVIDUAL JOB CARD ENGINE (PERMANENT IN/OUT/LEAVE EVERY DAY)
               // ============================================================
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
+              let searchDebounceTimer = null;
+
+              function debounceJobCardSearch() {
+                clearTimeout(searchDebounceTimer);
+                searchDebounceTimer = setTimeout(handleJobCardSearchInput, 250);
+              }
 
               function populateJobCardEmpDropdown() {
                 const select = document.getElementById('jobCardEmpSelect');
@@ -943,10 +904,9 @@ jobs:
                 const users = getUsers();
                 select.innerHTML = users.map(u => `<option value="${u.id}">${u.id} - ${u.name} (${u.section})</option>`).join('');
                 
-                const now = new Date();
-                const curMonth = now.toISOString().slice(0, 7);
+                const curMonth = getBstDateStr().slice(0, 7);
                 document.getElementById('jobCardMonthSelect').value = curMonth;
-                document.getElementById('jcPrintDate').innerText = now.toISOString().split('T')[0];
+                document.getElementById('jcPrintDate').innerText = getBstDateStr();
                 renderSelectedEmployeeJobCard();
               }
 
@@ -995,7 +955,7 @@ jobs:
 
               function buildDateWiseJobCard(empId, yearMonth) {
                 const users = getUsers();
-                const emp = users.find(u => u.id === empId);
+                const emp = users.find(u => String(u.id).trim() === String(empId).trim());
                 if (!emp) return null;
 
                 const [year, month] = yearMonth.split('-').map(Number);
@@ -1009,7 +969,7 @@ jobs:
                 let weekendCount = 0;
                 let absentCount = 0;
 
-                const todayStr = new Date().toISOString().split('T')[0];
+                const todayStr = getBstDateStr();
 
                 for (let day = 1; day <= daysInMonth; day++) {
                   const dayStr = String(day).padStart(2, '0');
@@ -1017,21 +977,23 @@ jobs:
                   const dateObj = new Date(year, month - 1, day);
                   const isFriday = (dateObj.getDay() === 5);
 
-                  const attRecord = records.find(r => r.empId === empId && r.date === dateStr);
-                  const activeLeave = leaves.find(l => l.empId === empId && (l.status === 'APPROVED' || l.status === 'PENDING') && dateStr >= l.fromDate && dateStr <= l.toDate);
+                  const attRecord = records.find(r => String(r.empId).trim() === String(empId).trim() && String(r.date).trim() === dateStr);
+                  const activeLeave = leaves.find(l => String(l.empId).trim() === String(empId).trim() && 
+                    (l.status === 'APPROVED' || l.status === 'PENDING') && 
+                    dateStr >= String(l.fromDate).trim() && dateStr <= String(l.toDate).trim());
 
                   let inTime = '--:--';
                   let outTime = '--:--';
                   let status = isFriday ? 'WEEKEND' : 'ABSENT';
 
-                  if (activeLeave) {
-                    status = `LEAVE (${activeLeave.type})`;
-                    leaveCount++;
-                  } else if (attRecord && attRecord.status !== 'ABSENT') {
+                  if (attRecord && attRecord.status !== 'ABSENT') {
                     inTime = attRecord.checkIn || '--:--';
                     outTime = attRecord.checkOut || '--:--';
                     status = 'PRESENT';
                     presentCount++;
+                  } else if (activeLeave) {
+                    status = `LEAVE (${activeLeave.type})`;
+                    leaveCount++;
                   } else if (isFriday) {
                     status = 'WEEKEND';
                     weekendCount++;
@@ -1074,7 +1036,7 @@ jobs:
                 document.getElementById('jcDisplayEmpName').innerText = currentJobCardData.emp.name;
                 document.getElementById('jcDisplayEmpDesigSec').innerText = `${currentJobCardData.emp.desig} • Section: ${currentJobCardData.emp.section}`;
                 document.getElementById('jcDisplayEmpId').innerText = currentJobCardData.emp.id;
-                document.getElementById('jcPrintDate').innerText = new Date().toISOString().split('T')[0];
+                document.getElementById('jcPrintDate').innerText = getBstDateStr();
 
                 document.getElementById('jcStatPresent').innerText = currentJobCardData.stats.present;
                 document.getElementById('jcStatLeave').innerText = currentJobCardData.stats.leave;
@@ -1096,7 +1058,7 @@ jobs:
 
               function viewEmployeeJobCard() {
                 if (!currentUser) return;
-                const curMonth = new Date().toISOString().slice(0, 7);
+                const curMonth = getBstDateStr().slice(0, 7);
                 document.getElementById('empJcMonthInput').value = curMonth;
                 document.getElementById('empJcSubtitle').innerText = `${currentUser.name} (Card: ${currentUser.id}) - ${currentUser.section}`;
                 renderMyJobCard();
@@ -1146,7 +1108,7 @@ jobs:
                 doc.text(`Section / Dept: ${data.emp.section}`, 40, 111);
 
                 doc.text(`Job Card Month : ${data.month}`, 400, 72);
-                doc.text(`Issue Date     : ${new Date().toISOString().split('T')[0]}`, 400, 85);
+                doc.text(`Issue Date     : ${getBstDateStr()}`, 400, 85);
                 doc.text(`Total Days     : ${data.stats.totalDays}`, 400, 98);
                 doc.text(`Present Days   : ${data.stats.present}`, 400, 111);
 
@@ -1205,9 +1167,9 @@ jobs:
                 downloadJobCardPDF();
               }
 
-              // =========================================================================
-              // 6. MULTI-PHONE CENTRAL SIGN-UP & PERMANENT PIN SYNC (ACROSS ALL UPDATES)
-              // =========================================================================
+              // ==========================================
+              // 6. PERMANENT CLOUD-SYNCED PIN ENGINE
+              // ==========================================
               function clearSignUpForm() {
                 const form = document.getElementById('signupForm');
                 if (form) form.reset();
@@ -1253,7 +1215,7 @@ jobs:
                 }
 
                 const users = getUsers();
-                const found = users.find(u => u.id === cardInput);
+                const found = users.find(u => String(u.id).trim() === cardInput);
 
                 if (!found) {
                   alertEl.innerText = 'Card No not found! Please check ID.';
@@ -1265,9 +1227,8 @@ jobs:
                 await pullAllFromCloud(false);
                 const vault = getPinVault();
 
-                // Check if PIN already set in permanent cloud/local storage
                 if (vault[found.id]) {
-                  alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly from any phone using your PIN.';
+                  alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly with your PIN from any phone.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   
                   document.getElementById('signupPin').value = '';
@@ -1293,7 +1254,7 @@ jobs:
                 alertEl.className = 'hidden';
 
                 const users = getUsers();
-                const found = users.find(u => u.id === cardInput);
+                const found = users.find(u => String(u.id).trim() === cardInput);
 
                 if (!found) {
                   alertEl.innerText = 'Card No not found!';
@@ -1318,10 +1279,9 @@ jobs:
                 vault[found.id] = hashed;
                 savePinVault(vault);
 
-                // Save to Google Sheet so all phones recognize this PIN permanently
                 await callGoogleSheet({ action: 'savePin', data: JSON.stringify({ id: found.id, hash: hashed, name: found.name }) });
 
-                alert('✓ Sign Up Successful!\nPIN created for ' + found.name + '. You can now log in from any phone using this PIN.');
+                alert('✓ Sign Up Successful!\nPIN created for ' + found.name + '. You can now log in from ANY phone using this PIN even after app update or re-install.');
                 
                 clearSignUpForm();
                 document.getElementById('loginId').value = cardInput;
@@ -1350,7 +1310,7 @@ jobs:
                 alertEl.className = 'hidden';
 
                 const users = getUsers();
-                const found = users.find(u => u.id === idInput);
+                const found = users.find(u => String(u.id).trim() === idInput);
 
                 if (!found) {
                   alertEl.innerText = 'Invalid Card No! ID does not exist.';
@@ -1358,7 +1318,6 @@ jobs:
                   return;
                 }
 
-                // Master Admin Universal Login
                 if (found.role === 'ADMIN') {
                   const inputHash = await hashPin(pinInput);
                   let vault = getPinVault();
@@ -1376,7 +1335,6 @@ jobs:
                   }
                 }
 
-                // Check PIN from permanent storage or Google Sheet
                 let vault = getPinVault();
                 let existingHashedPin = vault[found.id];
 
@@ -1442,8 +1400,17 @@ jobs:
                 loadRememberedCredentials();
               }
 
+              function refreshEmployeeTodayPunch() {
+                if (!currentUser) return;
+                const today = getBstDateStr();
+                const records = getRecords();
+                const record = records.find(r => String(r.empId).trim() === String(currentUser.id).trim() && String(r.date).trim() === today);
+                document.getElementById('todayInText').innerText = (record && record.checkIn) ? record.checkIn : '--:--';
+                document.getElementById('todayOutText').innerText = (record && record.checkOut) ? record.checkOut : '--:--';
+              }
+
               function openLeaveApplyModal() {
-                const today = new Date().toISOString().split('T')[0];
+                const today = getBstDateStr();
                 document.getElementById('leaveFrom').value = today;
                 document.getElementById('leaveTo').value = today;
                 document.getElementById('leaveReason').value = '';
@@ -1468,7 +1435,7 @@ jobs:
 
                 const leaveObj = {
                   id: 'LV-' + Date.now(),
-                  empId: currentUser.id,
+                  empId: String(currentUser.id).trim(),
                   name: currentUser.name,
                   desig: currentUser.desig,
                   section: currentUser.section,
@@ -1476,19 +1443,18 @@ jobs:
                   fromDate: fromDate,
                   toDate: toDate,
                   reason: reason,
-                  appliedOn: new Date().toISOString().split('T')[0],
-                  status: 'PENDING'
+                  appliedOn: getBstDateStr(),
+                  status: 'APPROVED'
                 };
 
                 const leaves = getLeaves();
                 leaves.unshift(leaveObj);
                 saveLeaves(leaves);
 
-                // Push Leave directly to Google Sheet
                 await callGoogleSheet({ action: 'applyLeave', data: JSON.stringify(leaveObj) });
 
                 closeLeaveApplyModal();
-                alert('✓ Leave application submitted successfully to Google Sheet!');
+                alert('✓ Leave application submitted successfully to Google Sheet! Permanent across all Job Cards.');
               }
 
               function switchAdminTab(tab) {
@@ -1505,6 +1471,7 @@ jobs:
                 if (tab === 'att') {
                   document.getElementById('adminAttSection').classList.remove('hidden');
                   document.getElementById('adminTabAtt').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold';
+                  loadAdminDashboard();
                 } else if (tab === 'jobcard') {
                   document.getElementById('adminJobCardSection').classList.remove('hidden');
                   document.getElementById('adminTabJobCard').className = 'flex-1 py-1.5 rounded-lg bg-emerald-600 text-white font-bold';
@@ -1522,22 +1489,13 @@ jobs:
 
               function loadAdminDashboard() {
                 const records = getRecords();
-                const totalEmployees = getUsers().length;
-                const today = new Date().toISOString().split('T')[0];
-                
-                // Real-time unique daily attendance count
-                const todayUniquePresentIds = new Set(
-                  records.filter(r => r.date === today && r.checkIn && r.checkIn !== '--:--' && r.status === 'PRESENT').map(r => r.empId)
-                );
-                const todayPresentCount = todayUniquePresentIds.size;
-                const todayAbsentCount = Math.max(0, totalEmployees - todayPresentCount);
-
+                const today = getBstDateStr();
+                const todayRecords = records.filter(r => String(r.date).trim() === today);
                 const leaves = getLeaves();
                 const pendingLeaves = leaves.filter(l => l.status === 'PENDING');
 
-                document.getElementById('totalEmpCount').innerText = totalEmployees;
-                document.getElementById('todayPresentCount').innerText = todayPresentCount;
-                document.getElementById('todayAbsentCount').innerText = todayAbsentCount;
+                document.getElementById('totalEmpCount').innerText = getUsers().length;
+                document.getElementById('todayPresentCount').innerText = todayRecords.length;
                 document.getElementById('pendingLeaveBadge').innerText = pendingLeaves.length;
 
                 const tabBadge = document.getElementById('tabPendingBadge');
@@ -1550,15 +1508,13 @@ jobs:
 
                 const tbody = document.getElementById('adminTableBody');
                 if (records.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-slate-500 font-sans">No attendance records found</td></tr>';
+                  tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500 font-sans">No attendance records found</td></tr>';
                 } else {
                   tbody.innerHTML = records.map(r => `
                     <tr class="hover:bg-slate-800/40">
                       <td class="p-2.5 text-slate-400">${r.date}</td>
                       <td class="p-2.5 font-sans font-bold text-white">${r.name}<br><span class="text-[9px] font-mono text-emerald-400">${r.empId}</span></td>
                       <td class="p-2.5 text-slate-300 font-sans">${r.section}</td>
-                      <td class="p-2.5 text-emerald-400 font-bold">${r.checkIn}</td>
-                      <td class="p-2.5 text-rose-400 font-bold">${r.checkOut || '--:--'}</td>
                       <td class="p-2.5 font-sans"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">${r.status}</span></td>
                       <td class="p-2.5 text-center">
                         <button onclick="deleteSingleRecord('${r.id}')" class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded active:scale-90" title="Delete Record">
@@ -1582,7 +1538,10 @@ jobs:
                   await deleteFromCloud(recordId);
 
                   loadAdminDashboard();
-                  alert('✓ Record deleted from Google Sheet and app! (Punch unlocked if today\'s record)');
+                  if (currentJobCardData && currentJobCardData.emp) {
+                    renderSelectedEmployeeJobCard();
+                  }
+                  alert('✓ Record deleted from Google Sheet and app!');
                 }
               }
 
@@ -1624,7 +1583,6 @@ jobs:
                 leaves[foundIndex].status = newStatus;
                 saveLeaves(leaves);
 
-                // Update Google Sheet
                 await callGoogleSheet({ action: 'updateLeaveStatus', data: JSON.stringify({ id: leaveId, status: newStatus }) });
 
                 alert(newStatus === 'APPROVED' ? '✓ Leave Approved! Synced across Job Cards and Sheet.' : 'Leave rejected.');
@@ -1653,14 +1611,13 @@ jobs:
                 `).join('');
               }
 
-              // ONLY ADMIN CAN RESET PIN - UNLESS RESET, USER PIN REMAINS PERMANENT
               async function resetUserPin(empId, empName) {
-                if (confirm('Reset PIN for ' + empName + ' (' + empId + ')?\nOnce reset, the employee can register a new PIN.')) {
+                if (confirm('Reset PIN for ' + empName + ' (' + empId + ')?')) {
                   const vault = getPinVault();
                   delete vault[empId];
                   savePinVault(vault);
                   await callGoogleSheet({ action: 'savePin', data: JSON.stringify({ id: empId, hash: '', name: empName }) });
-                  alert('✓ PIN Reset successfully! The employee can now set a new PIN.');
+                  alert('✓ PIN Reset successfully!');
                   loadAdminPinManagement();
                 }
               }
@@ -1675,10 +1632,10 @@ jobs:
                 }
                 let csv = 'DATE,CARD_NO,EMPLOYEE_NAME,SECTION,IN_TIME,OUT_TIME,STATUS\n';
                 records.forEach(r => {
-                  csv += `"${r.date}","${r.empId}","${r.name}","${r.section}","${r.checkIn}","${r.checkOut || ''}","${r.status}"\n`;
+                  csv += `"${r.date}","${r.empId}","${r.name}","${r.section}","${r.checkIn || ''}","${r.checkOut || ''}","${r.status}"\n`;
                 });
                 
-                const filename = `Tamishna_ERP_Attendance_${new Date().toISOString().split('T')[0]}.csv`;
+                const filename = `Tamishna_ERP_Attendance_${getBstDateStr()}.csv`;
 
                 if (window.AndroidBridge && window.AndroidBridge.saveCsvToDownloads) {
                   window.AndroidBridge.saveCsvToDownloads(csv, filename);
@@ -1697,7 +1654,7 @@ jobs:
 
               async function clearAllData() {
                 if (confirm('Delete ALL attendance records permanently?\nThis will clear the Google Sheet, device records, and Excel.')) {
-                  localStorage.removeItem('tsl_master_records');
+                  localStorage.removeItem('tsl_records_v50');
                   await clearCloudDatabase();
                   loadAdminDashboard();
                   alert('✓ All attendance records have been cleared from Google Sheet and app!');
@@ -1719,11 +1676,42 @@ jobs:
           sed -i '/<application/i <uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
           sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' tamishna/android/app/src/main/AndroidManifest.xml
 
-      # BUMP APP VERSION TO 5.2.0
-      - name: Bump Version in Gradle
+      # GENERATE PRODUCTION RELEASE KEYSTORE (PREVENTS PLAY PROTECT WARNINGS)
+      - name: Generate Official Release Keystore
         run: |
-          sed -i 's/versionCode 1/versionCode 32/g' tamishna/android/app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "5.2.0"/g' tamishna/android/app/build.gradle
+          keytool -genkeypair -v -keystore tamishna/android/release.keystore -alias tamishna -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass tamishna123 -keypass tamishna123 \
+            -dname "CN=Tamishna Synthetics Ltd, OU=IT ERP Division, O=Tamishna Group, L=Gazipur, ST=Dhaka, C=BD"
+
+      # INJECT RELEASE SIGNING CONFIG INTO GRADLE & BUMP VERSION TO V5.0.0
+      - name: Configure Production Release Signing in Gradle
+        run: |
+          python3 - << 'EOF'
+          with open('tamishna/android/app/build.gradle', 'r') as f:
+              content = f.read()
+
+          signing_block = """
+              signingConfigs {
+                  release {
+                      storeFile file("../release.keystore")
+                      storePassword "tamishna123"
+                      keyAlias "tamishna"
+                      keyPassword "tamishna123"
+                      v1SigningEnabled true
+                      v2SigningEnabled true
+                  }
+              }
+          """
+
+          content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
+          content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
+          content = content.replace('versionCode 1', 'versionCode 30')
+          content = content.replace('versionName "1.0"', 'versionName "5.0.0"')
+
+          with open('tamishna/android/app/build.gradle', 'w') as f:
+              f.write(content)
+          print("✓ Configured production release signing successfully!")
+          EOF
 
       # INJECT NATIVE STORAGE & FAST ASYNC REDIRECT HANDLER (NO BIOMETRIC SENSOR DEPENDENCY)
       - name: Inject Native Storage and Cloud Bridge into MainActivity
@@ -1939,21 +1927,22 @@ jobs:
           print("✓ Official Tamishna Group App Launcher Icons generated successfully!")
           EOF
 
-      - name: Build Debug APK
+      # BUILD PRODUCTION RELEASE SIGNED APK
+      - name: Build Production Signed Release APK
         run: |
           cd tamishna/android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
       # RENAME APK DIRECTLY TO "Tsl attendance.apk"
       - name: Rename APK to Tsl attendance.apk
         run: |
           mkdir -p output_apk
-          cp tamishna/android/app/build/outputs/apk/debug/app-debug.apk "output_apk/Tsl attendance.apk"
+          cp tamishna/android/app/build/outputs/apk/release/app-release.apk "output_apk/Tsl attendance.apk"
 
-      # UPLOAD DIRECT NAMED APK
+      # UPLOAD DIRECT PRODUCTION SIGNED APK
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v5.2
+          name: Tsl-attendance-v5.0
           path: "output_apk/Tsl attendance.apk"
