@@ -354,7 +354,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD -->
+              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (WITH DIRECT SEARCH) -->
               <div id="adminJobCardSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div>
@@ -367,10 +367,10 @@ jobs:
                 </div>
 
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                  <label class="block text-slate-300 font-semibold text-xs">🔍 Search Job Card by Card No / ID:</label>
+                  <label class="block text-slate-300 font-semibold text-xs">🔍 Search Job Card by Card No / ID / Name:</label>
                   <div class="flex space-x-2">
-                    <input type="text" id="jobCardSearchInput" oninput="debounceJobCardSearch()" onkeypress="if(event.key==='Enter') searchEmployeeJobCard()" placeholder="Type Employee ID (e.g. 10000159)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
-                    <button onclick="searchEmployeeJobCard()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold active:scale-95 shadow">Search</button>
+                    <input type="text" id="jobCardSearchInput" oninput="debounceJobCardSearch()" onkeypress="if(event.key==='Enter') searchEmployeeJobCard()" placeholder="Type Card No (e.g. 10000159)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+                    <button type="button" onclick="searchEmployeeJobCard()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold active:scale-95 shadow">Search</button>
                   </div>
                   <div id="jcSearchFeedback" class="hidden text-[10px] font-medium pt-0.5"></div>
                 </div>
@@ -650,7 +650,6 @@ jobs:
               function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v65') || '[]'); }
               function saveLeaves(d) { localStorage.setItem('tsl_leaves_v65', JSON.stringify(d)); }
               
-              // UNIVERSAL PIN RECOVERY (PREVENTS ANY PIN LOSS FROM OLD APP VERSIONS)
               function getPinVault() {
                 let vault = {};
                 const keys = ['tsl_pins_v65', 'tsl_pins_v64', 'tsl_pins_v63', 'tsl_pins', 'tamishna_pins'];
@@ -688,7 +687,49 @@ jobs:
                 return `${y}-${m}-${day}`;
               }
 
-              // SMART SHA256 HELPER
+              // SMART FIELD EXTRACTOR (CASE-INSENSITIVE)
+              function getProp(obj, ...keys) {
+                if (!obj) return '';
+                for (let k of keys) {
+                  if (obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') return String(obj[k]).trim();
+                  let lowerK = k.toLowerCase();
+                  for (let prop in obj) {
+                    if (prop.toLowerCase() === lowerK && obj[prop] !== undefined && obj[prop] !== null && String(obj[prop]).trim() !== '') {
+                      return String(obj[prop]).trim();
+                    }
+                  }
+                }
+                return '';
+              }
+
+              function normalizeDate(d) {
+                if (!d) return '';
+                if (typeof d === 'string') {
+                  d = d.trim();
+                  if (d.includes('T')) return d.split('T')[0];
+                  if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+                  if (/^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/.test(d)) {
+                    const p = d.split(/[\/-]/);
+                    return `${p[2]}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}`;
+                  }
+                }
+                try {
+                  const pDate = new Date(d);
+                  if (!isNaN(pDate.getTime())) return getBstDateStr(pDate);
+                } catch(e) {}
+                return String(d).slice(0, 10);
+              }
+
+              function isSameDate(d1, d2) {
+                if (!d1 || !d2) return false;
+                return normalizeDate(d1) === normalizeDate(d2);
+              }
+
+              function isSameEmp(id1, id2) {
+                if (!id1 || !id2) return false;
+                return String(id1).trim().toUpperCase() === String(id2).trim().toUpperCase();
+              }
+
               async function sha256Hex(str) {
                 const encoder = new TextEncoder();
                 const data = encoder.encode(str);
@@ -700,24 +741,19 @@ jobs:
                 return await sha256Hex(pin + "_tsl_secure_salt_2026");
               }
 
-              // 100% COMPATIBLE PIN VERIFIER (ACCEPTS OLD PLAIN PIN, OLD HASH & NEW HASH)
               async function verifyPin(inputPin, storedPin) {
                 if (!storedPin || !inputPin) return false;
                 const s = String(storedPin).trim();
                 const p = String(inputPin).trim();
 
-                // 1. Plain text PIN match
                 if (s === p) return true;
 
-                // 2. New salted hash
                 const hashCurrent = await sha256Hex(p + "_tsl_secure_salt_2026");
                 if (s === hashCurrent) return true;
 
-                // 3. Previous salted hash
                 const hashOld = await sha256Hex(p + "_tsl_secure_salt");
                 if (s === hashOld) return true;
 
-                // 4. Raw SHA-256 without salt
                 const hashRaw = await sha256Hex(p);
                 if (s === hashRaw) return true;
 
@@ -750,6 +786,57 @@ jobs:
                   localStorage.setItem('tsl_remember_active', 'false');
                   localStorage.removeItem('tsl_remembered_cred');
                 }
+              }
+
+              function mergeAttendanceRecords(list1, list2) {
+                const map = new Map();
+                const all = [...list1, ...list2];
+                all.forEach(r => {
+                  if (!r) return;
+                  const empId = getProp(r, 'empId', 'cardNo', 'empid', 'id');
+                  const date = getProp(r, 'date');
+                  if (!empId || !date) return;
+
+                  const normDate = normalizeDate(date);
+                  const normEmpId = String(empId).trim();
+                  const key = `${normEmpId}_${normDate}`;
+                  
+                  const cIn = getProp(r, 'checkIn', 'checkin', 'inTime');
+                  const cOut = getProp(r, 'checkOut', 'checkout', 'outTime');
+                  const st = getProp(r, 'status') || 'PRESENT';
+
+                  const existing = map.get(key);
+                  if (!existing) {
+                    map.set(key, {
+                      ...r,
+                      id: r.id || `TSL-${normEmpId}-${normDate.replace(/-/g, '')}`,
+                      date: normDate,
+                      empId: normEmpId,
+                      name: getProp(r, 'name', 'empName'),
+                      desig: getProp(r, 'desig', 'designation'),
+                      section: getProp(r, 'section', 'dept'),
+                      checkIn: (cIn && cIn !== '--:--') ? cIn : '--:--',
+                      checkOut: (cOut && cOut !== '--:--') ? cOut : '--:--',
+                      status: st
+                    });
+                  } else {
+                    const checkIn = (existing.checkIn && existing.checkIn !== '--:--') ? existing.checkIn : ((cIn && cIn !== '--:--') ? cIn : '--:--');
+                    const checkOut = (existing.checkOut && existing.checkOut !== '--:--') ? existing.checkOut : ((cOut && cOut !== '--:--') ? cOut : '--:--');
+                    const status = (existing.status === 'PRESENT' || st === 'PRESENT' || checkIn !== '--:--') ? 'PRESENT' : (existing.status || st);
+                    const id = existing.id || r.id || `TSL-${normEmpId}-${normDate.replace(/-/g, '')}`;
+                    map.set(key, {
+                      ...existing,
+                      ...r,
+                      id: id,
+                      date: normDate,
+                      empId: normEmpId,
+                      checkIn: checkIn,
+                      checkOut: checkOut,
+                      status: status
+                    });
+                  }
+                });
+                return Array.from(map.values());
               }
 
               // CLOUD SYNC ENGINE
@@ -788,15 +875,27 @@ jobs:
                 if (res && res.status === 'success') {
                   if (Array.isArray(res.records)) {
                     let localRecs = getRecords();
-                    let map = new Map();
-                    localRecs.forEach(r => map.set(r.id || `${r.empId}_${r.date}`, r));
-                    res.records.forEach(r => map.set(r.id || `${r.empId}_${r.date}`, r));
-                    let merged = Array.from(map.values());
+                    let merged = mergeAttendanceRecords(localRecs, res.records);
                     merged.sort((a,b) => (b.date + (b.checkIn||'')).localeCompare(a.date + (a.checkIn||'')));
                     saveRecords(merged);
                   }
                   if (Array.isArray(res.leaves)) {
-                    saveLeaves(res.leaves);
+                    let localLeaves = getLeaves();
+                    let map = new Map();
+                    localLeaves.forEach(l => { if (l && l.id) map.set(String(l.id).trim(), l); });
+                    res.leaves.forEach(l => {
+                      if (l && l.id) {
+                        const key = String(l.id).trim();
+                        const existing = map.get(key);
+                        map.set(key, {
+                          ...l,
+                          fromDate: normalizeDate(getProp(l, 'fromDate')),
+                          toDate: normalizeDate(getProp(l, 'toDate')),
+                          status: (existing && existing.status === 'APPROVED') ? 'APPROVED' : String(l.status || 'PENDING').trim().toUpperCase()
+                        });
+                      }
+                    });
+                    saveLeaves(Array.from(map.values()));
                   }
                   if (res.pins && typeof res.pins === 'object') {
                     let localPins = getPinVault();
@@ -836,15 +935,16 @@ jobs:
                 if (showAlert) alert('Google Sheet sync check completed.');
               }
 
+              // ULTRA-FAST 3-SECOND REALTIME SYNC FOR ADMIN
               function startRealtimeCloudSync() {
                 if (centralSyncInterval) clearInterval(centralSyncInterval);
                 pullAllFromCloud(false);
                 centralSyncInterval = setInterval(() => {
                   pullAllFromCloud(false);
-                }, 5000);
+                }, 3000);
               }
 
-              // ONE-TAP STRICT SINGLE PUNCH LOGIC
+              // STRICT ONE-TAP PUNCH (IMMEDIATELY NOTIFIES ADMIN PANEL)
               let isPunching = false;
               async function recordPunch(actionType) {
                 if (!currentUser || isPunching) return;
@@ -858,7 +958,13 @@ jobs:
                 btnOut.classList.add('opacity-50', 'pointer-events-none');
 
                 let records = getRecords();
-                let existingRecord = records.find(r => String(r.empId).trim() === String(currentUser.id).trim() && String(r.date).trim() === today);
+                let existingRecord = records.find(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
+
+                if (!existingRecord) {
+                  await pullAllFromCloud(false);
+                  records = getRecords();
+                  existingRecord = records.find(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
+                }
 
                 if (actionType === 'CHECK_IN') {
                   if (existingRecord && existingRecord.checkIn && existingRecord.checkIn !== '--:--') {
@@ -884,7 +990,6 @@ jobs:
 
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-
                 alertEl.innerHTML = `<span class="text-emerald-400 font-bold animate-pulse">✓ Recording ${actionType === 'CHECK_IN' ? 'Check-In' : 'Check-Out'}...</span>`;
 
                 const recId = (existingRecord && existingRecord.id) ? existingRecord.id : ('TSL-' + currentUser.id + '-' + today.replace(/-/g, ''));
@@ -901,7 +1006,7 @@ jobs:
                   status: 'PRESENT'
                 };
 
-                let existingIndex = records.findIndex(r => String(r.empId).trim() === String(currentUser.id).trim() && String(r.date).trim() === today);
+                let existingIndex = records.findIndex(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
                 if (existingIndex === -1) {
                   records.unshift(punchRecord);
                 } else {
@@ -926,7 +1031,7 @@ jobs:
                 if (!currentUser) return;
                 const today = getBstDateStr();
                 const records = getRecords();
-                const record = records.find(r => String(r.empId).trim() === String(currentUser.id).trim() && String(r.date).trim() === today);
+                const record = records.find(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
                 
                 const hasIn = record && record.checkIn && record.checkIn !== '--:--';
                 const hasOut = record && record.checkOut && record.checkOut !== '--:--';
@@ -975,12 +1080,10 @@ jobs:
 
                 doc.setFillColor(12, 65, 130);
                 doc.rect(0, 0, 595.28, 65, 'F');
-
                 doc.setTextColor(255, 255, 255);
                 doc.setFontSize(16);
                 doc.setFont('helvetica', 'bold');
                 doc.text('TAMISHNA SYNTHETICS LIMITED', 40, 30);
-
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
                 doc.text('Monthly Attendance Timesheet Report', 40, 48);
@@ -1051,7 +1154,7 @@ jobs:
 
               function debounceJobCardSearch() {
                 clearTimeout(searchDebounceTimer);
-                searchDebounceTimer = setTimeout(handleJobCardSearchInput, 150);
+                searchDebounceTimer = setTimeout(handleJobCardSearchInput, 200);
               }
 
               function populateJobCardEmpDropdown() {
@@ -1066,39 +1169,69 @@ jobs:
                 renderSelectedEmployeeJobCard();
               }
 
+              function searchEmployeeJobCard() {
+                const inputEl = document.getElementById('jobCardSearchInput');
+                const query = inputEl.value.trim().toUpperCase();
+                const feedbackEl = document.getElementById('jcSearchFeedback');
+                if (!query) {
+                  alert('Please enter Employee Card No or ID!');
+                  return;
+                }
+                const users = getUsers();
+                const matched = users.find(u => String(u.id).trim().toUpperCase() === query) ||
+                                users.find(u => String(u.id).trim().toUpperCase().includes(query)) ||
+                                users.find(u => String(u.name).trim().toUpperCase().includes(query));
+
+                if (matched) {
+                  const select = document.getElementById('jobCardEmpSelect');
+                  let optExists = Array.from(select.options).some(o => o.value === matched.id);
+                  if (!optExists) {
+                    const opt = document.createElement('option');
+                    opt.value = matched.id;
+                    opt.text = `${matched.id} - ${matched.name} (${matched.section})`;
+                    select.appendChild(opt);
+                  }
+                  select.value = matched.id;
+                  inputEl.value = matched.id;
+                  feedbackEl.innerText = `✓ Found: ${matched.name} (ID: ${matched.id}) - ${matched.section}`;
+                  feedbackEl.className = 'text-[11px] font-bold text-emerald-400 block pt-1';
+                  renderSelectedEmployeeJobCard(matched.id);
+                } else {
+                  feedbackEl.innerText = `❌ No employee found with Card No or Name: "${query}"`;
+                  feedbackEl.className = 'text-[11px] font-bold text-rose-400 block pt-1';
+                  alert(`No employee found matching: ${query}`);
+                }
+              }
+
               function handleJobCardSearchInput() {
-                const query = document.getElementById('jobCardSearchInput').value.trim().toUpperCase();
+                const inputEl = document.getElementById('jobCardSearchInput');
+                const query = inputEl.value.trim().toUpperCase();
                 const feedbackEl = document.getElementById('jcSearchFeedback');
                 if (!query) {
                   feedbackEl.className = 'hidden';
                   return;
                 }
                 const users = getUsers();
-                const matched = users.find(u => u.id.toUpperCase() === query || u.id.toUpperCase().includes(query));
-                if (matched) {
-                  document.getElementById('jobCardEmpSelect').value = matched.id;
-                  feedbackEl.innerText = `✓ Found: ${matched.name} (${matched.desig} - ${matched.section})`;
-                  feedbackEl.className = 'text-[10px] font-medium text-emerald-400 block';
-                  renderSelectedEmployeeJobCard();
-                } else {
-                  feedbackEl.innerText = 'No employee matched this Card No.';
-                  feedbackEl.className = 'text-[10px] font-medium text-amber-400 block';
-                }
-              }
+                const matched = users.find(u => String(u.id).trim().toUpperCase() === query) ||
+                                users.find(u => String(u.id).trim().toUpperCase().includes(query)) ||
+                                users.find(u => String(u.name).trim().toUpperCase().includes(query));
 
-              function searchEmployeeJobCard() {
-                const query = document.getElementById('jobCardSearchInput').value.trim().toUpperCase();
-                if (!query) {
-                  alert('Please enter Employee ID / Card No!');
-                  return;
-                }
-                const users = getUsers();
-                const matched = users.find(u => u.id === query);
                 if (matched) {
-                  document.getElementById('jobCardEmpSelect').value = matched.id;
-                  renderSelectedEmployeeJobCard();
+                  const select = document.getElementById('jobCardEmpSelect');
+                  let optExists = Array.from(select.options).some(o => o.value === matched.id);
+                  if (!optExists) {
+                    const opt = document.createElement('option');
+                    opt.value = matched.id;
+                    opt.text = `${matched.id} - ${matched.name} (${matched.section})`;
+                    select.appendChild(opt);
+                  }
+                  select.value = matched.id;
+                  feedbackEl.innerText = `✓ Found: ${matched.name} (${matched.id}) - ${matched.section}`;
+                  feedbackEl.className = 'text-[11px] font-bold text-emerald-400 block pt-1';
+                  renderSelectedEmployeeJobCard(matched.id);
                 } else {
-                  alert(`No employee found with ID: ${query}`);
+                  feedbackEl.innerText = 'Searching employee...';
+                  feedbackEl.className = 'text-[10px] font-medium text-amber-400 block pt-1';
                 }
               }
 
@@ -1106,12 +1239,12 @@ jobs:
                 const selectedId = document.getElementById('jobCardEmpSelect').value;
                 document.getElementById('jobCardSearchInput').value = selectedId;
                 document.getElementById('jcSearchFeedback').className = 'hidden';
-                renderSelectedEmployeeJobCard();
+                renderSelectedEmployeeJobCard(selectedId);
               }
 
               function buildDateWiseJobCard(empId, yearMonth) {
                 const users = getUsers();
-                const emp = users.find(u => String(u.id).trim() === String(empId).trim());
+                const emp = users.find(u => isSameEmp(u.id, empId));
                 if (!emp) return null;
 
                 const [year, month] = yearMonth.split('-').map(Number);
@@ -1133,11 +1266,16 @@ jobs:
                   const dateObj = new Date(year, month - 1, day);
                   const isFriday = (dateObj.getDay() === 5);
 
-                  const attRecord = records.find(r => String(r.empId).trim() === String(empId).trim() && String(r.date).trim() === dateStr);
+                  const attRecord = records.find(r => isSameEmp(r.empId, empId) && isSameDate(r.date, dateStr));
                   
-                  const approvedLeave = leaves.find(l => String(l.empId).trim() === String(empId).trim() && 
-                    l.status === 'APPROVED' && 
-                    dateStr >= String(l.fromDate).trim() && dateStr <= String(l.toDate).trim());
+                  const approvedLeave = leaves.find(l => {
+                    if (!isSameEmp(l.empId, empId)) return false;
+                    const status = String(l.status || '').trim().toUpperCase();
+                    if (status !== 'APPROVED') return false;
+                    const from = normalizeDate(l.fromDate);
+                    const to = normalizeDate(l.toDate);
+                    return dateStr >= from && dateStr <= to;
+                  });
 
                   let inTime = '--:--';
                   let outTime = '--:--';
@@ -1149,7 +1287,7 @@ jobs:
                     status = 'PRESENT';
                     presentCount++;
                   } else if (approvedLeave) {
-                    status = `LEAVE (${approvedLeave.type})`;
+                    status = `LEAVE (${approvedLeave.type || 'L'})`;
                     leaveCount++;
                   } else if (isFriday) {
                     status = 'WEEKEND';
@@ -1182,13 +1320,21 @@ jobs:
                 };
               }
 
-              function renderSelectedEmployeeJobCard() {
-                const empId = document.getElementById('jobCardEmpSelect').value;
-                const month = document.getElementById('jobCardMonthSelect').value;
-                if (!empId || !month) return;
+              function renderSelectedEmployeeJobCard(empIdParam) {
+                let empId = empIdParam || document.getElementById('jobCardEmpSelect').value;
+                let month = document.getElementById('jobCardMonthSelect').value;
+                if (!month) {
+                  month = getBstDateStr().slice(0, 7);
+                  document.getElementById('jobCardMonthSelect').value = month;
+                }
+                if (!empId) {
+                  const users = getUsers();
+                  if (users.length > 0) empId = users[0].id;
+                }
+                if (!empId) return;
 
                 currentJobCardData = buildDateWiseJobCard(empId, month);
-                if (!currentJobCardData) return;
+                if (!currentJobCardData || !currentJobCardData.emp) return;
 
                 document.getElementById('jcDisplayEmpName').innerText = currentJobCardData.emp.name;
                 document.getElementById('jcDisplayEmpDesigSec').innerText = `${currentJobCardData.emp.desig} • Section: ${currentJobCardData.emp.section}`;
@@ -1369,7 +1515,7 @@ jobs:
                 }
 
                 const users = getUsers();
-                const found = users.find(u => String(u.id).trim() === cardInput);
+                const found = users.find(u => isSameEmp(u.id, cardInput));
 
                 if (!found) {
                   alertEl.innerText = 'Card No not found! Please check ID or use + New Staff.';
@@ -1408,7 +1554,7 @@ jobs:
                 alertEl.className = 'hidden';
 
                 const users = getUsers();
-                const found = users.find(u => String(u.id).trim() === cardInput);
+                const found = users.find(u => isSameEmp(u.id, cardInput));
 
                 if (!found) {
                   alertEl.innerText = 'Card No not found!';
@@ -1460,7 +1606,7 @@ jobs:
                 }
 
                 const users = getUsers();
-                if (users.some(u => String(u.id).trim() === id)) {
+                if (users.some(u => isSameEmp(u.id, id))) {
                   alertEl.innerText = '⚠️ This Employee ID / Card No is already registered!';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   return;
@@ -1512,7 +1658,6 @@ jobs:
                 document.getElementById('loginPin').value = '';
               }
 
-              // COMPLETE ERASE (ADMIN)
               async function eraseEmployeeEntirely(empId, empName) {
                 const targetId = String(empId).trim();
                 if (confirm(`⚠️ DANGER: Completely erase employee ${empName} (${targetId})?\n\nThis will permanently delete:\n- Employee Profile\n- Secret PIN\n- All Attendance Records\n- All Leave Applications\n\nThis cannot be undone!`)) {
@@ -1522,24 +1667,24 @@ jobs:
                     localStorage.setItem('tsl_erased_ids_v65', JSON.stringify(erasedIds));
                   }
 
-                  let users = getUsers().filter(u => String(u.id).trim() !== targetId);
+                  let users = getUsers().filter(u => !isSameEmp(u.id, targetId));
                   saveUsers(users);
 
                   let vault = getPinVault();
                   delete vault[targetId];
                   savePinVault(vault);
 
-                  let records = getRecords().filter(r => String(r.empId).trim() !== targetId);
+                  let records = getRecords().filter(r => !isSameEmp(r.empId, targetId));
                   saveRecords(records);
 
-                  let leaves = getLeaves().filter(l => String(l.empId).trim() !== targetId);
+                  let leaves = getLeaves().filter(l => !isSameEmp(l.empId, targetId));
                   saveLeaves(leaves);
 
                   await callGoogleSheet({ action: 'deleteEmployee', id: targetId });
 
                   loadAdminDashboard();
                   populateJobCardEmpDropdown();
-                  if (currentJobCardData && currentJobCardData.emp && String(currentJobCardData.emp.id).trim() === targetId) {
+                  if (currentJobCardData && currentJobCardData.emp && isSameEmp(currentJobCardData.emp.id, targetId)) {
                     currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
                     document.getElementById('jcDisplayEmpName').innerText = '';
                     document.getElementById('jcDisplayEmpDesigSec').innerText = '';
@@ -1570,22 +1715,27 @@ jobs:
                 const alertEl = document.getElementById('authAlert');
                 alertEl.className = 'hidden';
 
+                const loginBtn = document.getElementById('loginSubmitBtn');
+                loginBtn.disabled = true;
+                loginBtn.innerText = 'Verifying...';
+
                 let users = getUsers();
-                let found = users.find(u => String(u.id).trim() === idInput);
+                let found = users.find(u => isSameEmp(u.id, idInput));
 
                 if (!found) {
                   await pullAllFromCloud(false);
                   users = getUsers();
-                  found = users.find(u => String(u.id).trim() === idInput);
+                  found = users.find(u => isSameEmp(u.id, idInput));
                 }
 
                 if (!found) {
+                  loginBtn.disabled = false;
+                  loginBtn.innerText = 'Login Now';
                   alertEl.innerText = 'Invalid Card No! ID does not exist.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
 
-                // 1. MASTER ADMIN LOGIN (DEFAULT 1234 OR CUSTOM ADMIN PIN)
                 if (found.role === 'ADMIN') {
                   let vault = getPinVault();
                   let adminStoredPin = getPinFromVault(vault, found.id);
@@ -1594,16 +1744,21 @@ jobs:
                   if (isAdminMatched) {
                     handleRememberPinSave(idInput, pinInput);
                     currentUser = found;
+                    loginBtn.innerText = 'Syncing...';
+                    await pullAllFromCloud(false);
+                    loginBtn.disabled = false;
+                    loginBtn.innerText = 'Login Now';
                     showAppScreen();
                     return;
                   } else {
+                    loginBtn.disabled = false;
+                    loginBtn.innerText = 'Login Now';
                     alertEl.innerText = 'Incorrect Admin PIN! (Default master PIN: 1234)';
                     alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                     return;
                   }
                 }
 
-                // 2. EMPLOYEE PIN VERIFICATION (ROBUST MULTI-FALLBACK)
                 let vault = getPinVault();
                 let existingPin = getPinFromVault(vault, found.id);
 
@@ -1614,6 +1769,8 @@ jobs:
                 }
 
                 if (!existingPin) {
+                  loginBtn.disabled = false;
+                  loginBtn.innerText = 'Login Now';
                   alertEl.innerText = 'PIN not set yet! Please register via Set PIN or New Staff.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   return;
@@ -1621,12 +1778,13 @@ jobs:
 
                 const isPinValid = await verifyPin(pinInput, existingPin);
                 if (!isPinValid) {
+                  loginBtn.disabled = false;
+                  loginBtn.innerText = 'Login Now';
                   alertEl.innerText = 'Incorrect PIN! Please enter the correct PIN.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
                   return;
                 }
 
-                // SEAMLESS AUTO-UPGRADE TO SECURE HASH
                 const currentSecureHash = await hashPin(pinInput);
                 if (existingPin !== currentSecureHash) {
                   vault[found.id] = currentSecureHash;
@@ -1635,6 +1793,12 @@ jobs:
 
                 handleRememberPinSave(idInput, pinInput);
                 currentUser = found;
+
+                loginBtn.innerText = 'Loading Profile...';
+                await pullAllFromCloud(false);
+                loginBtn.disabled = false;
+                loginBtn.innerText = 'Login Now';
+
                 showAppScreen();
               }
 
@@ -1658,9 +1822,6 @@ jobs:
                   document.getElementById('userId').innerText = currentUser.id;
                   document.getElementById('userSection').innerText = currentUser.section;
                   refreshEmployeeTodayPunch();
-                  pullAllFromCloud(false).then(() => {
-                    refreshEmployeeTodayPunch();
-                  });
                 }
               }
 
@@ -1716,7 +1877,7 @@ jobs:
                 leaves.unshift(leaveObj);
                 saveLeaves(leaves);
 
-                await callGoogleSheet({ action: 'applyLeave', data: JSON.stringify(leaveObj) });
+                callGoogleSheet({ action: 'applyLeave', data: JSON.stringify(leaveObj) });
 
                 closeLeaveApplyModal();
                 alert('✓ Leave application submitted successfully! It will appear on Job Card once Admin approves it.');
@@ -1752,15 +1913,23 @@ jobs:
                 }
               }
 
+              // REALTIME ATTENDANCE & PRESENT CALCULATION FOR ADMIN
               function loadAdminDashboard() {
                 const records = getRecords();
                 const today = getBstDateStr();
                 
-                const todayPresents = records.filter(r => String(r.date).trim() === today && (r.status === 'PRESENT' || (r.checkIn && r.checkIn !== '--:--')));
-                const uniquePresentEmpIds = new Set(todayPresents.map(r => String(r.empId).trim()));
+                // Smart check for today's present records
+                const todayPresents = records.filter(r => {
+                  const rDate = getProp(r, 'date');
+                  const rStatus = getProp(r, 'status').toUpperCase();
+                  const rCheckIn = getProp(r, 'checkIn', 'checkin');
+                  return isSameDate(rDate, today) && (rStatus === 'PRESENT' || (rCheckIn && rCheckIn !== '--:--'));
+                });
+
+                const uniquePresentEmpIds = new Set(todayPresents.map(r => String(getProp(r, 'empId', 'cardNo')).trim()));
 
                 const leaves = getLeaves();
-                const pendingLeaves = leaves.filter(l => l.status === 'PENDING');
+                const pendingLeaves = leaves.filter(l => String(l.status || '').toUpperCase() === 'PENDING');
 
                 document.getElementById('totalEmpCount').innerText = getUsers().length;
                 document.getElementById('todayPresentCount').innerText = uniquePresentEmpIds.size;
@@ -1778,19 +1947,28 @@ jobs:
                 if (records.length === 0) {
                   tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-500 font-sans">No attendance records found</td></tr>';
                 } else {
-                  tbody.innerHTML = records.map(r => `
-                    <tr class="hover:bg-slate-800/40">
-                      <td class="p-2.5 text-slate-400">${r.date}</td>
-                      <td class="p-2.5 font-sans font-bold text-white">${r.name}<br><span class="text-[9px] font-mono text-emerald-400">${r.empId}</span></td>
-                      <td class="p-2.5 text-slate-300 font-sans">${r.section}</td>
-                      <td class="p-2.5 font-sans"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">${r.status} (${r.checkIn || '--'})</span></td>
-                      <td class="p-2.5 text-center">
-                        <button onclick="deleteSingleRecord('${r.id}')" class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded active:scale-90" title="Delete Record">
-                          🗑️
-                        </button>
-                      </td>
-                    </tr>
-                  `).join('');
+                  tbody.innerHTML = records.map(r => {
+                    const rDate = getProp(r, 'date');
+                    const rId = getProp(r, 'empId', 'cardNo');
+                    const rName = getProp(r, 'name', 'empName');
+                    const rSec = getProp(r, 'section', 'dept') || 'General';
+                    const rCheckIn = getProp(r, 'checkIn', 'checkin');
+                    const rStatus = getProp(r, 'status') || 'PRESENT';
+
+                    return `
+                      <tr class="hover:bg-slate-800/40">
+                        <td class="p-2.5 text-slate-400">${rDate}</td>
+                        <td class="p-2.5 font-sans font-bold text-white">${rName}<br><span class="text-[9px] font-mono text-emerald-400">${rId}</span></td>
+                        <td class="p-2.5 text-slate-300 font-sans">${rSec}</td>
+                        <td class="p-2.5 font-sans"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">${rStatus} (${rCheckIn || '--'})</span></td>
+                        <td class="p-2.5 text-center">
+                          <button onclick="deleteSingleRecord('${r.id}')" class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded active:scale-90" title="Delete Record">
+                            🗑️
+                          </button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('');
                 }
 
                 loadAdminLeaveCards();
@@ -1845,15 +2023,16 @@ jobs:
                 `).join('');
               }
 
+              // INSTANT & PERMANENT LEAVE APPROVAL
               async function updateLeaveStatus(leaveId, newStatus) {
                 let leaves = getLeaves();
-                let foundIndex = leaves.findIndex(l => l.id === leaveId);
+                let foundIndex = leaves.findIndex(l => String(l.id).trim() === String(leaveId).trim());
                 if (foundIndex === -1) return;
 
                 leaves[foundIndex].status = newStatus;
                 saveLeaves(leaves);
 
-                await callGoogleSheet({ action: 'updateLeaveStatus', data: JSON.stringify({ id: leaveId, status: newStatus }) });
+                callGoogleSheet({ action: 'updateLeaveStatus', data: JSON.stringify({ id: leaveId, status: newStatus }) });
 
                 alert(newStatus === 'APPROVED' ? '✓ Leave Approved! It is now permanently recorded and visible on Job Card.' : 'Leave rejected.');
                 loadAdminDashboard();
@@ -1865,7 +2044,7 @@ jobs:
               async function deleteLeaveRecord(leaveId) {
                 if (confirm('Delete this leave application?\nIt will be permanently removed from Google Sheet and Job Card.')) {
                   let leaves = getLeaves();
-                  leaves = leaves.filter(l => l.id !== leaveId);
+                  leaves = leaves.filter(l => String(l.id).trim() !== String(leaveId).trim());
                   saveLeaves(leaves);
 
                   await callGoogleSheet({ action: 'deleteLeave', id: leaveId });
@@ -1953,7 +2132,6 @@ jobs:
                 }
               }
 
-              // AUTO BACKGROUND SYNC ON INITIAL LOAD
               document.addEventListener('DOMContentLoaded', () => {
                 loadRememberedCredentials();
                 pullAllFromCloud(false);
@@ -1997,8 +2175,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 47')
-          content = content.replace('versionName "1.0"', 'versionName "6.7.0"')
+          content = content.replace('versionCode 1', 'versionCode 49')
+          content = content.replace('versionName "1.0"', 'versionName "6.9.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2213,5 +2391,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v6.7
+          name: Tsl-attendance-v6.9
           path: "output_apk/Tsl attendance.apk"
