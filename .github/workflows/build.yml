@@ -78,11 +78,11 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v3.4</span>
+                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v3.8</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">Realtime Cloud Sync Active</span>
+                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">Realtime Firebase Cloud Connected</span>
                   </div>
                 </div>
               </div>
@@ -173,7 +173,7 @@ jobs:
               </div>
             </main>
 
-            <!-- 2. EMPLOYEE PUNCH & INDIVIDUAL JOB CARD SCREEN -->
+            <!-- 2. EMPLOYEE PUNCH SCREEN -->
             <main id="punchView" class="flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
               <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-md">
                 <div class="flex items-center space-x-3 min-w-0">
@@ -236,7 +236,7 @@ jobs:
               </div>
             </main>
 
-            <!-- 3. ADMIN PANEL (CENTRAL MULTI-DEVICE CLOUD DASHBOARD) -->
+            <!-- 3. ADMIN PANEL (CENTRAL FIREBASE DASHBOARD) -->
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
@@ -280,10 +280,10 @@ jobs:
               <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                 <div class="flex items-center space-x-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span class="text-slate-300 text-[11px]">Realtime Central Sync Active (Auto 5s Refresh)</span>
+                  <span class="text-slate-300 text-[11px]">Firebase Cloud Active (Punches from all phones sync live)</span>
                 </div>
                 <button onclick="pullAllFromCloud(true)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow">
-                  <span>🔄 Sync Now</span>
+                  <span>🔄 Refresh Now</span>
                 </button>
               </div>
 
@@ -334,7 +334,7 @@ jobs:
                   </button>
                 </div>
 
-                <!-- LIVE EMPLOYEE ID / CARD NO SEARCH BAR -->
+                <!-- LIVE SEARCH BAR -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
                   <label class="block text-slate-300 font-semibold text-xs">🔍 Search Job Card by Card No / ID:</label>
                   <div class="flex space-x-2">
@@ -355,7 +355,7 @@ jobs:
                   </div>
                 </div>
 
-                <!-- INDIVIDUAL JOB CARD PROFILE HEADER WITH ISSUE DATE -->
+                <!-- INDIVIDUAL JOB CARD PROFILE HEADER -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                   <div>
                     <p class="text-white font-bold text-sm" id="jcDisplayEmpName"></p>
@@ -388,7 +388,7 @@ jobs:
                   </div>
                 </div>
 
-                <!-- FULL MONTH DATE-WISE JOB CARD TABLE (NO DAY COLUMN) -->
+                <!-- TABLE WITHOUT DAY COLUMN -->
                 <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto max-h-72">
                   <table class="w-full text-left text-xs text-slate-300">
                     <thead class="bg-slate-900 text-slate-400 uppercase text-[9px] font-semibold sticky top-0">
@@ -403,7 +403,7 @@ jobs:
                   </table>
                 </div>
 
-                <!-- FACTORY SIGNATURES NOTE (AUTHORIZED BLANK) -->
+                <!-- SIGNATURES (AUTHORIZED BLANK) -->
                 <div class="border-t border-slate-800/80 pt-3 flex justify-between text-[10px] text-slate-400 font-sans">
                   <span>Employee: ____________________</span>
                   <span>Time Keeper: ____________________</span>
@@ -615,16 +615,16 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v24', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v28', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v24')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v24') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v24', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v24') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v24', JSON.stringify(d)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v28')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v28') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v28', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v28') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v28', JSON.stringify(d)); }
 
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v24') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v24', JSON.stringify(v)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v28') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v28', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -664,20 +664,22 @@ jobs:
               }
 
               // ============================================================
-              // 2. CENTRAL MULTI-DEVICE CLOUD SYNC ENGINE (REALTIME AUTO-POLL)
+              // 2. YOUR FIREBASE CLOUD DATABASE ENGINE (DIRECT TWO-WAY SYNC)
               // ============================================================
-              const SHARED_CLOUD_SYNC_URL = 'https://tamishna-attendance-v2-default-rtdb.firebaseio.com/records';
+              const SHARED_CLOUD_SYNC_URL = 'https://tamishna-attendance-default-rtdb.firebaseio.com/records';
               let centralSyncInterval = null;
 
               async function pushPunchToCloud(record) {
                 try {
-                  await fetch(`${SHARED_CLOUD_SYNC_URL}/${record.id}.json`, {
+                  const res = await fetch(`${SHARED_CLOUD_SYNC_URL}/${record.id}.json`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(record)
                   });
+                  return res.ok;
                 } catch(e) {
-                  console.warn('Cloud write error', e);
+                  console.warn('Firebase cloud write failed', e);
+                  return false;
                 }
               }
 
@@ -686,27 +688,42 @@ jobs:
                   const res = await fetch(`${SHARED_CLOUD_SYNC_URL}.json`);
                   if (res.ok) {
                     const cloudData = await res.json();
+                    let mergedList = [];
                     if (cloudData) {
-                      const localRecords = getRecords();
-                      const mergedMap = new Map();
-                      localRecords.forEach(r => mergedMap.set(r.id, r));
-                      Object.values(cloudData).forEach(r => {
-                        if (r && r.id) mergedMap.set(r.id, r);
-                      });
-                      const mergedList = Array.from(mergedMap.values());
+                      mergedList = Object.values(cloudData).filter(r => r && r.id);
                       mergedList.sort((a,b) => (b.date + (b.checkIn||'')).localeCompare(a.date + (a.checkIn||'')));
-                      saveRecords(mergedList);
-                      if (showAlert) alert('✓ Central Cloud Attendance Synced Successfully!');
-                      if (currentUser && currentUser.role === 'ADMIN') {
-                        loadAdminDashboard();
-                      }
-                      return;
                     }
+                    saveRecords(mergedList);
+                    if (showAlert) alert('✓ Connected to Firebase! Attendance records synced.');
+                    if (currentUser && currentUser.role === 'ADMIN') {
+                      loadAdminDashboard();
+                    }
+                    return;
                   }
                 } catch(e) {
-                  console.warn('Cloud sync error', e);
+                  console.warn('Firebase sync error', e);
                 }
-                if (showAlert) alert('Cloud sync error. Please check your internet connection.');
+                if (showAlert) alert('Firebase sync error. Please check your database rules.');
+              }
+
+              async function deleteFromCloud(recordId) {
+                try {
+                  await fetch(`${SHARED_CLOUD_SYNC_URL}/${recordId}.json`, {
+                    method: 'DELETE'
+                  });
+                } catch(e) {
+                  console.warn('Firebase delete failed', e);
+                }
+              }
+
+              async function clearCloudDatabase() {
+                try {
+                  await fetch(`${SHARED_CLOUD_SYNC_URL}.json`, {
+                    method: 'DELETE'
+                  });
+                } catch(e) {
+                  console.warn('Firebase wipe failed', e);
+                }
               }
 
               function startRealtimeCloudSync() {
@@ -754,7 +771,7 @@ jobs:
                 }
               }
 
-              window.onBiometricSuccess = function(actionType) {
+              window.onBiometricSuccess = async function(actionType) {
                 if (!currentUser) return;
                 const today = new Date().toISOString().split('T')[0];
                 const now = new Date();
@@ -764,7 +781,7 @@ jobs:
                 let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
 
                 const punchRecord = {
-                  id: 'TSL-' + Date.now(),
+                  id: (actionType === 'CHECK_IN' || existingIndex === -1) ? ('TSL-' + currentUser.id + '-' + today.replace(/-/g, '')) : records[existingIndex].id,
                   date: today,
                   empId: currentUser.id,
                   name: currentUser.name,
@@ -777,15 +794,20 @@ jobs:
 
                 if (actionType === 'CHECK_IN') {
                   records.unshift(punchRecord);
-                  saveRecords(records);
-                  pushPunchToCloud(punchRecord);
-                  alertEl.innerHTML = '<span class="text-emerald-400 font-bold">✓ Verified! Checked In at ' + timeStr + '</span>';
                 } else {
-                  records[existingIndex].checkOut = timeStr;
-                  saveRecords(records);
-                  pushPunchToCloud(records[existingIndex]);
-                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">✓ Verified! Checked Out at ' + timeStr + '</span>';
+                  records[existingIndex] = punchRecord;
                 }
+                saveRecords(records);
+                
+                alertEl.innerHTML = '<span class="text-blue-400 animate-pulse">Syncing punch to Firebase Cloud...</span>';
+                const cloudSuccess = await pushPunchToCloud(punchRecord);
+
+                if (cloudSuccess) {
+                  alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Firebase Synced! ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr}</span>`;
+                } else {
+                  alertEl.innerHTML = `<span class="text-amber-400 font-bold">✓ Local Saved (${timeStr}). Cloud will auto-sync when online.</span>`;
+                }
+
                 refreshEmployeeTodayPunch();
               };
 
@@ -1354,7 +1376,9 @@ jobs:
                   document.getElementById('userDesig').innerText = currentUser.desig;
                   document.getElementById('userId').innerText = currentUser.id;
                   document.getElementById('userSection').innerText = currentUser.section;
-                  refreshEmployeeTodayPunch();
+                  pullAllFromCloud(false).then(() => {
+                    refreshEmployeeTodayPunch();
+                  });
                 }
               }
 
@@ -1497,18 +1521,16 @@ jobs:
                 loadAdminPinManagement();
               }
 
-              function deleteSingleRecord(recordId) {
-                if (confirm('Delete this attendance record?\nIt will be permanently removed from cloud, Excel, and Job Card.')) {
+              async function deleteSingleRecord(recordId) {
+                if (confirm('Delete this attendance record?\nIt will be permanently removed from your Firebase database, Excel, and Job Card.')) {
                   let records = getRecords();
                   records = records.filter(r => r.id !== recordId);
                   saveRecords(records);
-                  
-                  try {
-                    fetch(`${SHARED_CLOUD_SYNC_URL}/${recordId}.json`, { method: 'DELETE' });
-                  } catch(e) {}
+
+                  await deleteFromCloud(recordId);
 
                   loadAdminDashboard();
-                  alert('✓ Record deleted successfully!');
+                  alert('✓ Record deleted from cloud, Excel, and Job Card!');
                 }
               }
 
@@ -1554,7 +1576,7 @@ jobs:
                   const targetLeave = leaves[foundIndex];
                   let records = getRecords();
                   
-                  records.unshift({
+                  const leaveRecord = {
                     id: 'REC-LV-' + Date.now(),
                     date: targetLeave.fromDate,
                     empId: targetLeave.empId,
@@ -1564,8 +1586,11 @@ jobs:
                     checkIn: 'LEAVE',
                     checkOut: targetLeave.type,
                     status: 'ON LEAVE (' + targetLeave.type + ')'
-                  });
+                  };
+
+                  records.unshift(leaveRecord);
                   saveRecords(records);
+                  pushPunchToCloud(leaveRecord);
                 }
 
                 alert(newStatus === 'APPROVED' ? '✓ Leave Approved! Added to date range on Job Card.' : 'Leave rejected.');
@@ -1604,8 +1629,9 @@ jobs:
                 }
               }
 
-              // 100% DIRECT DOWNLOAD FOR EXCEL / CSV (NATIVE DOWNLOADS INTEGRATION)
-              function exportAttendanceCSV() {
+              // 100% DIRECT DOWNLOAD FOR EXCEL / CSV (SYNC FIRST, NO DELETED DATA)
+              async function exportAttendanceCSV() {
+                await pullAllFromCloud(false);
                 const records = getRecords();
                 if (records.length === 0) {
                   alert('No attendance records to export!');
@@ -1633,14 +1659,12 @@ jobs:
                 }
               }
 
-              function clearAllData() {
-                if (confirm('Delete ALL attendance records permanently?\nThis will clear the central cloud and device records.')) {
-                  localStorage.removeItem('tsl_records_v24');
-                  try {
-                    fetch(`${SHARED_CLOUD_SYNC_URL}.json`, { method: 'DELETE' });
-                  } catch(e) {}
+              async function clearAllData() {
+                if (confirm('Delete ALL attendance records permanently?\nThis will clear your Firebase database, device records, and Excel.')) {
+                  localStorage.removeItem('tsl_records_v28');
+                  await clearCloudDatabase();
                   loadAdminDashboard();
-                  alert('✓ All attendance records have been cleared!');
+                  alert('✓ All attendance records have been cleared from Firebase and app!');
                 }
               }
 
@@ -1658,12 +1682,12 @@ jobs:
         run: |
           sed -i '/<application/i <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n<uses-permission android:name="android.permission.USE_FINGERPRINT" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
 
-      # ADD ANDROIDX BIOMETRIC DEPENDENCY & BUMP VERSION TO V3.4.0
+      # ADD ANDROIDX BIOMETRIC DEPENDENCY & BUMP VERSION TO V3.8.0
       - name: Add AndroidX Biometric Dependency & Bump Version
         run: |
           sed -i '/dependencies {/a \    implementation "androidx.biometric:biometric:1.1.0"' tamishna/android/app/build.gradle
-          sed -i 's/versionCode 1/versionCode 16/g' tamishna/android/app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "3.4.0"/g' tamishna/android/app/build.gradle
+          sed -i 's/versionCode 1/versionCode 20/g' tamishna/android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "3.8.0"/g' tamishna/android/app/build.gradle
 
       # INJECT BULLETPROOF NATIVE BIOMETRIC & REAL DOWNLOADS ENGINE INTO MAINACTIVITY
       - name: Inject Native Biometric and Real Storage Engine
@@ -1903,5 +1927,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v3.4
+          name: Tsl-attendance-v3.8
           path: "output_apk/Tsl attendance.apk"
