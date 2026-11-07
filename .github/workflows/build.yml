@@ -69,7 +69,7 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v5.0</span>
+                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v5.2</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -218,7 +218,7 @@ jobs:
               </div>
             </main>
 
-            <!-- 3. ADMIN PANEL (CENTRAL DASHBOARD - PERMANENT DATA UNLESS DELETED) -->
+            <!-- 3. ADMIN PANEL (CENTRAL DASHBOARD WITH REAL-TIME DAILY ATTENDANCE COUNT) -->
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
@@ -242,19 +242,23 @@ jobs:
                 </div>
               </div>
 
-              <!-- STATS -->
-              <div class="grid grid-cols-3 gap-2.5 text-center">
-                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">Total Staff</span>
-                  <p id="totalEmpCount" class="text-base font-bold text-white">51</p>
+              <!-- CENTRAL DAILY ATTENDANCE STATS COUNTER -->
+              <div class="grid grid-cols-4 gap-2 text-center">
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 shadow">
+                  <span class="text-[9px] text-slate-400 block font-semibold uppercase">Total Staff</span>
+                  <p id="totalEmpCount" class="text-sm font-bold text-white mt-0.5">51</p>
                 </div>
-                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">Present Today (All Phones)</span>
-                  <p id="todayPresentCount" class="text-base font-bold text-emerald-400">0</p>
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-emerald-500/30 shadow bg-emerald-950/20">
+                  <span class="text-[9px] text-emerald-400 block font-semibold uppercase">Present Today</span>
+                  <p id="todayPresentCount" class="text-sm font-bold text-emerald-400 mt-0.5">0</p>
                 </div>
-                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">Pending Leaves</span>
-                  <p id="pendingLeaveBadge" class="text-base font-bold text-amber-400">0</p>
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-rose-500/30 shadow bg-rose-950/20">
+                  <span class="text-[9px] text-rose-400 block font-semibold uppercase">Absent Today</span>
+                  <p id="todayAbsentCount" class="text-sm font-bold text-rose-400 mt-0.5">51</p>
+                </div>
+                <div class="bg-slate-900 p-2.5 rounded-xl border border-amber-500/30 shadow bg-amber-950/20">
+                  <span class="text-[9px] text-amber-400 block font-semibold uppercase">Pending Leaves</span>
+                  <p id="pendingLeaveBadge" class="text-sm font-bold text-amber-400 mt-0.5">0</p>
                 </div>
               </div>
 
@@ -262,7 +266,7 @@ jobs:
               <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                 <div class="flex items-center space-x-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span class="text-slate-300 text-[11px]">Google Sheet Connected (Syncs across all phones)</span>
+                  <span class="text-slate-300 text-[11px]">Real-time Daily Attendance Sync Active</span>
                 </div>
                 <button onclick="pullAllFromCloud(true)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow">
                   <span>🔄 Refresh Now</span>
@@ -597,15 +601,16 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v50', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_master', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v50')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v50') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v50', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v50') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v50', JSON.stringify(d)); }
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v50') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pins_v50', JSON.stringify(v)); }
+              // PERMANENT KEYS - WILL NEVER CHANGE WITH VERSION UPDATES
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_master')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_master_records') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_master_records', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_master_leaves') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_master_leaves', JSON.stringify(d)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_master_pins_vault') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_master_pins_vault', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -700,7 +705,10 @@ jobs:
                     saveLeaves(res.leaves);
                   }
                   if (res.pins && typeof res.pins === 'object') {
-                    savePinVault(res.pins);
+                    // Update master persistent pins vault
+                    const existingVault = getPinVault();
+                    const mergedPins = { ...existingVault, ...res.pins };
+                    savePinVault(mergedPins);
                   }
                   if (showAlert) alert('✓ Connected to Google Sheet! Live data synced.');
                   
@@ -719,7 +727,6 @@ jobs:
               function startRealtimeCloudSync() {
                 if (centralSyncInterval) clearInterval(centralSyncInterval);
                 pullAllFromCloud(false);
-                // Continuous 5-second polling for real-time updates from all phones
                 centralSyncInterval = setInterval(() => {
                   pullAllFromCloud(false);
                 }, 5000);
@@ -738,8 +745,8 @@ jobs:
                 const btnOut = document.getElementById('btnCheckOut');
                 const alertEl = document.getElementById('punchStatusAlert');
 
-                const checkInVal = (record && record.checkIn) ? record.checkIn : null;
-                const checkOutVal = (record && record.checkOut) ? record.checkOut : null;
+                const checkInVal = (record && record.checkIn && record.checkIn !== '--:--') ? record.checkIn : null;
+                const checkOutVal = (record && record.checkOut && record.checkOut !== '--:--') ? record.checkOut : null;
 
                 document.getElementById('todayInText').innerText = checkInVal || '--:--';
                 document.getElementById('todayOutText').innerText = checkOutVal || '--:--';
@@ -789,17 +796,17 @@ jobs:
 
                 // STRICT DAILY CHECK RULE ENFORCEMENT
                 if (actionType === 'CHECK_IN') {
-                  if (existingIndex !== -1 && records[existingIndex].checkIn) {
+                  if (existingIndex !== -1 && records[existingIndex].checkIn && records[existingIndex].checkIn !== '--:--') {
                     alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked In today at ' + records[existingIndex].checkIn + '. Multiple check-ins not allowed!</span>';
                     refreshEmployeeTodayPunch();
                     return;
                   }
                 } else {
-                  if (existingIndex === -1 || !records[existingIndex].checkIn) {
+                  if (existingIndex === -1 || !records[existingIndex].checkIn || records[existingIndex].checkIn === '--:--') {
                     alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Please Check-In first before Check-Out!</span>';
                     return;
                   }
-                  if (records[existingIndex].checkOut) {
+                  if (records[existingIndex].checkOut && records[existingIndex].checkOut !== '--:--') {
                     alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked Out today at ' + records[existingIndex].checkOut + '. Punches locked for today!</span>';
                     refreshEmployeeTodayPunch();
                     return;
@@ -1198,9 +1205,9 @@ jobs:
                 downloadJobCardPDF();
               }
 
-              // ==========================================
-              // 6. MULTI-PHONE CENTRAL SIGN-UP & PIN SYNC
-              // ==========================================
+              // =========================================================================
+              // 6. MULTI-PHONE CENTRAL SIGN-UP & PERMANENT PIN SYNC (ACROSS ALL UPDATES)
+              // =========================================================================
               function clearSignUpForm() {
                 const form = document.getElementById('signupForm');
                 if (form) form.reset();
@@ -1258,8 +1265,9 @@ jobs:
                 await pullAllFromCloud(false);
                 const vault = getPinVault();
 
+                // Check if PIN already set in permanent cloud/local storage
                 if (vault[found.id]) {
-                  alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly from any phone.';
+                  alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly from any phone using your PIN.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   
                   document.getElementById('signupPin').value = '';
@@ -1310,7 +1318,7 @@ jobs:
                 vault[found.id] = hashed;
                 savePinVault(vault);
 
-                // Save to Google Sheet so all phones recognize this PIN
+                // Save to Google Sheet so all phones recognize this PIN permanently
                 await callGoogleSheet({ action: 'savePin', data: JSON.stringify({ id: found.id, hash: hashed, name: found.name }) });
 
                 alert('✓ Sign Up Successful!\nPIN created for ' + found.name + '. You can now log in from any phone using this PIN.');
@@ -1368,7 +1376,7 @@ jobs:
                   }
                 }
 
-                // Check PIN from Sheet
+                // Check PIN from permanent storage or Google Sheet
                 let vault = getPinVault();
                 let existingHashedPin = vault[found.id];
 
@@ -1514,13 +1522,22 @@ jobs:
 
               function loadAdminDashboard() {
                 const records = getRecords();
+                const totalEmployees = getUsers().length;
                 const today = new Date().toISOString().split('T')[0];
-                const todayRecords = records.filter(r => r.date === today);
+                
+                // Real-time unique daily attendance count
+                const todayUniquePresentIds = new Set(
+                  records.filter(r => r.date === today && r.checkIn && r.checkIn !== '--:--' && r.status === 'PRESENT').map(r => r.empId)
+                );
+                const todayPresentCount = todayUniquePresentIds.size;
+                const todayAbsentCount = Math.max(0, totalEmployees - todayPresentCount);
+
                 const leaves = getLeaves();
                 const pendingLeaves = leaves.filter(l => l.status === 'PENDING');
 
-                document.getElementById('totalEmpCount').innerText = getUsers().length;
-                document.getElementById('todayPresentCount').innerText = todayRecords.length;
+                document.getElementById('totalEmpCount').innerText = totalEmployees;
+                document.getElementById('todayPresentCount').innerText = todayPresentCount;
+                document.getElementById('todayAbsentCount').innerText = todayAbsentCount;
                 document.getElementById('pendingLeaveBadge').innerText = pendingLeaves.length;
 
                 const tabBadge = document.getElementById('tabPendingBadge');
@@ -1565,7 +1582,7 @@ jobs:
                   await deleteFromCloud(recordId);
 
                   loadAdminDashboard();
-                  alert('✓ Record deleted from Google Sheet and app! (Punch un-locked if today\'s record)');
+                  alert('✓ Record deleted from Google Sheet and app! (Punch unlocked if today\'s record)');
                 }
               }
 
@@ -1636,13 +1653,14 @@ jobs:
                 `).join('');
               }
 
+              // ONLY ADMIN CAN RESET PIN - UNLESS RESET, USER PIN REMAINS PERMANENT
               async function resetUserPin(empId, empName) {
-                if (confirm('Reset PIN for ' + empName + ' (' + empId + ')?')) {
+                if (confirm('Reset PIN for ' + empName + ' (' + empId + ')?\nOnce reset, the employee can register a new PIN.')) {
                   const vault = getPinVault();
                   delete vault[empId];
                   savePinVault(vault);
                   await callGoogleSheet({ action: 'savePin', data: JSON.stringify({ id: empId, hash: '', name: empName }) });
-                  alert('✓ PIN Reset successfully!');
+                  alert('✓ PIN Reset successfully! The employee can now set a new PIN.');
                   loadAdminPinManagement();
                 }
               }
@@ -1679,7 +1697,7 @@ jobs:
 
               async function clearAllData() {
                 if (confirm('Delete ALL attendance records permanently?\nThis will clear the Google Sheet, device records, and Excel.')) {
-                  localStorage.removeItem('tsl_records_v50');
+                  localStorage.removeItem('tsl_master_records');
                   await clearCloudDatabase();
                   loadAdminDashboard();
                   alert('✓ All attendance records have been cleared from Google Sheet and app!');
@@ -1701,11 +1719,11 @@ jobs:
           sed -i '/<application/i <uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
           sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' tamishna/android/app/src/main/AndroidManifest.xml
 
-      # BUMP APP VERSION
+      # BUMP APP VERSION TO 5.2.0
       - name: Bump Version in Gradle
         run: |
-          sed -i 's/versionCode 1/versionCode 30/g' tamishna/android/app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "5.0.0"/g' tamishna/android/app/build.gradle
+          sed -i 's/versionCode 1/versionCode 32/g' tamishna/android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "5.2.0"/g' tamishna/android/app/build.gradle
 
       # INJECT NATIVE STORAGE & FAST ASYNC REDIRECT HANDLER (NO BIOMETRIC SENSOR DEPENDENCY)
       - name: Inject Native Storage and Cloud Bridge into MainActivity
@@ -1937,5 +1955,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v5.0
+          name: Tsl-attendance-v5.2
           path: "output_apk/Tsl attendance.apk"
