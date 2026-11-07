@@ -270,7 +270,7 @@ jobs:
               </div>
             </main>
 
-            <!-- 3. ADMIN PANEL (CENTRAL DASHBOARD - PERMANENT DATA UNLESS DELETED) -->
+            <!-- 3. ADMIN PANEL (MANAGE ATTENDANCE, JOB CARDS, LEAVES, STAFF & PINS) -->
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
@@ -329,7 +329,7 @@ jobs:
                   <span>Leaves</span>
                   <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-amber-500 text-slate-950 text-[9px] rounded-full font-bold">0</span>
                 </button>
-                <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">PIN List</button>
+                <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">Staff & PINs</button>
               </div>
 
               <!-- VIEW A: SIMPLIFIED ATTENDANCE LOG (DATE, NAME, SECTION, STATUS, DELETE) -->
@@ -451,10 +451,10 @@ jobs:
                 <div id="adminLeaveCardsContainer" class="p-3 space-y-3"></div>
               </div>
 
-              <!-- VIEW D: PIN MANAGEMENT -->
+              <!-- VIEW D: STAFF & PIN MANAGEMENT WITH FULL ERASE CAPABILITY -->
               <div id="adminPinSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
-                  Employee PIN Management & Reset
+                  Staff List, PIN Management & Erase Employee
                 </div>
                 <div class="overflow-x-auto max-h-96">
                   <table class="w-full text-left text-xs text-slate-300">
@@ -463,7 +463,7 @@ jobs:
                         <th class="p-2.5">Card No</th>
                         <th class="p-2.5">Name & Section</th>
                         <th class="p-2.5">PIN Status</th>
-                        <th class="p-2.5">Action</th>
+                        <th class="p-2.5">Actions</th>
                       </tr>
                     </thead>
                     <tbody id="adminPinTableBody" class="divide-y divide-slate-800 text-[11px]"></tbody>
@@ -642,18 +642,18 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              if (!localStorage.getItem('tsl_employees_v60')) {
-                localStorage.setItem('tsl_employees_v60', JSON.stringify(TAMISHNA_EMPLOYEES));
+              if (!localStorage.getItem('tsl_employees_v65')) {
+                localStorage.setItem('tsl_employees_v65', JSON.stringify(TAMISHNA_EMPLOYEES));
               }
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v60') || '[]'); }
-              function saveUsers(u) { localStorage.setItem('tsl_employees_v60', JSON.stringify(u)); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v60') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v60', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v60') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v60', JSON.stringify(d)); }
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v60') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pins_v60', JSON.stringify(v)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v65') || '[]'); }
+              function saveUsers(u) { localStorage.setItem('tsl_employees_v65', JSON.stringify(u)); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v65') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v65', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v65') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v65', JSON.stringify(d)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v65') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pins_v65', JSON.stringify(v)); }
 
               function getBstDateStr(d = new Date()) {
                 const bst = new Date(d.getTime() + (6 * 60 + d.getTimezoneOffset()) * 60000);
@@ -744,16 +744,23 @@ jobs:
                   if (res.pins && typeof res.pins === 'object') {
                     savePinVault(res.pins);
                   }
-                  // AUTO MERGE CLOUD REGISTERED EMPLOYEES
-                  if (Array.isArray(res.employees) && res.employees.length > 0) {
-                    let currentUsers = getUsers();
-                    let map = new Map();
-                    TAMISHNA_EMPLOYEES.forEach(u => map.set(String(u.id).trim(), u));
-                    currentUsers.forEach(u => map.set(String(u.id).trim(), u));
-                    res.employees.forEach(u => map.set(String(u.id).trim(), u));
-                    const merged = Array.from(map.values());
-                    saveUsers(merged);
+                  // AUTO MERGE CLOUD REGISTERED EMPLOYEES (EXCLUDING ERASED ONES)
+                  let erasedIds = JSON.parse(localStorage.getItem('tsl_erased_ids_v65') || '[]');
+                  let map = new Map();
+                  TAMISHNA_EMPLOYEES.forEach(u => {
+                    if (!erasedIds.includes(String(u.id).trim())) {
+                      map.set(String(u.id).trim(), u);
+                    }
+                  });
+                  if (Array.isArray(res.employees)) {
+                    res.employees.forEach(u => {
+                      if (!erasedIds.includes(String(u.id).trim())) {
+                        map.set(String(u.id).trim(), u);
+                      }
+                    });
                   }
+                  saveUsers(Array.from(map.values()));
+
                   if (showAlert) alert('✓ Connected to Google Sheet! Live data synced.');
                   if (currentUser && currentUser.role === 'ADMIN') {
                     loadAdminDashboard();
@@ -1009,6 +1016,7 @@ jobs:
                   const isFriday = (dateObj.getDay() === 5);
 
                   const attRecord = records.find(r => String(r.empId).trim() === String(empId).trim() && String(r.date).trim() === dateStr);
+                  // ONLY APPROVED LEAVES DISPLAY ON JOB CARD PERMANENTLY!
                   const approvedLeave = leaves.find(l => String(l.empId).trim() === String(empId).trim() && 
                     l.status === 'APPROVED' && 
                     dateStr >= String(l.fromDate).trim() && dateStr <= String(l.toDate).trim());
@@ -1156,7 +1164,7 @@ jobs:
                   body: tableRows,
                   theme: 'striped',
                   headStyles: { fillColor: [12, 65, 130], textColor: [255, 255, 255], fontSize: 8, fontStyle: 'bold', cellPadding: 2.5 },
-                  bodyStyles: { fontSize: 7.5, textColor: [40, 40, 40], cellPadding: 2 },
+                  bodyStyles: { fontSize: 7.5, textColor: [40, 40, 40] },
                   alternateRowStyles: { fillColor: [245, 247, 250] },
                   margin: { left: 40, right: 40 }
                 });
@@ -1332,7 +1340,6 @@ jobs:
                 const alertEl = document.getElementById('authAlert');
                 alertEl.className = 'hidden';
 
-                // VALIDATION: ID MUST START WITH 100
                 if (!id.startsWith('100')) {
                   alertEl.innerText = '⚠️ Employee ID must start with "100" (e.g. 10009999)!';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
@@ -1371,11 +1378,9 @@ jobs:
                 vault[newEmployee.id] = hashed;
                 savePinVault(vault);
 
-                // Auto include in local employee list
                 users.push(newEmployee);
                 saveUsers(users);
 
-                // Send to Google Sheet (Employees and Pins sheet)
                 alertEl.innerText = 'Registering new employee to cloud...';
                 alertEl.className = 'p-2.5 mb-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs text-center font-medium animate-pulse';
 
@@ -1392,6 +1397,54 @@ jobs:
                 switchAuthTab('login');
                 document.getElementById('loginId').value = id;
                 document.getElementById('loginPin').value = '';
+              }
+
+              // ============================================================
+              // 8. ERASE EMPLOYEE COMPLETELY (ADMIN FUNCTIONALITY)
+              // ============================================================
+              async function eraseEmployeeEntirely(empId, empName) {
+                const targetId = String(empId).trim();
+                if (confirm(`⚠️ DANGER: Completely erase employee ${empName} (${targetId})?\n\nThis will permanently delete:\n- Employee Profile\n- Secret PIN\n- All Attendance Records\n- All Leave Applications\n\nThis cannot be undone!`)) {
+                  // 1. Blacklist ID locally so it is never re-seeded
+                  let erasedIds = JSON.parse(localStorage.getItem('tsl_erased_ids_v65') || '[]');
+                  if (!erasedIds.includes(targetId)) {
+                    erasedIds.push(targetId);
+                    localStorage.setItem('tsl_erased_ids_v65', JSON.stringify(erasedIds));
+                  }
+
+                  // 2. Remove from local users list
+                  let users = getUsers().filter(u => String(u.id).trim() !== targetId);
+                  saveUsers(users);
+
+                  // 3. Remove from local PIN vault
+                  let vault = getPinVault();
+                  delete vault[targetId];
+                  savePinVault(vault);
+
+                  // 4. Remove all attendance records of this employee
+                  let records = getRecords().filter(r => String(r.empId).trim() !== targetId);
+                  saveRecords(records);
+
+                  // 5. Remove all leaves of this employee
+                  let leaves = getLeaves().filter(l => String(l.empId).trim() !== targetId);
+                  saveLeaves(leaves);
+
+                  // 6. Delete from Google Sheet (Employees, Pins, Attendance, Leaves)
+                  await callGoogleSheet({ action: 'deleteEmployee', id: targetId });
+
+                  // 7. Update Admin Views
+                  loadAdminDashboard();
+                  populateJobCardEmpDropdown();
+                  if (currentJobCardData && currentJobCardData.emp && String(currentJobCardData.emp.id).trim() === targetId) {
+                    currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
+                    document.getElementById('jcDisplayEmpName').innerText = '';
+                    document.getElementById('jcDisplayEmpDesigSec').innerText = '';
+                    document.getElementById('jcDisplayEmpId').innerText = '';
+                    document.getElementById('jobCardTableBody').innerHTML = '';
+                  }
+
+                  alert(`✓ Employee ${empName} (${targetId}) and all associated records have been completely erased from the system and Google Sheet.`);
+                }
               }
 
               let currentUser = null;
@@ -1446,7 +1499,6 @@ jobs:
                   }
                 }
 
-                // Check PIN from Local Vault or Pull from Cloud Sheet
                 let vault = getPinVault();
                 let existingHashedPin = vault[found.id];
 
@@ -1596,7 +1648,6 @@ jobs:
                 }
               }
 
-              // SIMPLIFIED ATTENDANCE LOG: DATE, EMPLOYEE NAME & ID, SECTION, STATUS, DELETE
               function loadAdminDashboard() {
                 const records = getRecords();
                 const today = getBstDateStr();
@@ -1655,7 +1706,6 @@ jobs:
                 }
               }
 
-              // ADMIN LEAVES: SHOWS STATUS, APPROVE BUTTON, AND DELETE BUTTON
               function loadAdminLeaveCards() {
                 const leaves = getLeaves();
                 const container = document.getElementById('adminLeaveCardsContainer');
@@ -1721,6 +1771,7 @@ jobs:
                 }
               }
 
+              // STAFF & PIN MANAGEMENT WITH ERASE EMPLOYEE BUTTON
               function loadAdminPinManagement() {
                 const users = getUsers();
                 const vault = getPinVault();
@@ -1729,12 +1780,19 @@ jobs:
                 tbody.innerHTML = users.map(u => `
                   <tr class="hover:bg-slate-800/40">
                     <td class="p-2.5 font-mono text-emerald-400 font-bold">${u.id}</td>
-                    <td class="p-2.5 font-sans">${u.name}<br><span class="text-[9px] text-slate-400">${u.section}</span></td>
+                    <td class="p-2.5 font-sans">${u.name}<br><span class="text-[9px] text-slate-400">${u.section} (${u.desig})</span></td>
                     <td class="p-2.5">${vault[u.id] ? '<span class="text-emerald-400 font-semibold text-[10px]">✓ PIN Active</span>' : '<span class="text-amber-400 font-semibold text-[10px]">⚠️ Not Set</span>'}</td>
                     <td class="p-2.5">
-                      <button onclick="resetUserPin('${u.id}', '${u.name}')" class="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold active:scale-95">
-                        Reset
-                      </button>
+                      <div class="flex items-center space-x-1.5">
+                        <button onclick="resetUserPin('${u.id}', '${u.name}')" class="px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded text-[10px] font-bold active:scale-95">
+                          Reset PIN
+                        </button>
+                        ${u.role !== 'ADMIN' ? `
+                          <button onclick="eraseEmployeeEntirely('${u.id}', '${u.name}')" class="px-2 py-1 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/40 rounded text-[10px] font-bold active:scale-95" title="Erase Employee Completely">
+                            🗑️ Erase
+                          </button>
+                        ` : ''}
+                      </div>
                     </td>
                   </tr>
                 `).join('');
@@ -1783,7 +1841,7 @@ jobs:
 
               async function clearAllData() {
                 if (confirm('Delete ALL attendance records permanently?\nThis will clear the Google Sheet, device records, and Excel.')) {
-                  localStorage.removeItem('tsl_records_v60');
+                  localStorage.removeItem('tsl_records_v65');
                   await clearCloudDatabase();
                   loadAdminDashboard();
                   alert('✓ All attendance records have been cleared from Google Sheet and app!');
@@ -1833,8 +1891,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 40')
-          content = content.replace('versionName "1.0"', 'versionName "6.0.0"')
+          content = content.replace('versionCode 1', 'versionCode 45')
+          content = content.replace('versionName "1.0"', 'versionName "6.5.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2054,5 +2112,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v6.0
+          name: Tsl-attendance-v6.5
           path: "output_apk/Tsl attendance.apk"
