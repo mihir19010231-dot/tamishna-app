@@ -78,11 +78,11 @@ jobs:
                 <div>
                   <div class="flex items-center space-x-1.5">
                     <h1 class="text-xs font-bold text-white tracking-wide">Tamishna Synthetics Ltd.</h1>
-                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v3.8</span>
+                    <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono font-bold px-1.5 py-0.2 rounded border border-blue-500/30">ERP v4.3</span>
                   </div>
                   <div class="flex items-center space-x-1.5">
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">Realtime Firebase Cloud Connected</span>
+                    <span id="cloudStatusText" class="text-[9px] text-emerald-400 font-medium">Google Sheet Cloud Active</span>
                   </div>
                 </div>
               </div>
@@ -173,7 +173,7 @@ jobs:
               </div>
             </main>
 
-            <!-- 2. EMPLOYEE PUNCH SCREEN -->
+            <!-- 2. EMPLOYEE PUNCH SCREEN (ALL PHONES COMPATIBLE - ONE-TAP INSTANT PUNCH) -->
             <main id="punchView" class="flex-1 p-4 max-w-md mx-auto w-full hidden flex flex-col justify-center space-y-4">
               <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center justify-between shadow-md">
                 <div class="flex items-center space-x-3 min-w-0">
@@ -204,20 +204,20 @@ jobs:
               </div>
 
               <div id="punchStatusAlert" class="p-3 bg-slate-900 rounded-xl text-xs text-center border border-slate-800 text-slate-300 font-medium transition duration-200">
-                Press button below and touch fingerprint sensor
+                Tap button below to record attendance (One-Tap Instant Punch)
               </div>
 
-              <!-- PUNCH BUTTONS -->
+              <!-- ONE-TAP DIRECT PUNCH BUTTONS -->
               <div class="grid grid-cols-2 gap-3 pt-1">
-                <button onclick="triggerBiometricAuth('CHECK_IN')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
-                  <span class="text-3xl mb-1">👆</span>
-                  <span class="text-xs font-bold">Fingerprint Check-In</span>
-                  <span class="text-[9px] text-emerald-200 mt-0.5">Punch In Now</span>
+                <button onclick="recordPunch('CHECK_IN')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-emerald-500 text-center flex flex-col items-center">
+                  <span class="text-3xl mb-1">⏱️</span>
+                  <span class="text-xs font-bold">Punch Check-In</span>
+                  <span class="text-[9px] text-emerald-200 mt-0.5">Instant Entry</span>
                 </button>
-                <button onclick="triggerBiometricAuth('CHECK_OUT')" class="bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
+                <button onclick="recordPunch('CHECK_OUT')" class="bg-rose-600 hover:bg-rose-500 active:scale-95 text-white p-4 rounded-2xl shadow-lg border border-rose-500 text-center flex flex-col items-center">
                   <span class="text-3xl mb-1">🚪</span>
-                  <span class="text-xs font-bold">Fingerprint Check-Out</span>
-                  <span class="text-[9px] text-rose-200 mt-0.5">Punch Out Now</span>
+                  <span class="text-xs font-bold">Punch Check-Out</span>
+                  <span class="text-[9px] text-rose-200 mt-0.5">Instant Exit</span>
                 </button>
               </div>
 
@@ -236,7 +236,7 @@ jobs:
               </div>
             </main>
 
-            <!-- 3. ADMIN PANEL (CENTRAL FIREBASE DASHBOARD) -->
+            <!-- 3. ADMIN PANEL (CENTRAL GOOGLE SHEET DASHBOARD) -->
             <main id="adminView" class="flex-1 p-4 max-w-2xl mx-auto w-full hidden space-y-4">
               <div class="flex justify-between items-center bg-slate-900 p-3.5 rounded-xl border border-slate-800 shadow">
                 <div class="flex items-center space-x-2.5">
@@ -244,7 +244,7 @@ jobs:
                   <div>
                     <div class="flex items-center space-x-1.5">
                       <h2 class="text-xs font-bold text-white">Admin Dashboard</h2>
-                      <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono px-1 py-0.2 rounded border border-blue-500/30">Auto Cloud Sync</span>
+                      <span class="text-[8px] bg-blue-500/20 text-blue-300 font-mono px-1 py-0.2 rounded border border-blue-500/30">Google Sheet Live</span>
                     </div>
                     <p class="text-[10px] text-emerald-400">Tamishna Synthetics Limited</p>
                   </div>
@@ -280,7 +280,7 @@ jobs:
               <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
                 <div class="flex items-center space-x-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span class="text-slate-300 text-[11px]">Firebase Cloud Active (Punches from all phones sync live)</span>
+                  <span class="text-slate-300 text-[11px]">Google Sheet Connected (Syncs across all phones)</span>
                 </div>
                 <button onclick="pullAllFromCloud(true)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-lg text-xs font-bold flex items-center space-x-1 shadow">
                   <span>🔄 Refresh Now</span>
@@ -301,7 +301,7 @@ jobs:
               <!-- VIEW A: ATTENDANCE LOG -->
               <div id="adminAttSection" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center text-xs">
-                  <span class="text-slate-300 font-semibold">All Attendance Records (Central Cloud Database)</span>
+                  <span class="text-slate-300 font-semibold">All Attendance Records (Direct Google Sheet Sync)</span>
                   <button onclick="clearAllData()" class="text-rose-400 text-[10px] hover:underline font-bold">Clear All Records</button>
                 </div>
                 <div class="overflow-x-auto max-h-96">
@@ -615,16 +615,15 @@ jobs:
                 { id: "10009796", name: "Md. Abdul Aual", desig: "Executive", section: "Maintenance", role: "EMPLOYEE" }
               ];
 
-              localStorage.setItem('tsl_employees_v28', JSON.stringify(TAMISHNA_EMPLOYEES));
+              localStorage.setItem('tsl_employees_v43', JSON.stringify(TAMISHNA_EMPLOYEES));
 
-              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v28')); }
-              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v28') || '[]'); }
-              function saveRecords(d) { localStorage.setItem('tsl_records_v28', JSON.stringify(d)); }
-              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v28') || '[]'); }
-              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v28', JSON.stringify(d)); }
-
-              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pin_vault_v28') || '{}'); }
-              function savePinVault(v) { localStorage.setItem('tsl_pin_vault_v28', JSON.stringify(v)); }
+              function getUsers() { return JSON.parse(localStorage.getItem('tsl_employees_v43')); }
+              function getRecords() { return JSON.parse(localStorage.getItem('tsl_records_v43') || '[]'); }
+              function saveRecords(d) { localStorage.setItem('tsl_records_v43', JSON.stringify(d)); }
+              function getLeaves() { return JSON.parse(localStorage.getItem('tsl_leaves_v43') || '[]'); }
+              function saveLeaves(d) { localStorage.setItem('tsl_leaves_v43', JSON.stringify(d)); }
+              function getPinVault() { return JSON.parse(localStorage.getItem('tsl_pins_v43') || '{}'); }
+              function savePinVault(v) { localStorage.setItem('tsl_pins_v43', JSON.stringify(v)); }
 
               async function hashPin(pin) {
                 const encoder = new TextEncoder();
@@ -664,66 +663,69 @@ jobs:
               }
 
               // ============================================================
-              // 2. YOUR FIREBASE CLOUD DATABASE ENGINE (DIRECT TWO-WAY SYNC)
+              // 2. YOUR GOOGLE APPS SCRIPT CLOUD SHEET ENGINE
               // ============================================================
-              const SHARED_CLOUD_SYNC_URL = 'https://tamishna-attendance-default-rtdb.firebaseio.com/records';
+              const GOOGLE_SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbyArqQrKOY5p3T6ACEMlLPiYaCv1umVOB6uudbLnU_-pC6T_IKv8uN_8XkZPG_OZf6A/exec';
               let centralSyncInterval = null;
 
-              async function pushPunchToCloud(record) {
-                try {
-                  const res = await fetch(`${SHARED_CLOUD_SYNC_URL}/${record.id}.json`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(record)
-                  });
-                  return res.ok;
-                } catch(e) {
-                  console.warn('Firebase cloud write failed', e);
-                  return false;
-                }
-              }
+              async function callGoogleSheet(params = {}) {
+                const query = new URLSearchParams(params).toString();
+                const fullUrl = `${GOOGLE_SHEET_API_URL}?${query}`;
 
-              async function pullAllFromCloud(showAlert = false) {
+                // 1. Native Java Request (100% bypasses Android WebView CORS & redirects)
+                if (window.AndroidBridge && window.AndroidBridge.cloudGetRequest) {
+                  try {
+                    const raw = window.AndroidBridge.cloudGetRequest(fullUrl);
+                    if (raw && raw.trim().startsWith('{')) {
+                      return JSON.parse(raw);
+                    }
+                  } catch(e) {
+                    console.warn('Native cloudGetRequest error', e);
+                  }
+                }
+
+                // 2. Fetch fallback
                 try {
-                  const res = await fetch(`${SHARED_CLOUD_SYNC_URL}.json`);
+                  const res = await fetch(fullUrl, { method: 'GET', redirect: 'follow' });
                   if (res.ok) {
-                    const cloudData = await res.json();
-                    let mergedList = [];
-                    if (cloudData) {
-                      mergedList = Object.values(cloudData).filter(r => r && r.id);
-                      mergedList.sort((a,b) => (b.date + (b.checkIn||'')).localeCompare(a.date + (a.checkIn||'')));
-                    }
-                    saveRecords(mergedList);
-                    if (showAlert) alert('✓ Connected to Firebase! Attendance records synced.');
-                    if (currentUser && currentUser.role === 'ADMIN') {
-                      loadAdminDashboard();
-                    }
-                    return;
+                    return await res.json();
                   }
                 } catch(e) {
-                  console.warn('Firebase sync error', e);
+                  console.warn('Fetch fallback error', e);
                 }
-                if (showAlert) alert('Firebase sync error. Please check your database rules.');
+                return null;
+              }
+
+              async function pushPunchToCloud(record) {
+                const res = await callGoogleSheet({ action: 'punch', data: JSON.stringify(record) });
+                return res && res.status === 'success';
               }
 
               async function deleteFromCloud(recordId) {
-                try {
-                  await fetch(`${SHARED_CLOUD_SYNC_URL}/${recordId}.json`, {
-                    method: 'DELETE'
-                  });
-                } catch(e) {
-                  console.warn('Firebase delete failed', e);
-                }
+                await callGoogleSheet({ action: 'deleteRecord', id: recordId });
               }
 
               async function clearCloudDatabase() {
-                try {
-                  await fetch(`${SHARED_CLOUD_SYNC_URL}.json`, {
-                    method: 'DELETE'
-                  });
-                } catch(e) {
-                  console.warn('Firebase wipe failed', e);
+                await callGoogleSheet({ action: 'clearAll' });
+              }
+
+              async function pullAllFromCloud(showAlert = false) {
+                const res = await callGoogleSheet({ action: 'getRecords' });
+                if (res && res.status === 'success') {
+                  if (Array.isArray(res.records)) {
+                    res.records.sort((a,b) => (b.date + (b.checkIn||'')).localeCompare(a.date + (a.checkIn||'')));
+                    saveRecords(res.records);
+                  }
+                  if (res.pins && typeof res.pins === 'object') {
+                    savePinVault(res.pins);
+                  }
+                  if (showAlert) alert('✓ Connected to Google Sheet! Synced live data.');
+                  if (currentUser && currentUser.role === 'ADMIN') {
+                    loadAdminDashboard();
+                  }
+                  return;
                 }
+                if (showAlert) alert('Google Sheet sync check completed.');
               }
 
               function startRealtimeCloudSync() {
@@ -734,44 +736,10 @@ jobs:
                 }, 5000);
               }
 
-              // ==========================================
-              // 3. HARDWARE BIOMETRIC PROMPT SENSOR
-              // ==========================================
-              function triggerBiometricAuth(actionType) {
-                if (!currentUser) return;
-                const today = new Date().toISOString().split('T')[0];
-                const alertEl = document.getElementById('punchStatusAlert');
-                let records = getRecords();
-                let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
-
-                if (actionType === 'CHECK_IN') {
-                  if (existingIndex !== -1) {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Duplicate punch ignored! Already punched in at ' + records[existingIndex].checkIn + '</span>';
-                    return;
-                  }
-                } else {
-                  if (existingIndex === -1) {
-                    alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Please Check-In first!</span>';
-                    return;
-                  }
-                  if (records[existingIndex].checkOut) {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Today\'s attendance already completed at ' + records[existingIndex].checkOut + '</span>';
-                    return;
-                  }
-                }
-
-                alertEl.innerHTML = '<span class="text-blue-400 font-medium animate-pulse">Please touch your phone\'s fingerprint sensor...</span>';
-
-                if (window.AndroidBiometric && window.AndroidBiometric.authenticate) {
-                  window.AndroidBiometric.authenticate(actionType);
-                } else {
-                  const confirmed = confirm("[Biometric Sensor Prompt]\nTamishna Synthetics Ltd.\n\nPress OK to verify fingerprint.");
-                  if (confirmed) onBiometricSuccess(actionType);
-                  else onBiometricError("Verification cancelled");
-                }
-              }
-
-              window.onBiometricSuccess = async function(actionType) {
+              // ============================================================
+              // 3. ONE-TAP INSTANT PUNCH (NO BIOMETRIC SENSOR REQUIRED)
+              // ============================================================
+              async function recordPunch(actionType) {
                 if (!currentUser) return;
                 const today = new Date().toISOString().split('T')[0];
                 const now = new Date();
@@ -780,6 +748,24 @@ jobs:
                 let records = getRecords();
                 let existingIndex = records.findIndex(r => r.empId === currentUser.id && r.date === today);
 
+                if (actionType === 'CHECK_IN') {
+                  if (existingIndex !== -1) {
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked In today at ' + records[existingIndex].checkIn + '</span>';
+                    return;
+                  }
+                } else {
+                  if (existingIndex === -1) {
+                    alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Please Check-In first before Check-Out!</span>';
+                    return;
+                  }
+                  if (records[existingIndex].checkOut) {
+                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked Out today at ' + records[existingIndex].checkOut + '</span>';
+                    return;
+                  }
+                }
+
+                alertEl.innerHTML = '<span class="text-blue-400 font-medium animate-pulse">Syncing punch to Google Sheet...</span>';
+
                 const punchRecord = {
                   id: (actionType === 'CHECK_IN' || existingIndex === -1) ? ('TSL-' + currentUser.id + '-' + today.replace(/-/g, '')) : records[existingIndex].id,
                   date: today,
@@ -787,7 +773,7 @@ jobs:
                   name: currentUser.name,
                   desig: currentUser.desig,
                   section: currentUser.section,
-                  checkIn: actionType === 'CHECK_IN' ? timeStr : (records[existingIndex] ? records[existingIndex].checkIn : timeStr),
+                  checkIn: actionType === 'CHECK_IN' ? timeStr : records[existingIndex].checkIn,
                   checkOut: actionType === 'CHECK_OUT' ? timeStr : null,
                   status: 'PRESENT'
                 };
@@ -798,26 +784,17 @@ jobs:
                   records[existingIndex] = punchRecord;
                 }
                 saveRecords(records);
-                
-                alertEl.innerHTML = '<span class="text-blue-400 animate-pulse">Syncing punch to Firebase Cloud...</span>';
+
                 const cloudSuccess = await pushPunchToCloud(punchRecord);
 
                 if (cloudSuccess) {
-                  alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Firebase Synced! ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr}</span>`;
+                  alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Success! ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr} (Google Sheet Live)</span>`;
                 } else {
                   alertEl.innerHTML = `<span class="text-amber-400 font-bold">✓ Local Saved (${timeStr}). Cloud will auto-sync when online.</span>`;
                 }
 
                 refreshEmployeeTodayPunch();
-              };
-
-              window.onBiometricFailed = function() {
-                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-rose-400 font-bold">❌ Fingerprint not recognized. Try again.</span>';
-              };
-
-              window.onBiometricError = function(errMsg) {
-                document.getElementById('punchStatusAlert').innerHTML = '<span class="text-amber-400">⚠️ Sensor error: ' + errMsg + '</span>';
-              };
+              }
 
               // ==========================================
               // 4. REAL NATIVE PDF SAVER (AUTHORIZED BLANK)
@@ -897,8 +874,8 @@ jobs:
                 if (!activePdfDoc) return;
                 const base64Data = activePdfDoc.output('datauristring').split(',')[1];
 
-                if (window.AndroidBiometric && window.AndroidBiometric.savePdfToDownloads) {
-                  window.AndroidBiometric.savePdfToDownloads(base64Data, activePdfFilename);
+                if (window.AndroidBridge && window.AndroidBridge.savePdfToDownloads) {
+                  window.AndroidBridge.savePdfToDownloads(base64Data, activePdfFilename);
                   closePDFExportModal();
                 } else {
                   activePdfDoc.save(activePdfFilename);
@@ -1171,8 +1148,8 @@ jobs:
                 const filename = `JobCard_${safeId}_${safeMonth}.pdf`;
                 const base64 = doc.output('datauristring').split(',')[1];
 
-                if (window.AndroidBiometric && window.AndroidBiometric.savePdfToDownloads) {
-                  window.AndroidBiometric.savePdfToDownloads(base64, filename);
+                if (window.AndroidBridge && window.AndroidBridge.savePdfToDownloads) {
+                  window.AndroidBridge.savePdfToDownloads(base64, filename);
                 } else {
                   doc.save(filename);
                   alert('✓ Job Card PDF downloaded successfully!');
@@ -1184,7 +1161,7 @@ jobs:
               }
 
               // ==========================================
-              // 6. AUTO REFRESH SIGN UP
+              // 6. AUTO REFRESH SIGN UP (SYNCED WITH SHEET)
               // ==========================================
               function clearSignUpForm() {
                 const form = document.getElementById('signupForm');
@@ -1220,7 +1197,7 @@ jobs:
                 }
               }
 
-              function verifyEmployeeForSignUp() {
+              async function verifyEmployeeForSignUp() {
                 const cardInput = document.getElementById('signupId').value.trim();
                 const alertEl = document.getElementById('authAlert');
                 alertEl.className = 'hidden';
@@ -1240,9 +1217,11 @@ jobs:
                   return;
                 }
 
+                await pullAllFromCloud(false);
                 const vault = getPinVault();
+
                 if (vault[found.id]) {
-                  alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly.';
+                  alertEl.innerText = '⚠️ PIN already set for this ID! Please login directly from any phone.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   
                   document.getElementById('signupPin').value = '';
@@ -1276,13 +1255,6 @@ jobs:
                   return;
                 }
 
-                const vault = getPinVault();
-                if (vault[found.id]) {
-                  alertEl.innerText = '⚠️ PIN already set for this ID. Please login directly.';
-                  alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
-                  return;
-                }
-
                 if (pin.length < 4) {
                   alertEl.innerText = 'PIN must be at least 4 digits!';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
@@ -1295,10 +1267,15 @@ jobs:
                   return;
                 }
 
-                vault[found.id] = await hashPin(pin);
+                const hashed = await hashPin(pin);
+                const vault = getPinVault();
+                vault[found.id] = hashed;
                 savePinVault(vault);
 
-                alert('✓ Sign Up Successful!\nPIN created for ' + found.name);
+                // Save to Google Sheet so all phones recognize this PIN
+                await callGoogleSheet({ action: 'savePin', data: JSON.stringify({ id: found.id, hash: hashed, name: found.name }) });
+
+                alert('✓ Sign Up Successful!\nPIN created for ' + found.name + '. You can now log in from any phone using this PIN.');
                 
                 clearSignUpForm();
                 document.getElementById('loginId').value = cardInput;
@@ -1335,11 +1312,36 @@ jobs:
                   return;
                 }
 
-                const vault = getPinVault();
-                const existingHashedPin = vault[found.id];
+                // If Admin, allow universal login with master PIN 1234 or sheet PIN
+                if (found.role === 'ADMIN') {
+                  const inputHash = await hashPin(pinInput);
+                  let vault = getPinVault();
+                  let adminHash = vault[found.id];
+
+                  if (pinInput === '1234' || (adminHash && adminHash === inputHash)) {
+                    handleRememberPinSave(idInput, pinInput);
+                    currentUser = found;
+                    showAppScreen();
+                    return;
+                  } else {
+                    alertEl.innerText = 'Incorrect Admin PIN! (Default master PIN: 1234)';
+                    alertEl.className = 'p-2.5 mb-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs text-center font-medium';
+                    return;
+                  }
+                }
+
+                // Check PIN from Sheet
+                let vault = getPinVault();
+                let existingHashedPin = vault[found.id];
 
                 if (!existingHashedPin) {
-                  alertEl.innerText = 'PIN not set yet! Please register via Sign Up tab.';
+                  await pullAllFromCloud(false);
+                  vault = getPinVault();
+                  existingHashedPin = vault[found.id];
+                }
+
+                if (!existingHashedPin) {
+                  alertEl.innerText = 'PIN not set yet! Please register via Sign Up tab first.';
                   alertEl.className = 'p-2.5 mb-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs text-center font-medium';
                   return;
                 }
@@ -1389,7 +1391,7 @@ jobs:
                 document.getElementById('punchView').classList.add('hidden');
                 document.getElementById('adminView').classList.add('hidden');
                 document.getElementById('headerActions').classList.add('hidden');
-                document.getElementById('punchStatusAlert').innerText = 'Press button below and touch fingerprint sensor';
+                document.getElementById('punchStatusAlert').innerText = 'Tap button below to record attendance (One-Tap Instant Punch)';
                 injectLogos();
                 clearSignUpForm();
                 loadRememberedCredentials();
@@ -1522,7 +1524,7 @@ jobs:
               }
 
               async function deleteSingleRecord(recordId) {
-                if (confirm('Delete this attendance record?\nIt will be permanently removed from your Firebase database, Excel, and Job Card.')) {
+                if (confirm('Delete this attendance record?\nIt will be permanently removed from Google Sheet, Excel, and Job Card.')) {
                   let records = getRecords();
                   records = records.filter(r => r.id !== recordId);
                   saveRecords(records);
@@ -1530,7 +1532,7 @@ jobs:
                   await deleteFromCloud(recordId);
 
                   loadAdminDashboard();
-                  alert('✓ Record deleted from cloud, Excel, and Job Card!');
+                  alert('✓ Record deleted from Google Sheet and app!');
                 }
               }
 
@@ -1644,8 +1646,8 @@ jobs:
                 
                 const filename = `Tamishna_ERP_Attendance_${new Date().toISOString().split('T')[0]}.csv`;
 
-                if (window.AndroidBiometric && window.AndroidBiometric.saveCsvToDownloads) {
-                  window.AndroidBiometric.saveCsvToDownloads(csv, filename);
+                if (window.AndroidBridge && window.AndroidBridge.saveCsvToDownloads) {
+                  window.AndroidBridge.saveCsvToDownloads(csv, filename);
                 } else {
                   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
                   const url = URL.createObjectURL(blob);
@@ -1660,11 +1662,11 @@ jobs:
               }
 
               async function clearAllData() {
-                if (confirm('Delete ALL attendance records permanently?\nThis will clear your Firebase database, device records, and Excel.')) {
-                  localStorage.removeItem('tsl_records_v28');
+                if (confirm('Delete ALL attendance records permanently?\nThis will clear the Google Sheet, device records, and Excel.')) {
+                  localStorage.removeItem('tsl_records_v43');
                   await clearCloudDatabase();
                   loadAdminDashboard();
-                  alert('✓ All attendance records have been cleared from Firebase and app!');
+                  alert('✓ All attendance records have been cleared from Google Sheet and app!');
                 }
               }
 
@@ -1677,20 +1679,20 @@ jobs:
           npx cap init "Tamishna Attendance" "com.tamishna.synthetics.attendance" --web-dir dist
           npx cap add android
 
-      # ADD PERMISSIONS FOR STORAGE, HARDWARE SENSORS & NETWORK
-      - name: Add Permissions to AndroidManifest
+      # ADD STORAGE & FULL NETWORK PERMISSIONS (WITH CLEARTEXT TRAFFIC)
+      - name: Add Permissions and Network Settings to AndroidManifest
         run: |
-          sed -i '/<application/i <uses-permission android:name="android.permission.USE_BIOMETRIC" />\n<uses-permission android:name="android.permission.USE_FINGERPRINT" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
+          sed -i '/<application/i <uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />\n<uses-permission android:name="android.permission.VIBRATE" />' tamishna/android/app/src/main/AndroidManifest.xml
+          sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' tamishna/android/app/src/main/AndroidManifest.xml
 
-      # ADD ANDROIDX BIOMETRIC DEPENDENCY & BUMP VERSION TO V3.8.0
-      - name: Add AndroidX Biometric Dependency & Bump Version
+      # BUMP APP VERSION
+      - name: Bump Version in Gradle
         run: |
-          sed -i '/dependencies {/a \    implementation "androidx.biometric:biometric:1.1.0"' tamishna/android/app/build.gradle
-          sed -i 's/versionCode 1/versionCode 20/g' tamishna/android/app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "3.8.0"/g' tamishna/android/app/build.gradle
+          sed -i 's/versionCode 1/versionCode 25/g' tamishna/android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "4.3.0"/g' tamishna/android/app/build.gradle
 
-      # INJECT BULLETPROOF NATIVE BIOMETRIC & REAL DOWNLOADS ENGINE INTO MAINACTIVITY
-      - name: Inject Native Biometric and Real Storage Engine
+      # INJECT NATIVE STORAGE & GOOGLE APPS SCRIPT REDIRECT HANDLER (NO BIOMETRIC DEPENDENCY)
+      - name: Inject Native Storage and Cloud Bridge into MainActivity
         run: |
           cat << 'EOF' > tamishna/android/app/src/main/java/com/tamishna/synthetics/attendance/MainActivity.java
           package com.tamishna.synthetics.attendance;
@@ -1705,61 +1707,53 @@ jobs:
           import android.util.Base64;
           import android.webkit.JavascriptInterface;
           import android.widget.Toast;
-          import androidx.annotation.NonNull;
-          import androidx.biometric.BiometricManager;
-          import androidx.biometric.BiometricPrompt;
-          import androidx.core.content.ContextCompat;
           import com.getcapacitor.BridgeActivity;
+          import java.io.BufferedReader;
           import java.io.File;
           import java.io.FileOutputStream;
+          import java.io.InputStreamReader;
           import java.io.OutputStream;
+          import java.net.HttpURLConnection;
+          import java.net.URL;
           import java.nio.charset.StandardCharsets;
-          import java.util.concurrent.Executor;
 
           public class MainActivity extends BridgeActivity {
               @Override
               protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
-                  this.bridge.getWebView().addJavascriptInterface(new BiometricBridge(), "AndroidBiometric");
+                  this.bridge.getWebView().addJavascriptInterface(new StorageBridge(), "AndroidBridge");
               }
 
-              public class BiometricBridge {
+              public class StorageBridge {
+                  // NATIVE HTTP HANDLER THAT FOLLOWS GOOGLE APPS SCRIPT REDIRECTS CLEANLY
                   @JavascriptInterface
-                  public void authenticate(final String actionType) {
-                      runOnUiThread(() -> {
-                          Executor executor = ContextCompat.getMainExecutor(MainActivity.this);
-                          BiometricPrompt biometricPrompt = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
-                              @Override
-                              public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                                  super.onAuthenticationSucceeded(result);
-                                  bridge.getWebView().evaluateJavascript("window.onBiometricSuccess('" + actionType + "')", null);
-                              }
+                  public String cloudGetRequest(final String targetUrl) {
+                      try {
+                          URL url = new URL(targetUrl);
+                          HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                          conn.setInstanceFollowRedirects(true);
+                          conn.setRequestMethod("GET");
+                          conn.setConnectTimeout(12000);
+                          conn.setReadTimeout(12000);
 
-                              @Override
-                              public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                                  super.onAuthenticationError(errorCode, errString);
-                                  bridge.getWebView().evaluateJavascript("window.onBiometricError('" + errString + "')", null);
-                              }
+                          int status = conn.getResponseCode();
+                          if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == 307) {
+                              String newUrl = conn.getHeaderField("Location");
+                              conn = (HttpURLConnection) new URL(newUrl).openConnection();
+                              conn.setRequestMethod("GET");
+                          }
 
-                              @Override
-                              public void onAuthenticationFailed() {
-                                  super.onAuthenticationFailed();
-                                  bridge.getWebView().evaluateJavascript("window.onBiometricFailed()", null);
-                              }
-                          });
-
-                          String title = actionType.equals("CHECK_IN") ? "Attendance Check-In" : "Attendance Check-Out";
-                          String subtitle = "Tamishna Synthetics Ltd. - Touch Fingerprint Sensor";
-
-                          BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                                  .setTitle(title)
-                                  .setSubtitle(subtitle)
-                                  .setNegativeButtonText("Cancel")
-                                  .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.BIOMETRIC_WEAK)
-                                  .build();
-
-                          biometricPrompt.authenticate(promptInfo);
-                      });
+                          BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                          StringBuilder resp = new StringBuilder();
+                          String line;
+                          while ((line = in.readLine()) != null) {
+                              resp.append(line);
+                          }
+                          in.close();
+                          return resp.toString();
+                      } catch (Exception e) {
+                          return "";
+                      }
                   }
 
                   // NATIVE PDF SAVER DIRECTLY INTO DOWNLOADS
@@ -1927,5 +1921,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v3.8
+          name: Tsl-attendance-v4.3
           path: "output_apk/Tsl attendance.apk"
