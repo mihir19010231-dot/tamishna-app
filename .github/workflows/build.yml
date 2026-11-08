@@ -305,8 +305,8 @@ jobs:
                   <p id="todayPresentCount" class="text-base font-bold text-emerald-400">0</p>
                 </div>
                 <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-                  <span class="text-[10px] text-slate-400 block">Pending Leaves</span>
-                  <p id="pendingLeaveBadge" class="text-base font-bold text-amber-400">0</p>
+                  <span class="text-[10px] text-slate-400 block">Active Leaves</span>
+                  <p id="pendingLeaveBadge" class="text-base font-bold text-blue-400">0</p>
                 </div>
               </div>
 
@@ -327,7 +327,7 @@ jobs:
                 <button id="adminTabJobCard" onclick="switchAdminTab('jobcard')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">📋 Job Card Search</button>
                 <button id="adminTabLeave" onclick="switchAdminTab('leave')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white flex items-center justify-center space-x-1">
                   <span>Leaves</span>
-                  <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-amber-500 text-slate-950 text-[9px] rounded-full font-bold">0</span>
+                  <span id="tabPendingBadge" class="hidden px-1.5 py-0.2 bg-blue-500 text-white text-[9px] rounded-full font-bold">0</span>
                 </button>
                 <button id="adminTabPin" onclick="switchAdminTab('pin')" class="flex-1 py-1.5 rounded-lg text-slate-400 font-bold hover:text-white">Staff & PINs</button>
               </div>
@@ -441,10 +441,10 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW C: LEAVE MANAGEMENT -->
+              <!-- VIEW C: LEAVE MANAGEMENT (VIEW & DELETE) -->
               <div id="adminLeaveSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
-                  Leave Applications (Admin Approval & Management)
+                  Applied Leaves (Remove from Job Card via Delete)
                 </div>
                 <div id="adminLeaveCardsContainer" class="p-3 space-y-3"></div>
               </div>
@@ -687,7 +687,6 @@ jobs:
                 return `${y}-${m}-${day}`;
               }
 
-              // SMART FIELD EXTRACTOR (CASE-INSENSITIVE)
               function getProp(obj, ...keys) {
                 if (!obj) return '';
                 for (let k of keys) {
@@ -881,18 +880,15 @@ jobs:
                   }
                   if (Array.isArray(res.leaves)) {
                     let localLeaves = getLeaves();
+                    let deletedLeaves = JSON.parse(localStorage.getItem('tsl_deleted_leaves_v65') || '[]');
                     let map = new Map();
                     localLeaves.forEach(l => {
                       const lid = getProp(l, 'id');
-                      if (lid) map.set(lid, l);
+                      if (lid && !deletedLeaves.includes(lid)) map.set(lid, l);
                     });
                     res.leaves.forEach(l => {
                       const lid = getProp(l, 'id');
-                      if (lid) {
-                        const existing = map.get(lid);
-                        const cloudStatus = getProp(l, 'status').toUpperCase();
-                        const localStatus = existing ? getProp(existing, 'status').toUpperCase() : '';
-                        
+                      if (lid && !deletedLeaves.includes(lid)) {
                         map.set(lid, {
                           ...l,
                           id: lid,
@@ -903,7 +899,7 @@ jobs:
                           type: getProp(l, 'type') || 'C/L',
                           fromDate: normalizeDate(getProp(l, 'fromDate', 'from', 'fromdate')),
                           toDate: normalizeDate(getProp(l, 'toDate', 'to', 'todate')),
-                          status: (localStatus === 'APPROVED') ? 'APPROVED' : (cloudStatus || 'PENDING')
+                          status: 'APPROVED'
                         });
                       }
                     });
@@ -955,7 +951,7 @@ jobs:
                 }, 3000);
               }
 
-              // ONE-TAP INSTANT PUNCH (ZERO LAG, LOCAL-FIRST EXECUTION)
+              // ONE-TAP INSTANT PUNCH (ZERO LAG)
               let isPunching = false;
               async function recordPunch(actionType) {
                 if (!currentUser) {
@@ -996,7 +992,6 @@ jobs:
                     }
                   }
 
-                  // INSTANT OPTIMISTIC SAVE (NO NETWORK FREEZE)
                   alertEl.innerHTML = `<span class="text-emerald-400 font-bold animate-pulse">✓ Recording ${actionType === 'CHECK_IN' ? 'Check-In' : 'Check-Out'} (${timeStr})...</span>`;
 
                   const recId = (existingRecord && existingRecord.id) ? existingRecord.id : ('TSL-' + currentUser.id + '-' + today.replace(/-/g, ''));
@@ -1027,7 +1022,6 @@ jobs:
 
                   alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Successfully ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr}! Saved.</span>`;
 
-                  // BACKGROUND NON-BLOCKING SYNC TO GOOGLE SHEETS
                   pushPunchToCloud(punchRecord).then((ok) => {
                     if (ok) {
                       alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Successfully ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr} (Cloud Synced)</span>`;
@@ -1166,7 +1160,7 @@ jobs:
                 }
               }
 
-              // INDIVIDUAL JOB CARD ENGINE (ACCEPTS SEARCH QUERY DIRECTLY)
+              // INDIVIDUAL JOB CARD ENGINE
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
               let searchDebounceTimer = null;
 
@@ -1260,7 +1254,7 @@ jobs:
                 renderSelectedEmployeeJobCard(selectedId);
               }
 
-              // BULLETPROOF DATE-WISE JOB CARD WITH PERSISTENT APPROVED LEAVES
+              // DIRECT APPLIED LEAVES DISPLAY ON JOB CARD (ONLY REMOVED IF ADMIN DELETES)
               function buildDateWiseJobCard(empId, yearMonth) {
                 const users = getUsers();
                 const emp = users.find(u => isSameEmp(u.id, empId));
@@ -1287,19 +1281,18 @@ jobs:
 
                   const attRecord = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), empId) && isSameDate(getProp(r, 'date'), dateStr));
                   
-                  // ACCURATE APPROVED LEAVE DETECTION ACROSS ALL FORMATS
-                  const approvedLeave = leaves.find(l => {
+                  // DIRECT LEAVE MATCHING (APPLY KORLEI DIRECT SHOW KORBE)
+                  const appliedLeave = leaves.find(l => {
                     const lEmp = getProp(l, 'empId', 'cardNo', 'empid');
                     if (!isSameEmp(lEmp, empId)) return false;
-                    
-                    const st = getProp(l, 'status').toUpperCase();
-                    if (st !== 'APPROVED') return false;
 
                     const from = normalizeDate(getProp(l, 'fromDate', 'from', 'fromdate', 'startdate', 'start'));
                     const to = normalizeDate(getProp(l, 'toDate', 'to', 'todate', 'enddate', 'end'));
                     if (!from || !to) return false;
 
-                    return (dateStr >= from && dateStr <= to);
+                    const minD = from <= to ? from : to;
+                    const maxD = from <= to ? to : from;
+                    return (dateStr >= minD && dateStr <= maxD);
                   });
 
                   let inTime = '--:--';
@@ -1315,8 +1308,8 @@ jobs:
                     outTime = recOut || '--:--';
                     status = 'PRESENT';
                     presentCount++;
-                  } else if (approvedLeave) {
-                    const lType = getProp(approvedLeave, 'type') || 'C/L';
+                  } else if (appliedLeave) {
+                    const lType = getProp(appliedLeave, 'type') || 'C/L';
                     status = `LEAVE (${lType})`;
                     leaveCount++;
                   } else if (isFriday) {
@@ -1885,6 +1878,7 @@ jobs:
                 document.getElementById('leaveApplyModal').classList.add('hidden');
               }
 
+              // DIRECT APPLY KORLEI JOB CARD A SHOW KORBE
               async function handleLeaveSubmit(e) {
                 e.preventDefault();
                 if (!currentUser) return;
@@ -1907,7 +1901,7 @@ jobs:
                   fromDate: fromDate,
                   toDate: toDate,
                   appliedOn: getBstDateStr(),
-                  status: 'PENDING'
+                  status: 'APPROVED'
                 };
 
                 const leaves = getLeaves();
@@ -1917,7 +1911,7 @@ jobs:
                 callGoogleSheet({ action: 'applyLeave', data: JSON.stringify(leaveObj) });
 
                 closeLeaveApplyModal();
-                alert('✓ Leave application submitted successfully! It will appear on Job Card once Admin approves it.');
+                alert('✓ Leave application submitted successfully! It is now directly recorded on your Job Card.');
               }
 
               function switchAdminTab(tab) {
@@ -1962,17 +1956,15 @@ jobs:
                 });
 
                 const uniquePresentEmpIds = new Set(todayPresents.map(r => String(getProp(r, 'empId', 'cardNo')).trim()));
-
                 const leaves = getLeaves();
-                const pendingLeaves = leaves.filter(l => String(getProp(l, 'status')).toUpperCase() === 'PENDING');
 
                 document.getElementById('totalEmpCount').innerText = getUsers().length;
                 document.getElementById('todayPresentCount').innerText = uniquePresentEmpIds.size;
-                document.getElementById('pendingLeaveBadge').innerText = pendingLeaves.length;
+                document.getElementById('pendingLeaveBadge').innerText = leaves.length;
 
                 const tabBadge = document.getElementById('tabPendingBadge');
-                if (pendingLeaves.length > 0) {
-                  tabBadge.innerText = pendingLeaves.length;
+                if (leaves.length > 0) {
+                  tabBadge.innerText = leaves.length;
                   tabBadge.classList.remove('hidden');
                 } else {
                   tabBadge.classList.add('hidden');
@@ -2042,7 +2034,6 @@ jobs:
                   const ltype = getProp(l, 'type') || 'C/L';
                   const lfrom = getProp(l, 'fromDate', 'from');
                   const lto = getProp(l, 'toDate', 'to');
-                  const lst = getProp(l, 'status').toUpperCase() || 'PENDING';
 
                   return `
                     <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
@@ -2051,18 +2042,14 @@ jobs:
                           <h4 class="font-bold text-white text-xs">${lname} <span class="text-emerald-400 font-mono">(${lemp})</span></h4>
                           <p class="text-[10px] text-slate-400">${ldesig} &bull; ${lsec}</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${lst === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : lst === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}">${lst} (${ltype})</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border bg-blue-500/20 text-blue-300 border-blue-500/40">ACTIVE LEAVE (${ltype})</span>
                       </div>
                       <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
                         <p class="text-slate-300"><b>Date:</b> ${lfrom} to ${lto}</p>
                       </div>
                       <div class="flex items-center space-x-2 pt-2 border-t border-slate-800">
-                        ${lst === 'PENDING' ? `
-                          <button onclick="updateLeaveStatus('${lid}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ Approve</button>
-                          <button onclick="updateLeaveStatus('${lid}', 'REJECTED')" class="flex-1 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ Reject</button>
-                        ` : ''}
-                        <button onclick="deleteLeaveRecord('${lid}')" class="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1" title="Delete Leave">
-                          <span>🗑️ Delete</span>
+                        <button onclick="deleteLeaveRecord('${lid}')" class="w-full py-1.5 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white rounded-lg text-xs font-bold flex items-center justify-center space-x-1 shadow" title="Delete Leave to remove from Job Card">
+                          <span>🗑️ Delete Leave (Remove from Job Card)</span>
                         </button>
                       </div>
                     </div>
@@ -2070,33 +2057,25 @@ jobs:
                 }).join('');
               }
 
-              // INSTANT & PERMANENT LEAVE APPROVAL (DIRECT JOB CARD BINDING)
-              async function updateLeaveStatus(leaveId, newStatus) {
-                let leaves = getLeaves();
-                let foundIndex = leaves.findIndex(l => String(getProp(l, 'id')).trim() === String(leaveId).trim());
-                if (foundIndex === -1) return;
-
-                leaves[foundIndex].status = newStatus;
-                saveLeaves(leaves);
-
-                callGoogleSheet({ action: 'updateLeaveStatus', data: JSON.stringify({ id: leaveId, status: newStatus }) });
-
-                alert(newStatus === 'APPROVED' ? '✓ Leave Approved! It is now permanently recorded and visible on Job Card.' : 'Leave rejected.');
-                loadAdminDashboard();
-                if (currentJobCardData && currentJobCardData.emp) {
-                  renderSelectedEmployeeJobCard();
-                }
-              }
-
+              // ADMIN DELETE KORLEI JOB CARD THEKE REMOVE HBE
               async function deleteLeaveRecord(leaveId) {
                 if (confirm('Delete this leave application?\nIt will be permanently removed from Google Sheet and Job Card.')) {
+                  const targetLid = String(leaveId).trim();
+
+                  // Blacklist permanently so cloud sync never resurrects it
+                  let deletedLeaves = JSON.parse(localStorage.getItem('tsl_deleted_leaves_v65') || '[]');
+                  if (!deletedLeaves.includes(targetLid)) {
+                    deletedLeaves.push(targetLid);
+                    localStorage.setItem('tsl_deleted_leaves_v65', JSON.stringify(deletedLeaves));
+                  }
+
                   let leaves = getLeaves();
-                  leaves = leaves.filter(l => String(getProp(l, 'id')).trim() !== String(leaveId).trim());
+                  leaves = leaves.filter(l => String(getProp(l, 'id')).trim() !== targetLid);
                   saveLeaves(leaves);
 
-                  await callGoogleSheet({ action: 'deleteLeave', id: leaveId });
+                  callGoogleSheet({ action: 'deleteLeave', id: targetLid });
 
-                  alert('✓ Leave record deleted successfully!');
+                  alert('✓ Leave record deleted successfully! Removed from Job Card.');
                   loadAdminDashboard();
                   if (currentJobCardData && currentJobCardData.emp) {
                     renderSelectedEmployeeJobCard();
@@ -2225,8 +2204,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 50')
-          content = content.replace('versionName "1.0"', 'versionName "7.0.0"')
+          content = content.replace('versionCode 1', 'versionCode 51')
+          content = content.replace('versionName "1.0"', 'versionName "7.1.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2441,5 +2420,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v7.0
+          name: Tsl-attendance-v7.1
           path: "output_apk/Tsl attendance.apk"
