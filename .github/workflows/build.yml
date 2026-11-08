@@ -191,11 +191,11 @@ jobs:
                   <div class="grid grid-cols-2 gap-2">
                     <div>
                       <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">Secret PIN</label>
-                      <input type="password" id="newStaffPin" required maxlength="6" placeholder="4-digit PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                      <input type="password" id="newStaffPin" required maxlength="6" placeholder="4-digit PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
                       <label class="block text-[10px] font-semibold text-slate-300 uppercase tracking-wider mb-0.5">Confirm PIN</label>
-                      <input type="password" id="newStaffPinConfirm" required maxlength="6" placeholder="Re-enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
+                      <input type="password" id="newStaffPinConfirm" required maxlength="6" placeholder="Re-enter PIN" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-600 text-xs font-mono tracking-widest focus:outline-none focus:border-emerald-500">
                     </div>
                   </div>
 
@@ -882,16 +882,28 @@ jobs:
                   if (Array.isArray(res.leaves)) {
                     let localLeaves = getLeaves();
                     let map = new Map();
-                    localLeaves.forEach(l => { if (l && l.id) map.set(String(l.id).trim(), l); });
+                    localLeaves.forEach(l => {
+                      const lid = getProp(l, 'id');
+                      if (lid) map.set(lid, l);
+                    });
                     res.leaves.forEach(l => {
-                      if (l && l.id) {
-                        const key = String(l.id).trim();
-                        const existing = map.get(key);
-                        map.set(key, {
+                      const lid = getProp(l, 'id');
+                      if (lid) {
+                        const existing = map.get(lid);
+                        const cloudStatus = getProp(l, 'status').toUpperCase();
+                        const localStatus = existing ? getProp(existing, 'status').toUpperCase() : '';
+                        
+                        map.set(lid, {
                           ...l,
-                          fromDate: normalizeDate(getProp(l, 'fromDate')),
-                          toDate: normalizeDate(getProp(l, 'toDate')),
-                          status: (existing && existing.status === 'APPROVED') ? 'APPROVED' : String(l.status || 'PENDING').trim().toUpperCase()
+                          id: lid,
+                          empId: getProp(l, 'empId', 'cardNo', 'empid'),
+                          name: getProp(l, 'name', 'empName'),
+                          desig: getProp(l, 'desig', 'designation'),
+                          section: getProp(l, 'section', 'dept'),
+                          type: getProp(l, 'type') || 'C/L',
+                          fromDate: normalizeDate(getProp(l, 'fromDate', 'from', 'fromdate')),
+                          toDate: normalizeDate(getProp(l, 'toDate', 'to', 'todate')),
+                          status: (localStatus === 'APPROVED') ? 'APPROVED' : (cloudStatus || 'PENDING')
                         });
                       }
                     });
@@ -935,7 +947,6 @@ jobs:
                 if (showAlert) alert('Google Sheet sync check completed.');
               }
 
-              // ULTRA-FAST 3-SECOND REALTIME SYNC FOR ADMIN
               function startRealtimeCloudSync() {
                 if (centralSyncInterval) clearInterval(centralSyncInterval);
                 pullAllFromCloud(false);
@@ -944,100 +955,107 @@ jobs:
                 }, 3000);
               }
 
-              // STRICT ONE-TAP PUNCH (IMMEDIATELY NOTIFIES ADMIN PANEL)
+              // ONE-TAP INSTANT PUNCH (ZERO LAG, LOCAL-FIRST EXECUTION)
               let isPunching = false;
               async function recordPunch(actionType) {
-                if (!currentUser || isPunching) return;
-                const today = getBstDateStr();
+                if (!currentUser) {
+                  alert('Please login first!');
+                  return;
+                }
+                if (isPunching) return;
+
                 const alertEl = document.getElementById('punchStatusAlert');
-
-                isPunching = true;
-                const btnIn = document.getElementById('btnCheckIn');
-                const btnOut = document.getElementById('btnCheckOut');
-                btnIn.classList.add('opacity-50', 'pointer-events-none');
-                btnOut.classList.add('opacity-50', 'pointer-events-none');
-
-                let records = getRecords();
-                let existingRecord = records.find(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
-
-                if (!existingRecord) {
-                  await pullAllFromCloud(false);
-                  records = getRecords();
-                  existingRecord = records.find(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
-                }
-
-                if (actionType === 'CHECK_IN') {
-                  if (existingRecord && existingRecord.checkIn && existingRecord.checkIn !== '--:--') {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked In today at ' + existingRecord.checkIn + '! Duplicate punch not allowed.</span>';
-                    isPunching = false;
-                    refreshEmployeeTodayPunch();
-                    return;
-                  }
-                } else if (actionType === 'CHECK_OUT') {
-                  if (!existingRecord || !existingRecord.checkIn || existingRecord.checkIn === '--:--') {
-                    alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Please Check-In first before Check-Out!</span>';
-                    isPunching = false;
-                    refreshEmployeeTodayPunch();
-                    return;
-                  }
-                  if (existingRecord.checkOut && existingRecord.checkOut !== '--:--') {
-                    alertEl.innerHTML = '<span class="text-amber-400 font-bold">⚠️ Already Checked Out today at ' + existingRecord.checkOut + '! Duplicate checkout not allowed.</span>';
-                    isPunching = false;
-                    refreshEmployeeTodayPunch();
-                    return;
-                  }
-                }
-
+                const today = getBstDateStr();
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                alertEl.innerHTML = `<span class="text-emerald-400 font-bold animate-pulse">✓ Recording ${actionType === 'CHECK_IN' ? 'Check-In' : 'Check-Out'}...</span>`;
 
-                const recId = (existingRecord && existingRecord.id) ? existingRecord.id : ('TSL-' + currentUser.id + '-' + today.replace(/-/g, ''));
-                
-                const punchRecord = {
-                  id: recId,
-                  date: today,
-                  empId: String(currentUser.id).trim(),
-                  name: currentUser.name,
-                  desig: currentUser.desig,
-                  section: currentUser.section,
-                  checkIn: actionType === 'CHECK_IN' ? timeStr : (existingRecord ? existingRecord.checkIn : timeStr),
-                  checkOut: actionType === 'CHECK_OUT' ? timeStr : (existingRecord ? existingRecord.checkOut : null),
-                  status: 'PRESENT'
-                };
+                try {
+                  isPunching = true;
+                  let records = getRecords();
+                  let existingRecord = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), currentUser.id) && isSameDate(getProp(r, 'date'), today));
 
-                let existingIndex = records.findIndex(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
-                if (existingIndex === -1) {
-                  records.unshift(punchRecord);
-                } else {
-                  records[existingIndex] = punchRecord;
-                }
-                
-                saveRecords(records);
-                refreshEmployeeTodayPunch();
-
-                pushPunchToCloud(punchRecord).then((ok) => {
-                  if (ok) {
-                    alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Successfully ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr} (Google Sheet Synced)</span>`;
-                  } else {
-                    alertEl.innerHTML = `<span class="text-amber-400 font-bold">✓ Recorded (${timeStr}). Cloud syncing in background.</span>`;
+                  if (actionType === 'CHECK_IN') {
+                    const prevIn = existingRecord ? getProp(existingRecord, 'checkIn', 'checkin') : '';
+                    if (prevIn && prevIn !== '--:--') {
+                      alertEl.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Already Checked In today at ${prevIn}! Duplicate punch not allowed.</span>`;
+                      refreshEmployeeTodayPunch();
+                      return;
+                    }
+                  } else if (actionType === 'CHECK_OUT') {
+                    const prevIn = existingRecord ? getProp(existingRecord, 'checkIn', 'checkin') : '';
+                    if (!existingRecord || !prevIn || prevIn === '--:--') {
+                      alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Please Check-In first before Check-Out!</span>';
+                      refreshEmployeeTodayPunch();
+                      return;
+                    }
+                    const prevOut = getProp(existingRecord, 'checkOut', 'checkout');
+                    if (prevOut && prevOut !== '--:--') {
+                      alertEl.innerHTML = `<span class="text-amber-400 font-bold">⚠️ Already Checked Out today at ${prevOut}! Duplicate checkout not allowed.</span>`;
+                      refreshEmployeeTodayPunch();
+                      return;
+                    }
                   }
-                });
 
-                isPunching = false;
+                  // INSTANT OPTIMISTIC SAVE (NO NETWORK FREEZE)
+                  alertEl.innerHTML = `<span class="text-emerald-400 font-bold animate-pulse">✓ Recording ${actionType === 'CHECK_IN' ? 'Check-In' : 'Check-Out'} (${timeStr})...</span>`;
+
+                  const recId = (existingRecord && existingRecord.id) ? existingRecord.id : ('TSL-' + currentUser.id + '-' + today.replace(/-/g, ''));
+                  const existingIn = existingRecord ? getProp(existingRecord, 'checkIn', 'checkin') : '';
+                  const existingOut = existingRecord ? getProp(existingRecord, 'checkOut', 'checkout') : '';
+
+                  const punchRecord = {
+                    id: recId,
+                    date: today,
+                    empId: String(currentUser.id).trim(),
+                    name: currentUser.name,
+                    desig: currentUser.desig,
+                    section: currentUser.section,
+                    checkIn: actionType === 'CHECK_IN' ? timeStr : (existingIn || timeStr),
+                    checkOut: actionType === 'CHECK_OUT' ? timeStr : (existingOut || '--:--'),
+                    status: 'PRESENT'
+                  };
+
+                  let existingIndex = records.findIndex(r => isSameEmp(getProp(r, 'empId', 'cardNo'), currentUser.id) && isSameDate(getProp(r, 'date'), today));
+                  if (existingIndex === -1) {
+                    records.unshift(punchRecord);
+                  } else {
+                    records[existingIndex] = punchRecord;
+                  }
+                  
+                  saveRecords(records);
+                  refreshEmployeeTodayPunch();
+
+                  alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Successfully ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr}! Saved.</span>`;
+
+                  // BACKGROUND NON-BLOCKING SYNC TO GOOGLE SHEETS
+                  pushPunchToCloud(punchRecord).then((ok) => {
+                    if (ok) {
+                      alertEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Successfully ${actionType === 'CHECK_IN' ? 'Checked In' : 'Checked Out'} at ${timeStr} (Cloud Synced)</span>`;
+                    }
+                  }).catch(() => {});
+
+                } catch (err) {
+                  console.error("Punch error:", err);
+                  alertEl.innerHTML = '<span class="text-rose-400 font-bold">❌ Error recording punch. Please try again.</span>';
+                } finally {
+                  isPunching = false;
+                  refreshEmployeeTodayPunch();
+                }
               }
 
               function refreshEmployeeTodayPunch() {
                 if (!currentUser) return;
                 const today = getBstDateStr();
                 const records = getRecords();
-                const record = records.find(r => isSameEmp(r.empId, currentUser.id) && isSameDate(r.date, today));
+                const record = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), currentUser.id) && isSameDate(getProp(r, 'date'), today));
                 
-                const hasIn = record && record.checkIn && record.checkIn !== '--:--';
-                const hasOut = record && record.checkOut && record.checkOut !== '--:--';
+                const recIn = record ? getProp(record, 'checkIn', 'checkin') : '';
+                const recOut = record ? getProp(record, 'checkOut', 'checkout') : '';
+                const hasIn = recIn && recIn !== '--:--';
+                const hasOut = recOut && recOut !== '--:--';
 
-                document.getElementById('todayInText').innerText = hasIn ? record.checkIn : '--:--';
-                document.getElementById('todayOutText').innerText = hasOut ? record.checkOut : '--:--';
+                document.getElementById('todayInText').innerText = hasIn ? recIn : '--:--';
+                document.getElementById('todayOutText').innerText = hasOut ? recOut : '--:--';
 
                 const btnIn = document.getElementById('btnCheckIn');
                 const btnOut = document.getElementById('btnCheckOut');
@@ -1045,7 +1063,7 @@ jobs:
                 if (hasIn) {
                   btnIn.classList.add('opacity-40', 'pointer-events-none');
                   document.getElementById('txtBtnCheckIn').innerText = 'Checked In';
-                  document.getElementById('subTxtBtnCheckIn').innerText = record.checkIn;
+                  document.getElementById('subTxtBtnCheckIn').innerText = recIn;
                 } else {
                   btnIn.classList.remove('opacity-40', 'pointer-events-none', 'opacity-50');
                   document.getElementById('txtBtnCheckIn').innerText = 'Punch Check-In';
@@ -1055,7 +1073,7 @@ jobs:
                 if (hasOut) {
                   btnOut.classList.add('opacity-40', 'pointer-events-none');
                   document.getElementById('txtBtnCheckOut').innerText = 'Checked Out';
-                  document.getElementById('subTxtBtnCheckOut').innerText = record.checkOut;
+                  document.getElementById('subTxtBtnCheckOut').innerText = recOut;
                 } else if (!hasIn) {
                   btnOut.classList.add('opacity-50', 'pointer-events-none');
                   document.getElementById('txtBtnCheckOut').innerText = 'Punch Check-Out';
@@ -1148,7 +1166,7 @@ jobs:
                 }
               }
 
-              // INDIVIDUAL JOB CARD ENGINE
+              // INDIVIDUAL JOB CARD ENGINE (ACCEPTS SEARCH QUERY DIRECTLY)
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
               let searchDebounceTimer = null;
 
@@ -1242,6 +1260,7 @@ jobs:
                 renderSelectedEmployeeJobCard(selectedId);
               }
 
+              // BULLETPROOF DATE-WISE JOB CARD WITH PERSISTENT APPROVED LEAVES
               function buildDateWiseJobCard(empId, yearMonth) {
                 const users = getUsers();
                 const emp = users.find(u => isSameEmp(u.id, empId));
@@ -1266,28 +1285,39 @@ jobs:
                   const dateObj = new Date(year, month - 1, day);
                   const isFriday = (dateObj.getDay() === 5);
 
-                  const attRecord = records.find(r => isSameEmp(r.empId, empId) && isSameDate(r.date, dateStr));
+                  const attRecord = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), empId) && isSameDate(getProp(r, 'date'), dateStr));
                   
+                  // ACCURATE APPROVED LEAVE DETECTION ACROSS ALL FORMATS
                   const approvedLeave = leaves.find(l => {
-                    if (!isSameEmp(l.empId, empId)) return false;
-                    const status = String(l.status || '').trim().toUpperCase();
-                    if (status !== 'APPROVED') return false;
-                    const from = normalizeDate(l.fromDate);
-                    const to = normalizeDate(l.toDate);
-                    return dateStr >= from && dateStr <= to;
+                    const lEmp = getProp(l, 'empId', 'cardNo', 'empid');
+                    if (!isSameEmp(lEmp, empId)) return false;
+                    
+                    const st = getProp(l, 'status').toUpperCase();
+                    if (st !== 'APPROVED') return false;
+
+                    const from = normalizeDate(getProp(l, 'fromDate', 'from', 'fromdate', 'startdate', 'start'));
+                    const to = normalizeDate(getProp(l, 'toDate', 'to', 'todate', 'enddate', 'end'));
+                    if (!from || !to) return false;
+
+                    return (dateStr >= from && dateStr <= to);
                   });
 
                   let inTime = '--:--';
                   let outTime = '--:--';
                   let status = isFriday ? 'WEEKEND' : 'ABSENT';
 
-                  if (attRecord && (attRecord.status === 'PRESENT' || (attRecord.checkIn && attRecord.checkIn !== '--:--'))) {
-                    inTime = attRecord.checkIn || '--:--';
-                    outTime = attRecord.checkOut || '--:--';
+                  const recIn = attRecord ? getProp(attRecord, 'checkIn', 'checkin') : '';
+                  const recOut = attRecord ? getProp(attRecord, 'checkOut', 'checkout') : '';
+                  const recStatus = attRecord ? getProp(attRecord, 'status').toUpperCase() : '';
+
+                  if (attRecord && (recStatus === 'PRESENT' || (recIn && recIn !== '--:--'))) {
+                    inTime = recIn || '--:--';
+                    outTime = recOut || '--:--';
                     status = 'PRESENT';
                     presentCount++;
                   } else if (approvedLeave) {
-                    status = `LEAVE (${approvedLeave.type || 'L'})`;
+                    const lType = getProp(approvedLeave, 'type') || 'C/L';
+                    status = `LEAVE (${lType})`;
                     leaveCount++;
                   } else if (isFriday) {
                     status = 'WEEKEND';
@@ -1366,6 +1396,9 @@ jobs:
                 document.getElementById('empJcSubtitle').innerText = `${currentUser.name} (Card: ${currentUser.id}) - ${currentUser.section}`;
                 renderMyJobCard();
                 document.getElementById('empJobCardModal').classList.remove('hidden');
+                pullAllFromCloud(false).then(() => {
+                  renderMyJobCard();
+                });
               }
               function closeEmployeeJobCard() {
                 document.getElementById('empJobCardModal').classList.add('hidden');
@@ -1696,7 +1729,7 @@ jobs:
                 }
               }
 
-              let currentUser = null;
+              let currentUser = JSON.parse(localStorage.getItem('tsl_current_user_v65') || 'null');
 
               function tick() {
                 const now = new Date();
@@ -1744,6 +1777,7 @@ jobs:
                   if (isAdminMatched) {
                     handleRememberPinSave(idInput, pinInput);
                     currentUser = found;
+                    localStorage.setItem('tsl_current_user_v65', JSON.stringify(currentUser));
                     loginBtn.innerText = 'Syncing...';
                     await pullAllFromCloud(false);
                     loginBtn.disabled = false;
@@ -1793,6 +1827,7 @@ jobs:
 
                 handleRememberPinSave(idInput, pinInput);
                 currentUser = found;
+                localStorage.setItem('tsl_current_user_v65', JSON.stringify(currentUser));
 
                 loginBtn.innerText = 'Loading Profile...';
                 await pullAllFromCloud(false);
@@ -1803,6 +1838,7 @@ jobs:
               }
 
               function showAppScreen() {
+                if (!currentUser) return;
                 document.getElementById('authView').classList.add('hidden');
                 document.getElementById('headerActions').classList.remove('hidden');
                 document.getElementById('headerName').innerText = currentUser.role === 'ADMIN' ? 'Admin' : currentUser.name.split(' ')[0];
@@ -1827,6 +1863,7 @@ jobs:
 
               function logout() {
                 currentUser = null;
+                localStorage.removeItem('tsl_current_user_v65');
                 if (centralSyncInterval) clearInterval(centralSyncInterval);
                 document.getElementById('authView').classList.remove('hidden');
                 document.getElementById('punchView').classList.add('hidden');
@@ -1913,12 +1950,10 @@ jobs:
                 }
               }
 
-              // REALTIME ATTENDANCE & PRESENT CALCULATION FOR ADMIN
               function loadAdminDashboard() {
                 const records = getRecords();
                 const today = getBstDateStr();
                 
-                // Smart check for today's present records
                 const todayPresents = records.filter(r => {
                   const rDate = getProp(r, 'date');
                   const rStatus = getProp(r, 'status').toUpperCase();
@@ -1929,7 +1964,7 @@ jobs:
                 const uniquePresentEmpIds = new Set(todayPresents.map(r => String(getProp(r, 'empId', 'cardNo')).trim()));
 
                 const leaves = getLeaves();
-                const pendingLeaves = leaves.filter(l => String(l.status || '').toUpperCase() === 'PENDING');
+                const pendingLeaves = leaves.filter(l => String(getProp(l, 'status')).toUpperCase() === 'PENDING');
 
                 document.getElementById('totalEmpCount').innerText = getUsers().length;
                 document.getElementById('todayPresentCount').innerText = uniquePresentEmpIds.size;
@@ -1998,35 +2033,47 @@ jobs:
                   container.innerHTML = '<p class="text-slate-500 text-center py-6">No leave applications found</p>';
                   return;
                 }
-                container.innerHTML = leaves.map(l => `
-                  <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex justify-between items-start">
-                      <div>
-                        <h4 class="font-bold text-white text-xs">${l.name} <span class="text-emerald-400 font-mono">(${l.empId})</span></h4>
-                        <p class="text-[10px] text-slate-400">${l.desig} &bull; ${l.section}</p>
+                container.innerHTML = leaves.map(l => {
+                  const lid = getProp(l, 'id');
+                  const lemp = getProp(l, 'empId', 'cardNo');
+                  const lname = getProp(l, 'name', 'empName');
+                  const ldesig = getProp(l, 'desig', 'designation');
+                  const lsec = getProp(l, 'section', 'dept');
+                  const ltype = getProp(l, 'type') || 'C/L';
+                  const lfrom = getProp(l, 'fromDate', 'from');
+                  const lto = getProp(l, 'toDate', 'to');
+                  const lst = getProp(l, 'status').toUpperCase() || 'PENDING';
+
+                  return `
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                      <div class="flex justify-between items-start">
+                        <div>
+                          <h4 class="font-bold text-white text-xs">${lname} <span class="text-emerald-400 font-mono">(${lemp})</span></h4>
+                          <p class="text-[10px] text-slate-400">${ldesig} &bull; ${lsec}</p>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${lst === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : lst === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}">${lst} (${ltype})</span>
                       </div>
-                      <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${l.status === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : l.status === 'REJECTED' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}">${l.status} (${l.type})</span>
+                      <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
+                        <p class="text-slate-300"><b>Date:</b> ${lfrom} to ${lto}</p>
+                      </div>
+                      <div class="flex items-center space-x-2 pt-2 border-t border-slate-800">
+                        ${lst === 'PENDING' ? `
+                          <button onclick="updateLeaveStatus('${lid}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ Approve</button>
+                          <button onclick="updateLeaveStatus('${lid}', 'REJECTED')" class="flex-1 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ Reject</button>
+                        ` : ''}
+                        <button onclick="deleteLeaveRecord('${lid}')" class="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1" title="Delete Leave">
+                          <span>🗑️ Delete</span>
+                        </button>
+                      </div>
                     </div>
-                    <div class="text-[11px] bg-slate-900 p-2 rounded border border-slate-800/80">
-                      <p class="text-slate-300"><b>Date:</b> ${l.fromDate} to ${l.toDate}</p>
-                    </div>
-                    <div class="flex items-center space-x-2 pt-2 border-t border-slate-800">
-                      ${l.status === 'PENDING' ? `
-                        <button onclick="updateLeaveStatus('${l.id}', 'APPROVED')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✓ Approve</button>
-                        <button onclick="updateLeaveStatus('${l.id}', 'REJECTED')" class="flex-1 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white py-1.5 rounded-lg text-xs font-bold">✗ Reject</button>
-                      ` : ''}
-                      <button onclick="deleteLeaveRecord('${l.id}')" class="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1" title="Delete Leave">
-                        <span>🗑️ Delete</span>
-                      </button>
-                    </div>
-                  </div>
-                `).join('');
+                  `;
+                }).join('');
               }
 
-              // INSTANT & PERMANENT LEAVE APPROVAL
+              // INSTANT & PERMANENT LEAVE APPROVAL (DIRECT JOB CARD BINDING)
               async function updateLeaveStatus(leaveId, newStatus) {
                 let leaves = getLeaves();
-                let foundIndex = leaves.findIndex(l => String(l.id).trim() === String(leaveId).trim());
+                let foundIndex = leaves.findIndex(l => String(getProp(l, 'id')).trim() === String(leaveId).trim());
                 if (foundIndex === -1) return;
 
                 leaves[foundIndex].status = newStatus;
@@ -2044,7 +2091,7 @@ jobs:
               async function deleteLeaveRecord(leaveId) {
                 if (confirm('Delete this leave application?\nIt will be permanently removed from Google Sheet and Job Card.')) {
                   let leaves = getLeaves();
-                  leaves = leaves.filter(l => String(l.id).trim() !== String(leaveId).trim());
+                  leaves = leaves.filter(l => String(getProp(l, 'id')).trim() !== String(leaveId).trim());
                   saveLeaves(leaves);
 
                   await callGoogleSheet({ action: 'deleteLeave', id: leaveId });
@@ -2135,6 +2182,9 @@ jobs:
               document.addEventListener('DOMContentLoaded', () => {
                 loadRememberedCredentials();
                 pullAllFromCloud(false);
+                if (currentUser) {
+                  showAppScreen();
+                }
               });
               setTimeout(loadRememberedCredentials, 200);
             </script>
@@ -2175,8 +2225,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 49')
-          content = content.replace('versionName "1.0"', 'versionName "6.9.0"')
+          content = content.replace('versionCode 1', 'versionCode 50')
+          content = content.replace('versionName "1.0"', 'versionName "7.0.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2391,5 +2441,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v6.9
+          name: Tsl-attendance-v7.0
           path: "output_apk/Tsl attendance.apk"
