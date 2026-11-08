@@ -354,7 +354,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (EVERY EMPLOYEE VIEW & DOWNLOAD) -->
+              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD -->
               <div id="adminJobCardSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div>
@@ -742,6 +742,28 @@ jobs:
                 return String(id1).trim().toUpperCase() === String(id2).trim().toUpperCase();
               }
 
+              // ACCURATE DATES GENERATOR (PREVENTS DAY-DRIFT)
+              function getDatesInRange(startStr, endStr) {
+                const dates = [];
+                const s = normalizeDate(startStr);
+                const e = normalizeDate(endStr);
+                if (!s || !e) return dates;
+
+                let [y1, m1, d1] = s.split('-').map(Number);
+                let [y2, m2, d2] = e.split('-').map(Number);
+                let current = new Date(y1, m1 - 1, d1, 12, 0, 0);
+                const targetEnd = new Date(y2, m2 - 1, d2, 12, 0, 0);
+
+                while (current <= targetEnd) {
+                  const y = current.getFullYear();
+                  const m = String(current.getMonth() + 1).padStart(2, '0');
+                  const d = String(current.getDate()).padStart(2, '0');
+                  dates.push(`${y}-${m}-${d}`);
+                  current.setDate(current.getDate() + 1);
+                }
+                return dates;
+              }
+
               async function sha256Hex(str) {
                 const encoder = new TextEncoder();
                 const data = encoder.encode(str);
@@ -834,7 +856,7 @@ jobs:
                   } else {
                     const checkIn = (existing.checkIn && existing.checkIn !== '--:--') ? existing.checkIn : ((cIn && cIn !== '--:--') ? cIn : '--:--');
                     const checkOut = (existing.checkOut && existing.checkOut !== '--:--') ? existing.checkOut : ((cOut && cOut !== '--:--') ? cOut : '--:--');
-                    const status = (existing.status === 'PRESENT' || st === 'PRESENT' || checkIn !== '--:--') ? 'PRESENT' : (existing.status || st);
+                    const status = (existing.status.includes('LEAVE')) ? existing.status : ((st.includes('LEAVE')) ? st : (existing.status || st));
                     const id = existing.id || r.id || `TSL-${normEmpId}-${normDate.replace(/-/g, '')}`;
                     map.set(key, {
                       ...existing,
@@ -923,7 +945,7 @@ jobs:
                     savePinVault(Object.assign({}, localPins, res.pins));
                   }
                   
-                  // SYNC ALL EMPLOYEES ACCURATELY (INCLUDING THOSE WITH ATTENDANCE RECORDS)
+                  // SYNC ALL EMPLOYEES ACCURATELY
                   let erasedIds = JSON.parse(localStorage.getItem('tsl_erased_ids_v65') || '[]');
                   let mapEmp = new Map();
                   TAMISHNA_EMPLOYEES.forEach(u => {
@@ -1189,7 +1211,7 @@ jobs:
                 }
               }
 
-              // INDIVIDUAL JOB CARD ENGINE (VIEW & DOWNLOAD EVERY EMPLOYEE)
+              // INDIVIDUAL JOB CARD ENGINE (ACCEPTS SEARCH & PREV/NEXT NAVIGATION)
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
               let searchDebounceTimer = null;
 
@@ -1217,7 +1239,6 @@ jobs:
                 renderSelectedEmployeeJobCard();
               }
 
-              // QUICK PREV/NEXT EMPLOYEE NAVIGATION FOR ADMIN
               function navigateJobCardEmp(direction) {
                 const select = document.getElementById('jobCardEmpSelect');
                 if (!select || select.options.length === 0) return;
@@ -1302,14 +1323,13 @@ jobs:
                 renderSelectedEmployeeJobCard(selectedId);
               }
 
-              // ACCURATELY BUILD DATE-WISE JOB CARD FOR ANY EMPLOYEE
+              // BULLETPROOF DATE-WISE JOB CARD: DIRECT PERMANENT LEAVE RENDERING
               function buildDateWiseJobCard(empId, yearMonth) {
                 const users = getUsers();
                 let emp = users.find(u => isSameEmp(u.id, empId));
                 const records = getRecords();
                 const leaves = getLeaves();
 
-                // Safe fallback for metadata if newly added
                 if (!emp) {
                   const rec = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), empId));
                   emp = {
@@ -1339,9 +1359,10 @@ jobs:
                   const isFriday = (dateObj.getDay() === 5);
 
                   const attRecord = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), empId) && isSameDate(getProp(r, 'date'), dateStr));
-                  
-                  // INSTANT DIRECT LEAVE MATCHING
-                  const appliedLeave = leaves.find(l => {
+                  const isAttLeave = attRecord && (getProp(attRecord, 'status').toUpperCase().includes('LEAVE') || attRecord.isLeave);
+
+                  // CHECK LEAVES ARRAY
+                  const activeLeave = leaves.find(l => {
                     const lEmp = getProp(l, 'empId', 'cardNo', 'empid', 'id');
                     if (!isSameEmp(lEmp, empId)) return false;
 
@@ -1362,9 +1383,12 @@ jobs:
                   const recOut = attRecord ? getProp(attRecord, 'checkOut', 'checkout') : '';
                   const recStatus = attRecord ? getProp(attRecord, 'status').toUpperCase() : '';
 
-                  if (appliedLeave) {
-                    const lType = getProp(appliedLeave, 'type', 'leavetype') || 'C/L';
+                  // PERMANENT LEAVE PRIORITY (IN-TIME/OUT-TIME LIKE PERSISTENCE)
+                  if (activeLeave || isAttLeave) {
+                    const lType = activeLeave ? (getProp(activeLeave, 'type', 'leavetype') || 'C/L') : (attRecord.leaveType || 'C/L');
                     status = `LEAVE (${lType})`;
+                    inTime = '--:--';
+                    outTime = '--:--';
                     leaveCount++;
                   } else if (attRecord && (recStatus === 'PRESENT' || (recIn && recIn !== '--:--'))) {
                     inTime = recIn || '--:--';
@@ -1532,7 +1556,7 @@ jobs:
                 return doc;
               }
 
-              // DOWNLOAD ANY EMPLOYEE JOB CARD WITH 100% ACCURACY
+              // DOWNLOAD JOB CARD PDF FOR ANY SELECTED EMPLOYEE
               function downloadJobCardPDF() {
                 const empId = document.getElementById('jobCardEmpSelect').value;
                 const month = document.getElementById('jobCardMonthSelect').value || getBstDateStr().slice(0, 7);
@@ -1541,7 +1565,6 @@ jobs:
                   return;
                 }
                 
-                // Freshly build job card for accuracy
                 currentJobCardData = buildDateWiseJobCard(empId, month);
                 if (!currentJobCardData || !currentJobCardData.emp) {
                   alert('No Job Card data available for this employee!');
@@ -1948,7 +1971,7 @@ jobs:
                 document.getElementById('leaveApplyModal').classList.add('hidden');
               }
 
-              // DIRECT APPLY = INSTANT PERMANENT JOB CARD UPDATE
+              // DIRECT APPLY: INSTANTLY & PERMANENTLY WRITES TO BOTH LEAVES & RECORDS (LIKE IN/OUT TIME)
               async function handleLeaveSubmit(e) {
                 e.preventDefault();
                 if (!currentUser) return;
@@ -1956,13 +1979,19 @@ jobs:
                 const fromDate = document.getElementById('leaveFrom').value;
                 const toDate = document.getElementById('leaveTo').value;
 
+                if (!fromDate || !toDate) {
+                  alert('Please select both From and To dates!');
+                  return;
+                }
+
                 if (fromDate > toDate) {
                   alert('From Date cannot be later than To Date!');
                   return;
                 }
 
+                const leaveId = 'LV-' + currentUser.id + '-' + Date.now();
                 const leaveObj = {
-                  id: 'LV-' + currentUser.id + '-' + Date.now(),
+                  id: leaveId,
                   empId: String(currentUser.id).trim(),
                   name: currentUser.name,
                   desig: currentUser.desig,
@@ -1974,19 +2003,61 @@ jobs:
                   status: 'APPROVED'
                 };
 
-                const leaves = getLeaves();
+                // 1. SAVE TO LEAVES ARRAY
+                let leaves = getLeaves();
                 leaves.unshift(leaveObj);
                 saveLeaves(leaves);
 
+                // 2. CREATE A DIRECT DAY-BY-DAY PERMANENT RECORD (IN-TIME / OUT-TIME LIKE PERMANENCE)
+                let records = getRecords();
+                const datesRange = getDatesInRange(fromDate, toDate);
+
+                datesRange.forEach(dStr => {
+                  const recId = `TSL-LV-${currentUser.id}-${dStr.replace(/-/g, '')}`;
+                  const leaveAttRecord = {
+                    id: recId,
+                    leaveId: leaveId,
+                    isLeave: true,
+                    leaveType: type,
+                    date: dStr,
+                    empId: String(currentUser.id).trim(),
+                    name: currentUser.name,
+                    desig: currentUser.desig,
+                    section: currentUser.section,
+                    checkIn: '--:--',
+                    checkOut: '--:--',
+                    status: `LEAVE (${type})`
+                  };
+
+                  let existingIndex = records.findIndex(r => isSameEmp(getProp(r, 'empId', 'cardNo'), currentUser.id) && isSameDate(getProp(r, 'date'), dStr));
+                  if (existingIndex === -1) {
+                    records.unshift(leaveAttRecord);
+                  } else {
+                    records[existingIndex] = {
+                      ...records[existingIndex],
+                      ...leaveAttRecord
+                    };
+                  }
+
+                  // Non-blocking sync to Google Sheets Attendance
+                  pushPunchToCloud(leaveAttRecord).catch(() => {});
+                });
+                saveRecords(records);
+
                 closeLeaveApplyModal();
 
+                // 3. IMMEDIATELY RE-RENDER JOB CARDS
+                if (document.getElementById('empJobCardModal') && !document.getElementById('empJobCardModal').classList.contains('hidden')) {
+                  renderMyJobCard();
+                }
                 if (currentJobCardData && currentJobCardData.emp) {
                   renderSelectedEmployeeJobCard();
                 }
 
+                // 4. Background sync to Google Sheet Leaves tab
                 callGoogleSheet({ action: 'applyLeave', data: JSON.stringify(leaveObj) });
 
-                alert(`✓ Leave applied successfully for ${fromDate} to ${toDate}!\nIt is now directly recorded on your Job Card.`);
+                alert(`✓ Leave applied successfully for ${fromDate} to ${toDate}!\nIt is now permanently recorded on your Job Card.`);
               }
 
               function switchAdminTab(tab) {
@@ -2062,7 +2133,7 @@ jobs:
                         <td class="p-2.5 text-slate-400">${rDate}</td>
                         <td class="p-2.5 font-sans font-bold text-white">${rName}<br><span class="text-[9px] font-mono text-emerald-400">${rId}</span></td>
                         <td class="p-2.5 text-slate-300 font-sans">${rSec}</td>
-                        <td class="p-2.5 font-sans"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">${rStatus} (${rCheckIn || '--'})</span></td>
+                        <td class="p-2.5 font-sans"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${rStatus.includes('LEAVE') ? 'bg-blue-500/20 text-blue-300' : 'bg-emerald-500/20 text-emerald-300'}">${rStatus} (${rCheckIn || '--'})</span></td>
                         <td class="p-2.5 text-center">
                           <button onclick="deleteSingleRecord('${r.id}')" class="p-1 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 rounded active:scale-90" title="Delete Record">
                             🗑️
@@ -2132,7 +2203,7 @@ jobs:
                 }).join('');
               }
 
-              // ADMIN DELETE KORLEI JOB CARD THEKE REMOVE HBE
+              // ADMIN DELETE: COMPLETELY PURGES LEAVE AND RESTORES JOB CARD DATES
               async function deleteLeaveRecord(leaveId) {
                 if (confirm('Delete this leave application?\nIt will be permanently removed from Google Sheet and Job Card.')) {
                   const targetLid = String(leaveId).trim();
@@ -2144,8 +2215,28 @@ jobs:
                   }
 
                   let leaves = getLeaves();
+                  const targetLeave = leaves.find(l => String(getProp(l, 'id')).trim() === targetLid);
                   leaves = leaves.filter(l => String(getProp(l, 'id')).trim() !== targetLid);
                   saveLeaves(leaves);
+
+                  // Remove corresponding day records from records
+                  let records = getRecords();
+                  if (targetLeave) {
+                    const lEmp = getProp(targetLeave, 'empId', 'cardNo');
+                    const from = normalizeDate(getProp(targetLeave, 'fromDate', 'from'));
+                    const to = normalizeDate(getProp(targetLeave, 'toDate', 'to'));
+                    records = records.filter(r => {
+                      if (r.leaveId && String(r.leaveId).trim() === targetLid) return false;
+                      if (r.isLeave && isSameEmp(getProp(r, 'empId', 'cardNo'), lEmp)) {
+                        const rDate = normalizeDate(getProp(r, 'date'));
+                        if (rDate >= from && rDate <= to) return false;
+                      }
+                      return true;
+                    });
+                  } else {
+                    records = records.filter(r => String(r.leaveId).trim() !== targetLid);
+                  }
+                  saveRecords(records);
 
                   callGoogleSheet({ action: 'deleteLeave', id: targetLid });
 
@@ -2278,8 +2369,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 53')
-          content = content.replace('versionName "1.0"', 'versionName "7.3.0"')
+          content = content.replace('versionCode 1', 'versionCode 54')
+          content = content.replace('versionName "1.0"', 'versionName "7.4.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2494,5 +2585,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v7.3
+          name: Tsl-attendance-v7.4
           path: "output_apk/Tsl attendance.apk"
