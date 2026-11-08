@@ -366,7 +366,7 @@ jobs:
                   </button>
                 </div>
 
-                <!-- FAST DEBOUNCED SEARCH BAR & QUICK PREV/NEXT NAVIGATION -->
+                <!-- FAST SEARCH & QUICK PREV/NEXT NAVIGATION -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
                   <label class="block text-slate-300 font-semibold text-xs">🔍 Search Job Card by Card No / ID / Name:</label>
                   <div class="flex space-x-2">
@@ -694,7 +694,6 @@ jobs:
                 return `${y}-${m}-${day}`;
               }
 
-              // SMART FUZZY FIELD EXTRACTOR (IGNORES SPACES, UNDERSCORES & CASING)
               function getProp(obj, ...keys) {
                 if (!obj || typeof obj !== 'object') return '';
                 for (let k of keys) {
@@ -742,7 +741,7 @@ jobs:
                 return String(id1).trim().toUpperCase() === String(id2).trim().toUpperCase();
               }
 
-              // ACCURATE DATES GENERATOR (PREVENTS DAY-DRIFT)
+              // ACCURATE DATES GENERATOR (NO TIMEZONE DRIFT)
               function getDatesInRange(startStr, endStr) {
                 const dates = [];
                 const s = normalizeDate(startStr);
@@ -854,30 +853,38 @@ jobs:
                       status: st
                     });
                   } else {
-                    const checkIn = (existing.checkIn && existing.checkIn !== '--:--') ? existing.checkIn : ((cIn && cIn !== '--:--') ? cIn : '--:--');
-                    const checkOut = (existing.checkOut && existing.checkOut !== '--:--') ? existing.checkOut : ((cOut && cOut !== '--:--') ? cOut : '--:--');
-                    const status = (existing.status.includes('LEAVE')) ? existing.status : ((st.includes('LEAVE')) ? st : (existing.status || st));
+                    let bestIn = '--:--';
+                    if (cIn && cIn !== '--:--') bestIn = cIn;
+                    else if (existing.checkIn && existing.checkIn !== '--:--') bestIn = existing.checkIn;
+
+                    let bestOut = '--:--';
+                    if (cOut && cOut !== '--:--') bestOut = cOut;
+                    else if (existing.checkOut && existing.checkOut !== '--:--') bestOut = existing.checkOut;
+
+                    let bestStatus = (existing.status.includes('LEAVE')) ? existing.status : ((st.includes('LEAVE')) ? st : ((bestIn !== '--:--' || st === 'PRESENT' || existing.status === 'PRESENT') ? 'PRESENT' : (st || existing.status || 'PRESENT')));
                     const id = existing.id || r.id || `TSL-${normEmpId}-${normDate.replace(/-/g, '')}`;
+
                     map.set(key, {
                       ...existing,
                       ...r,
                       id: id,
                       date: normDate,
                       empId: normEmpId,
-                      checkIn: checkIn,
-                      checkOut: checkOut,
-                      status: status
+                      checkIn: bestIn,
+                      checkOut: bestOut,
+                      status: bestStatus
                     });
                   }
                 });
                 return Array.from(map.values());
               }
 
-              // CLOUD SYNC ENGINE
+              // CLOUD SYNC ENGINE WITH CACHE-BUSTER
               const GOOGLE_SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbyArqQrKOY5p3T6ACEMlLPiYaCv1umVOB6uudbLnU_-pC6T_IKv8uN_8XkZPG_OZf6A/exec';
               let centralSyncInterval = null;
 
               async function callGoogleSheet(params = {}) {
+                params._nocache = Date.now();
                 const query = new URLSearchParams(params).toString();
                 const fullUrl = `${GOOGLE_SHEET_API_URL}?${query}`;
                 try {
@@ -904,6 +911,7 @@ jobs:
                 await callGoogleSheet({ action: 'clearAll' });
               }
 
+              // MULTI-PHONE CLOUD PULL
               async function pullAllFromCloud(showAlert = false) {
                 const res = await callGoogleSheet({ action: 'getRecords' });
                 if (res && res.status === 'success') {
@@ -945,7 +953,7 @@ jobs:
                     savePinVault(Object.assign({}, localPins, res.pins));
                   }
                   
-                  // SYNC ALL EMPLOYEES ACCURATELY
+                  // ALL EMPLOYEES AUTO-DISCOVERY
                   let erasedIds = JSON.parse(localStorage.getItem('tsl_erased_ids_v65') || '[]');
                   let mapEmp = new Map();
                   TAMISHNA_EMPLOYEES.forEach(u => {
@@ -960,7 +968,6 @@ jobs:
                       }
                     });
                   }
-                  // Auto-discover employees from records
                   let recordsList = getRecords();
                   recordsList.forEach(r => {
                     const eid = getProp(r, 'empId', 'cardNo');
@@ -978,15 +985,18 @@ jobs:
                   saveUsers(Array.from(mapEmp.values()));
 
                   if (showAlert) alert('✓ Connected to Google Sheet! Live data synced.');
+                  
+                  // AUTO RE-RENDER JOB CARDS
                   if (currentUser) {
                     if (currentUser.role === 'ADMIN') {
                       loadAdminDashboard();
                       populateJobCardEmpDropdown();
-                      if (currentJobCardData && currentJobCardData.emp) {
-                        renderSelectedEmployeeJobCard();
-                      }
+                      renderSelectedEmployeeJobCard();
                     } else {
                       refreshEmployeeTodayPunch();
+                      if (document.getElementById('empJobCardModal') && !document.getElementById('empJobCardModal').classList.contains('hidden')) {
+                        renderMyJobCard();
+                      }
                     }
                   }
                   return;
@@ -999,7 +1009,7 @@ jobs:
                 pullAllFromCloud(false);
                 centralSyncInterval = setInterval(() => {
                   pullAllFromCloud(false);
-                }, 3000);
+                }, 2500);
               }
 
               // ONE-TAP INSTANT PUNCH
@@ -1323,7 +1333,7 @@ jobs:
                 renderSelectedEmployeeJobCard(selectedId);
               }
 
-              // BULLETPROOF DATE-WISE JOB CARD: DIRECT PERMANENT LEAVE RENDERING
+              // BULLETPROOF DATE-WISE JOB CARD: DIRECT PERMANENT LEAVE RENDERING (LIKE IN/OUT TIME)
               function buildDateWiseJobCard(empId, yearMonth) {
                 const users = getUsers();
                 let emp = users.find(u => isSameEmp(u.id, empId));
@@ -1361,7 +1371,7 @@ jobs:
                   const attRecord = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), empId) && isSameDate(getProp(r, 'date'), dateStr));
                   const isAttLeave = attRecord && (getProp(attRecord, 'status').toUpperCase().includes('LEAVE') || attRecord.isLeave);
 
-                  // CHECK LEAVES ARRAY
+                  // CHECK LEAVES ARRAY DIRECTLY
                   const activeLeave = leaves.find(l => {
                     const lEmp = getProp(l, 'empId', 'cardNo', 'empid', 'id');
                     if (!isSameEmp(lEmp, empId)) return false;
@@ -1943,6 +1953,7 @@ jobs:
                   document.getElementById('userDesig').innerText = currentUser.desig;
                   document.getElementById('userId').innerText = currentUser.id;
                   document.getElementById('userSection').innerText = currentUser.section;
+                  startRealtimeCloudSync();
                   refreshEmployeeTodayPunch();
                 }
               }
@@ -1971,7 +1982,7 @@ jobs:
                 document.getElementById('leaveApplyModal').classList.add('hidden');
               }
 
-              // DIRECT APPLY: INSTANTLY & PERMANENTLY WRITES TO BOTH LEAVES & RECORDS (LIKE IN/OUT TIME)
+              // DIRECT APPLY: PERMANENTLY SAVES AS DAY ATTENDANCE RECORDS (JUST LIKE IN/OUT TIME)
               async function handleLeaveSubmit(e) {
                 e.preventDefault();
                 if (!currentUser) return;
@@ -2003,7 +2014,7 @@ jobs:
                   status: 'APPROVED'
                 };
 
-                // 1. SAVE TO LEAVES ARRAY
+                // 1. SAVE TO LEAVES
                 let leaves = getLeaves();
                 leaves.unshift(leaveObj);
                 saveLeaves(leaves);
@@ -2095,13 +2106,13 @@ jobs:
                 const today = getBstDateStr();
                 
                 const todayPresents = records.filter(r => {
-                  const rDate = getProp(r, 'date');
+                  const rDate = normalizeDate(getProp(r, 'date'));
                   const rStatus = getProp(r, 'status').toUpperCase();
-                  const rCheckIn = getProp(r, 'checkIn', 'checkin');
-                  return isSameDate(rDate, today) && (rStatus === 'PRESENT' || (rCheckIn && rCheckIn !== '--:--'));
+                  const rCheckIn = getProp(r, 'checkIn', 'checkin', 'inTime');
+                  return isSameDate(rDate, today) && (rStatus === 'PRESENT' || (rCheckIn && rCheckIn !== '--:--' && !rCheckIn.includes('LEAVE')));
                 });
 
-                const uniquePresentEmpIds = new Set(todayPresents.map(r => String(getProp(r, 'empId', 'cardNo')).trim()));
+                const uniquePresentEmpIds = new Set(todayPresents.map(r => String(getProp(r, 'empId', 'cardNo')).trim().toUpperCase()));
                 const leaves = getLeaves();
 
                 document.getElementById('totalEmpCount').innerText = getUsers().length;
@@ -2125,7 +2136,7 @@ jobs:
                     const rId = getProp(r, 'empId', 'cardNo');
                     const rName = getProp(r, 'name', 'empName');
                     const rSec = getProp(r, 'section', 'dept') || 'General';
-                    const rCheckIn = getProp(r, 'checkIn', 'checkin');
+                    const rCheckIn = getProp(r, 'checkIn', 'checkin', 'inTime');
                     const rStatus = getProp(r, 'status') || 'PRESENT';
 
                     return `
@@ -2203,7 +2214,7 @@ jobs:
                 }).join('');
               }
 
-              // ADMIN DELETE: COMPLETELY PURGES LEAVE AND RESTORES JOB CARD DATES
+              // ADMIN DELETE: COMPLETELY REMOVES LEAVE FROM BOTH LEAVES & RECORDS
               async function deleteLeaveRecord(leaveId) {
                 if (confirm('Delete this leave application?\nIt will be permanently removed from Google Sheet and Job Card.')) {
                   const targetLid = String(leaveId).trim();
@@ -2369,8 +2380,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 54')
-          content = content.replace('versionName "1.0"', 'versionName "7.4.0"')
+          content = content.replace('versionCode 1', 'versionCode 55')
+          content = content.replace('versionName "1.0"', 'versionName "7.5.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2585,5 +2596,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v7.4
+          name: Tsl-attendance-v7.5
           path: "output_apk/Tsl attendance.apk"
