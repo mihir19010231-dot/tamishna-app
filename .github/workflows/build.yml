@@ -354,18 +354,19 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (WITH DIRECT SEARCH) -->
+              <!-- VIEW B: FACTORY STANDARD INDIVIDUAL JOB CARD (EVERY EMPLOYEE VIEW & DOWNLOAD) -->
               <div id="adminJobCardSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 p-4 space-y-3">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                   <div>
                     <h3 class="text-xs font-bold text-white">Monthly Attendance Job Card (Factory ERP Standard)</h3>
                     <p class="text-[10px] text-slate-400">Tamishna Synthetics Limited &bull; Gazipur Plant</p>
                   </div>
-                  <button onclick="downloadJobCardPDF()" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1 shadow">
-                    <span>📄 Save Job Card PDF</span>
+                  <button onclick="downloadJobCardPDF()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold active:scale-95 flex items-center space-x-1 shadow">
+                    <span>📄 Download Job Card PDF</span>
                   </button>
                 </div>
 
+                <!-- FAST DEBOUNCED SEARCH BAR & QUICK PREV/NEXT NAVIGATION -->
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
                   <label class="block text-slate-300 font-semibold text-xs">🔍 Search Job Card by Card No / ID / Name:</label>
                   <div class="flex space-x-2">
@@ -375,14 +376,20 @@ jobs:
                   <div id="jcSearchFeedback" class="hidden text-[10px] font-medium pt-0.5"></div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                   <div>
-                    <label class="block text-slate-400 mb-1">Select from dropdown:</label>
-                    <select id="jobCardEmpSelect" onchange="onJobCardDropdownChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white"></select>
+                    <div class="flex justify-between items-center mb-1">
+                      <label class="text-slate-400">Select Employee:</label>
+                      <div class="space-x-1">
+                        <button type="button" onclick="navigateJobCardEmp(-1)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded font-bold">⬅ Prev</button>
+                        <button type="button" onclick="navigateJobCardEmp(1)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded font-bold">Next ➡</button>
+                      </div>
+                    </div>
+                    <select id="jobCardEmpSelect" onchange="onJobCardDropdownChange()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono text-xs"></select>
                   </div>
                   <div>
                     <label class="block text-slate-400 mb-1">Month & Year:</label>
-                    <input type="month" id="jobCardMonthSelect" onchange="renderSelectedEmployeeJobCard()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono">
+                    <input type="month" id="jobCardMonthSelect" onchange="renderSelectedEmployeeJobCard()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono text-xs">
                   </div>
                 </div>
 
@@ -441,7 +448,7 @@ jobs:
                 </div>
               </div>
 
-              <!-- VIEW C: LEAVE MANAGEMENT (VIEW & DELETE) -->
+              <!-- VIEW C: LEAVE MANAGEMENT -->
               <div id="adminLeaveSection" class="hidden bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow">
                 <div class="p-2.5 bg-slate-950 border-b border-slate-800 text-xs font-semibold text-slate-300">
                   Applied Leaves (Remove from Job Card via Delete)
@@ -687,14 +694,21 @@ jobs:
                 return `${y}-${m}-${day}`;
               }
 
+              // SMART FUZZY FIELD EXTRACTOR (IGNORES SPACES, UNDERSCORES & CASING)
               function getProp(obj, ...keys) {
-                if (!obj) return '';
+                if (!obj || typeof obj !== 'object') return '';
                 for (let k of keys) {
-                  if (obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') return String(obj[k]).trim();
-                  let lowerK = k.toLowerCase();
-                  for (let prop in obj) {
-                    if (prop.toLowerCase() === lowerK && obj[prop] !== undefined && obj[prop] !== null && String(obj[prop]).trim() !== '') {
-                      return String(obj[prop]).trim();
+                  if (obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== '') {
+                    return String(obj[k]).trim();
+                  }
+                }
+                const cleanKeys = keys.map(k => String(k).toLowerCase().replace(/[^a-z0-9]/g, ''));
+                for (let prop in obj) {
+                  const cleanProp = String(prop).toLowerCase().replace(/[^a-z0-9]/g, '');
+                  if (cleanKeys.includes(cleanProp)) {
+                    const val = obj[prop];
+                    if (val !== undefined && val !== null && String(val).trim() !== '') {
+                      return String(val).trim();
                     }
                   }
                 }
@@ -705,11 +719,10 @@ jobs:
                 if (!d) return '';
                 if (typeof d === 'string') {
                   d = d.trim();
-                  if (d.includes('T')) return d.split('T')[0];
                   if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
                   if (/^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/.test(d)) {
                     const p = d.split(/[\/-]/);
-                    return `${p[2]}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}`;
+                    return `${p[2]}-${String(p[1]).padStart(2, '0')}-${String(p[0]).padStart(2, '0')}`;
                   }
                 }
                 try {
@@ -879,8 +892,8 @@ jobs:
                     saveRecords(merged);
                   }
                   if (Array.isArray(res.leaves)) {
-                    let localLeaves = getLeaves();
                     let deletedLeaves = JSON.parse(localStorage.getItem('tsl_deleted_leaves_v65') || '[]');
+                    let localLeaves = getLeaves().filter(l => !deletedLeaves.includes(String(getProp(l, 'id')).trim()));
                     let map = new Map();
                     localLeaves.forEach(l => {
                       const lid = getProp(l, 'id');
@@ -896,7 +909,7 @@ jobs:
                           name: getProp(l, 'name', 'empName'),
                           desig: getProp(l, 'desig', 'designation'),
                           section: getProp(l, 'section', 'dept'),
-                          type: getProp(l, 'type') || 'C/L',
+                          type: getProp(l, 'type', 'leavetype') || 'C/L',
                           fromDate: normalizeDate(getProp(l, 'fromDate', 'from', 'fromdate')),
                           toDate: normalizeDate(getProp(l, 'toDate', 'to', 'todate')),
                           status: 'APPROVED'
@@ -910,6 +923,7 @@ jobs:
                     savePinVault(Object.assign({}, localPins, res.pins));
                   }
                   
+                  // SYNC ALL EMPLOYEES ACCURATELY (INCLUDING THOSE WITH ATTENDANCE RECORDS)
                   let erasedIds = JSON.parse(localStorage.getItem('tsl_erased_ids_v65') || '[]');
                   let mapEmp = new Map();
                   TAMISHNA_EMPLOYEES.forEach(u => {
@@ -924,6 +938,21 @@ jobs:
                       }
                     });
                   }
+                  // Auto-discover employees from records
+                  let recordsList = getRecords();
+                  recordsList.forEach(r => {
+                    const eid = getProp(r, 'empId', 'cardNo');
+                    if (eid && !mapEmp.has(eid) && !erasedIds.includes(eid)) {
+                      mapEmp.set(eid, {
+                        id: eid,
+                        name: getProp(r, 'name', 'empName') || eid,
+                        desig: getProp(r, 'desig', 'designation') || 'Staff',
+                        section: getProp(r, 'section', 'dept') || 'General',
+                        role: 'EMPLOYEE'
+                      });
+                    }
+                  });
+
                   saveUsers(Array.from(mapEmp.values()));
 
                   if (showAlert) alert('✓ Connected to Google Sheet! Live data synced.');
@@ -951,7 +980,7 @@ jobs:
                 }, 3000);
               }
 
-              // ONE-TAP INSTANT PUNCH (ZERO LAG)
+              // ONE-TAP INSTANT PUNCH
               let isPunching = false;
               async function recordPunch(actionType) {
                 if (!currentUser) {
@@ -1160,7 +1189,7 @@ jobs:
                 }
               }
 
-              // INDIVIDUAL JOB CARD ENGINE
+              // INDIVIDUAL JOB CARD ENGINE (VIEW & DOWNLOAD EVERY EMPLOYEE)
               let currentJobCardData = { emp: null, month: '', rows: [], stats: {} };
               let searchDebounceTimer = null;
 
@@ -1173,12 +1202,31 @@ jobs:
                 const select = document.getElementById('jobCardEmpSelect');
                 if (!select) return;
                 const users = getUsers();
+                const curVal = select.value;
                 select.innerHTML = users.map(u => `<option value="${u.id}">${u.id} - ${u.name} (${u.section})</option>`).join('');
                 
+                if (curVal && users.some(u => isSameEmp(u.id, curVal))) {
+                  select.value = curVal;
+                }
+
                 const curMonth = getBstDateStr().slice(0, 7);
-                document.getElementById('jobCardMonthSelect').value = curMonth;
+                if (!document.getElementById('jobCardMonthSelect').value) {
+                  document.getElementById('jobCardMonthSelect').value = curMonth;
+                }
                 document.getElementById('jcPrintDate').innerText = getBstDateStr();
                 renderSelectedEmployeeJobCard();
+              }
+
+              // QUICK PREV/NEXT EMPLOYEE NAVIGATION FOR ADMIN
+              function navigateJobCardEmp(direction) {
+                const select = document.getElementById('jobCardEmpSelect');
+                if (!select || select.options.length === 0) return;
+                let currentIndex = select.selectedIndex;
+                let nextIndex = currentIndex + direction;
+                if (nextIndex < 0) nextIndex = select.options.length - 1;
+                if (nextIndex >= select.options.length) nextIndex = 0;
+                select.selectedIndex = nextIndex;
+                onJobCardDropdownChange();
               }
 
               function searchEmployeeJobCard() {
@@ -1254,16 +1302,27 @@ jobs:
                 renderSelectedEmployeeJobCard(selectedId);
               }
 
-              // DIRECT APPLIED LEAVES DISPLAY ON JOB CARD (ONLY REMOVED IF ADMIN DELETES)
+              // ACCURATELY BUILD DATE-WISE JOB CARD FOR ANY EMPLOYEE
               function buildDateWiseJobCard(empId, yearMonth) {
                 const users = getUsers();
-                const emp = users.find(u => isSameEmp(u.id, empId));
-                if (!emp) return null;
+                let emp = users.find(u => isSameEmp(u.id, empId));
+                const records = getRecords();
+                const leaves = getLeaves();
+
+                // Safe fallback for metadata if newly added
+                if (!emp) {
+                  const rec = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), empId));
+                  emp = {
+                    id: empId,
+                    name: rec ? getProp(rec, 'name', 'empName') : empId,
+                    desig: rec ? getProp(rec, 'desig', 'designation') : 'Employee',
+                    section: rec ? getProp(rec, 'section', 'dept') : 'General',
+                    role: 'EMPLOYEE'
+                  };
+                }
 
                 const [year, month] = yearMonth.split('-').map(Number);
                 const daysInMonth = new Date(year, month, 0).getDate();
-                const records = getRecords();
-                const leaves = getLeaves();
 
                 const rows = [];
                 let presentCount = 0;
@@ -1281,9 +1340,9 @@ jobs:
 
                   const attRecord = records.find(r => isSameEmp(getProp(r, 'empId', 'cardNo'), empId) && isSameDate(getProp(r, 'date'), dateStr));
                   
-                  // DIRECT LEAVE MATCHING (APPLY KORLEI DIRECT SHOW KORBE)
+                  // INSTANT DIRECT LEAVE MATCHING
                   const appliedLeave = leaves.find(l => {
-                    const lEmp = getProp(l, 'empId', 'cardNo', 'empid');
+                    const lEmp = getProp(l, 'empId', 'cardNo', 'empid', 'id');
                     if (!isSameEmp(lEmp, empId)) return false;
 
                     const from = normalizeDate(getProp(l, 'fromDate', 'from', 'fromdate', 'startdate', 'start'));
@@ -1303,15 +1362,15 @@ jobs:
                   const recOut = attRecord ? getProp(attRecord, 'checkOut', 'checkout') : '';
                   const recStatus = attRecord ? getProp(attRecord, 'status').toUpperCase() : '';
 
-                  if (attRecord && (recStatus === 'PRESENT' || (recIn && recIn !== '--:--'))) {
+                  if (appliedLeave) {
+                    const lType = getProp(appliedLeave, 'type', 'leavetype') || 'C/L';
+                    status = `LEAVE (${lType})`;
+                    leaveCount++;
+                  } else if (attRecord && (recStatus === 'PRESENT' || (recIn && recIn !== '--:--'))) {
                     inTime = recIn || '--:--';
                     outTime = recOut || '--:--';
                     status = 'PRESENT';
                     presentCount++;
-                  } else if (appliedLeave) {
-                    const lType = getProp(appliedLeave, 'type') || 'C/L';
-                    status = `LEAVE (${lType})`;
-                    leaveCount++;
                   } else if (isFriday) {
                     status = 'WEEKEND';
                     weekendCount++;
@@ -1473,11 +1532,22 @@ jobs:
                 return doc;
               }
 
+              // DOWNLOAD ANY EMPLOYEE JOB CARD WITH 100% ACCURACY
               function downloadJobCardPDF() {
-                if (!currentJobCardData || !currentJobCardData.emp) {
-                  alert('No Job Card data available!');
+                const empId = document.getElementById('jobCardEmpSelect').value;
+                const month = document.getElementById('jobCardMonthSelect').value || getBstDateStr().slice(0, 7);
+                if (!empId) {
+                  alert('Please select or search an employee first!');
                   return;
                 }
+                
+                // Freshly build job card for accuracy
+                currentJobCardData = buildDateWiseJobCard(empId, month);
+                if (!currentJobCardData || !currentJobCardData.emp) {
+                  alert('No Job Card data available for this employee!');
+                  return;
+                }
+
                 const doc = generateJobCardPdfDoc(currentJobCardData);
                 const safeId = (currentJobCardData.emp.id || 'EMP').replace(/[^a-zA-Z0-9]/g, '_');
                 const safeMonth = (currentJobCardData.month || '2026_11').replace(/[^a-zA-Z0-9]/g, '_');
@@ -1878,7 +1948,7 @@ jobs:
                 document.getElementById('leaveApplyModal').classList.add('hidden');
               }
 
-              // DIRECT APPLY KORLEI JOB CARD A SHOW KORBE
+              // DIRECT APPLY = INSTANT PERMANENT JOB CARD UPDATE
               async function handleLeaveSubmit(e) {
                 e.preventDefault();
                 if (!currentUser) return;
@@ -1892,7 +1962,7 @@ jobs:
                 }
 
                 const leaveObj = {
-                  id: 'LV-' + Date.now(),
+                  id: 'LV-' + currentUser.id + '-' + Date.now(),
                   empId: String(currentUser.id).trim(),
                   name: currentUser.name,
                   desig: currentUser.desig,
@@ -1908,10 +1978,15 @@ jobs:
                 leaves.unshift(leaveObj);
                 saveLeaves(leaves);
 
+                closeLeaveApplyModal();
+
+                if (currentJobCardData && currentJobCardData.emp) {
+                  renderSelectedEmployeeJobCard();
+                }
+
                 callGoogleSheet({ action: 'applyLeave', data: JSON.stringify(leaveObj) });
 
-                closeLeaveApplyModal();
-                alert('✓ Leave application submitted successfully! It is now directly recorded on your Job Card.');
+                alert(`✓ Leave applied successfully for ${fromDate} to ${toDate}!\nIt is now directly recorded on your Job Card.`);
               }
 
               function switchAdminTab(tab) {
@@ -2031,7 +2106,7 @@ jobs:
                   const lname = getProp(l, 'name', 'empName');
                   const ldesig = getProp(l, 'desig', 'designation');
                   const lsec = getProp(l, 'section', 'dept');
-                  const ltype = getProp(l, 'type') || 'C/L';
+                  const ltype = getProp(l, 'type', 'leavetype') || 'C/L';
                   const lfrom = getProp(l, 'fromDate', 'from');
                   const lto = getProp(l, 'toDate', 'to');
 
@@ -2062,7 +2137,6 @@ jobs:
                 if (confirm('Delete this leave application?\nIt will be permanently removed from Google Sheet and Job Card.')) {
                   const targetLid = String(leaveId).trim();
 
-                  // Blacklist permanently so cloud sync never resurrects it
                   let deletedLeaves = JSON.parse(localStorage.getItem('tsl_deleted_leaves_v65') || '[]');
                   if (!deletedLeaves.includes(targetLid)) {
                     deletedLeaves.push(targetLid);
@@ -2204,8 +2278,8 @@ jobs:
 
           content = content.replace('buildTypes {', signing_block + '\n    buildTypes {')
           content = content.replace('minifyEnabled false', 'signingConfig signingConfigs.release\n            minifyEnabled false')
-          content = content.replace('versionCode 1', 'versionCode 51')
-          content = content.replace('versionName "1.0"', 'versionName "7.1.0"')
+          content = content.replace('versionCode 1', 'versionCode 53')
+          content = content.replace('versionName "1.0"', 'versionName "7.3.0"')
 
           with open('tamishna/android/app/build.gradle', 'w') as f:
               f.write(content)
@@ -2420,5 +2494,5 @@ jobs:
       - name: Upload Tsl attendance.apk
         uses: actions/upload-artifact@v4
         with:
-          name: Tsl-attendance-v7.1
+          name: Tsl-attendance-v7.3
           path: "output_apk/Tsl attendance.apk"
